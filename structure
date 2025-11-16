@@ -1,0 +1,43 @@
+Here you can see how the project is structure
+													INTERN-CONNECT
+the admin can do
+
+-> the admin can add the register college || endpoint will be - /api/admin/registered-colleges
+-> the admin can make payment for registration || endpoint- 	/api/admin/registration-payment
+-> the admin can register a trainer || endpoint- 		/api/admin/trainers
+-> create the trainer password || endpoint -/api/admin/trainers/{trainerId}/password?password=xyz  // trainerId is coming from trainer table where we register the trainer 
+-> create the batches || endpoint - /api/admin/batches  
+-> admin can initiate the stipend for particular user -------------------- /api/admin/stipend
+-> View all payments	endpoint	/api/admin/payments	
+-> View all users	endpoint	/api/admin/users	
+-> View all batches	endpoint	/api/admin/batches	
+-> View all trainers	endpoint	/api/admin/trainers
+
+-> we can also give some more access to admin like to delete the trainer or user or college
+
+the user can do
+
+-> firstly user can check available college endpoint -/api/user/college/{collegeName}
+-> enroll in a course endpoint ---------------------- /api/user/enroll
+-> create the password ---------------------------/api/user/{userId}/password?password=abcd
+				// fetching the userid form the user table
+-> user login ----------------------------------/api/user/login
+-> view user performance -----------------/api/user/{userId}/performance
+-> view stipend history ------------------/api/user/{userId}/stipend-history
+-> user can give feed back --------------/api/user/feedback
+-> user can view batch details -----------/api/user/batch/{batchCode}
+-> USEE EMAIL 
+the trainer can do ---- (temp mail)
+/// here i want to implement the email thing like when the admin is registering the trainer and creating the password the trainer should receive the email of trainer id and password
+//// validation
+// popups
+-> login 				----------/api/trainer/login
+-> trainer can see their batches ----------------/api/trainer/batches?trainerName=prakhar
+-> trainer can see students in batches ---------/api/trainer/batches/{batchCode}/students
+-> trainer can update the user performance -----/api/trainer/performance
+-> trainer can add stipend ----------------------/api/trainer/stipend  ----- trainer can only update the performance table but payment will be initiated by the admin (stipend)
+-> trainer can view feedback form their batches----/api/trainer/feedback?trainerName=Prakhar
+
+------one more features we can add like attendance trainer can give the attendance to user and the user can see their attendance.
+
+
