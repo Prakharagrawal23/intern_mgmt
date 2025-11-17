@@ -16,7 +16,7 @@ the admin can do
 -> we can also give some more access to admin like to delete the trainer or user or college
 
 the user can do
-
+-> fill the user details -> 
 -> firstly user can check available college endpoint -/api/user/college/{collegeName}
 -> enroll in a intership endpoint ---------------------- /api/user/enroll
 -> create the password ---------------------------/api/user/{userId}/password?password=abcd
