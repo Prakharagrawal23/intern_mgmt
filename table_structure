@@ -8,7 +8,7 @@
 
 
 
-Today
+Yesterday
 You said
 -- 1) Internship Batches CREATE TABLE internship_batches ( batch_code BIGINT AUTO_INCREMENT PRIMARY KEY, course_name VARCHAR(255) NOT NULL, trainer_name VARCHAR(255) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL, total_seats INT NOT NULL, available_seats INT NOT NULL ); -- 2) Registered Colleges CREATE TABLE registered_colleges ( college_id BIGINT AUTO_INCREMENT PRIMARY KEY, college_name VARCHAR(255) UNIQUE NOT NULL, state VARCHAR(100) NOT NULL, city VARCHAR(100) NOT NULL, pincode VARCHAR(20) NOT NULL ); -- 3) College Registration CREATE TABLE college_registration ( registration_id BIGINT AUTO_INCREMENT PRIMARY KEY, college_id BIGINT NOT NULL, college_name VARCHAR(255) NOT NULL, state VARCHAR(100) NOT NULL, city VARCHAR(100) NOT NULL, pincode VARCHAR(20) NOT NULL, FOREIGN KEY (college_id) REFERENCES registered_colleges(college_id) ); -- 4) Users CREATE TABLE users ( user_id BIGINT AUTO_INCREMENT PRIMARY KEY, user_name VARCHAR(255) NOT NULL, college_name VARCHAR(255) NOT NULL, contact_no VARCHAR(20) NOT NULL, course_name VARCHAR(255) NOT NULL, start_date DATE, end_date DATE, batch_code BIGINT NOT NULL, FOREIGN KEY (batch_code) REFERENCES internship_batches(batch_code) ); -- 5) Performance CREATE TABLE performance ( id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, user_name VARCHAR(255) NOT NULL, performance VARCHAR(255), stipend DECIMAL(10,2), FOREIGN KEY (user_id) REFERENCES users(user_id) ); -- 6) Payment CREATE TABLE payment ( payment_id BIGINT AUTO_INCREMENT PRIMARY KEY, registration_id BIGINT NOT NULL, payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, payment_mode VARCHAR(50) NOT NULL, amount DECIMAL(10,2) NOT NULL, FOREIGN KEY (registration_id) REFERENCES college_registration(registration_id) ); -- 7) Trainer CREATE TABLE trainer ( trainer_id BIGINT AUTO_INCREMENT PRIMARY KEY, trainer_name VARCHAR(255) NOT NULL, location VARCHAR(255) NOT NULL, contact_no VARCHAR(20) NOT NULL, experience INT NOT NULL, certifications VARCHAR(500) ); -- 8) Trainer Login CREATE TABLE trainer_login ( trainer_id BIGINT PRIMARY KEY, password VARCHAR(255) NOT NULL, FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id) ); -- 9) User Login CREATE TABLE user_login ( user_id BIGINT PRIMARY KEY, password VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users(user_id) ); -- 10) Stipend CREATE TABLE stipend ( id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, user_name VARCHAR(255) NOT NULL, payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, payment_mode VARCHAR(50) NOT NULL, amount DECIMAL(10,2) NOT NULL, FOREIGN KEY (user_id) REFERENCES users(user_id) ); -- 11) Feedback CREATE TABLE feedback ( id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NOT NULL, user_name VARCHAR(255) NOT NULL, batch_code BIGINT NOT NULL, trainer_name VARCHAR(255) NOT NULL, date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, feedback TEXT, rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5), FOREIGN KEY (user_id) REFERENCES users(user_id), FOREIGN KEY (batch_code) REFERENCES internship_batches(batch_code) ); Here you can see how the project is structure   INTERN-CONNECT the admin can do -> -> the admin can add the register college || endpoint will be - /api/admin/registered-colleges -> the admin can make payment for registration || endpoint- /api/admin/registration-payment -> the admin can register a trainer || endpoint- /api/admin/trainers -> create the trainer password || endpoint -/api/admin/trainers/{trainerId}/password?password=xyz // trainerId is coming from trainer table where we register the trainer -> create the batches || endpoint - /api/admin/batches -> admin can initiate the stipend for particular user -------------------- /api/admin/stipend -> View all payments endpoint /api/admin/payments -> View all users endpoint /api/admin/users -> View all batches endpoint /api/admin/batches -> View all trainers endpoint /api/admin/trainers -> we can also give some more access to admin like to delete the trainer or user or college the user can do -> fill the user details -> -> firstly user can check available college endpoint -/api/user/college/{collegeName} -> enroll in a intership endpoint ---------------------- /api/user/enroll -> create the password ---------------------------/api/user/{userId}/password?password=abcd   // fetching the userid form the user table -> user login ----------------------------------/api/user/login -> view user performance -----------------/api/user/{userId}/performance -> view stipend history ------------------/api/user/{userId}/stipend-history -> user can give feed back --------------/api/user/feedback -> user can view batch details -----------/api/user/batch/{batchCode} -> USEE EMAIL the trainer can do ---- (temp mail) /to the particular trainer like hey Prakhar this is you trainer id and password //// validation // popups -> login ----------/api/trainer/login -> trainer can see their batches ----------------/api/trainer/batches?trainerName=prakhar -> trainer can see students in batches ---------/api/trainer/batches/{batchCode}/students -> trainer can update the user performance -----/api/trainer/performance -> trainer can add stipend ----------------------/api/trainer/stipend ----- trainer can only update the performance table but payment will be initiated by the admin (stipend) -> trainer can view feedback form their batches----/api/trainer/feedback?trainerName=Prakhar ------one more features we can add like attendance trainer can give the attendance to user and the user can see their attendance. create the model, repository(dao,daoimplement) , services (service,service implement), exception, dto, controllers create at least i want to check these in postman using the jwt security
 
@@ -1646,8 +1646,171 @@ If you want, I can generate getters/setters/toString for any model or DTO you’
 
 
 
+Edit in a page
+You said
+how i know which is class and which is interface 
+com.finalproject.internMgmtSystem
+├── InternMgmtSystemApplication.java
+├── controllers
+│   ├── AdminController.java
+│   ├── TrainerController.java
+│   ├── UserController.java
+│   └── AuthController.java
+├── dto
+│   ├── AuthRequest.java
+│   ├── AuthResponse.java
+│   ├── CollegeDTO.java
+│   ├── TrainerDTO.java
+│   ├── BatchDTO.java
+│   ├── UserDTO.java
+│   ├── PaymentDTO.java
+│   ├── PerformanceDTO.java
+│   ├── StipendDTO.java
+│   ├── FeedbackDTO.java
+│   └── AttendanceDTO.java
+├── exception
+│   ├── ApiException.java
+│   ├── ResourceNotFoundException.java
+│   └── GlobalExceptionHandler.java
+├── model
+│   ├── InternshipBatch.java
+│   ├── RegisteredCollege.java
+│   ├── CollegeRegistration.java
+│   ├── User.java
+│   ├── Performance.java
+│   ├── Payment.java
+│   ├── Trainer.java
+│   ├── TrainerLogin.java
+│   ├── UserLogin.java
+│   ├── Stipend.java
+│   ├── Feedback.java
+│   └── Attendance.java
+├── repository
+│   ├── InternshipBatchRepository.java
+│   ├── RegisteredCollegeRepository.java
+│   ├── CollegeRegistrationRepository.java
+│   ├── UserRepository.java
+│   ├── PerformanceRepository.java
+│   ├── PaymentRepository.java
+│   ├── TrainerRepository.java
+│   ├── TrainerLoginRepository.java
+│   ├── UserLoginRepository.java
+│   ├── StipendRepository.java
+│   ├── FeedbackRepository.java
+│   └── AttendanceRepository.java
+├── service
+│   ├── AdminService.java
+│   ├── AdminServiceImpl.java
+│   ├── TrainerService.java
+│   ├── TrainerServiceImpl.java
+│   ├── UserService.java
+│   ├── UserServiceImpl.java
+│   ├── AuthService.java
+│   └── AuthServiceImpl.java
+├── util
+│   ├── JwtUtil.java
+│   └── Roles.java
+└── security
+    ├── SecurityConfig.java
+    ├── JwtAuthFilter.java
+    ├── CustomUserDetailsService.java
+    └── PasswordConfig.java
+
+so here in each filename   also write the classtype name like which is interface or class
+Copilot said
+Got it 👍 — let’s annotate your project tree so you can clearly see which files are classes and which are interfaces.
+
+Annotated Project Structure
+Code
+
+
+Copy
+com.finalproject.internMgmtSystem
+├── InternMgmtSystemApplication.java                [CLASS]
+├── controllers
+│   ├── AdminController.java                        [CLASS]
+│   ├── TrainerController.java                      [CLASS]
+│   ├── UserController.java                         [CLASS]
+│   └── AuthController.java                         [CLASS]
+├── dto
+│   ├── AuthRequest.java                            [CLASS]
+│   ├── AuthResponse.java                           [CLASS]
+│   ├── CollegeDTO.java                             [CLASS]
+│   ├── TrainerDTO.java                             [CLASS]
+│   ├── BatchDTO.java                               [CLASS]
+│   ├── UserDTO.java                                [CLASS]
+│   ├── PaymentDTO.java                             [CLASS]
+│   ├── PerformanceDTO.java                         [CLASS]
+│   ├── StipendDTO.java                             [CLASS]
+│   ├── FeedbackDTO.java                            [CLASS]
+│   └── AttendanceDTO.java                          [CLASS]
+├── exception
+│   ├── ApiException.java                           [CLASS]
+│   ├── ResourceNotFoundException.java              [CLASS]
+│   └── GlobalExceptionHandler.java                 [CLASS]
+├── model
+│   ├── InternshipBatch.java                        [CLASS]
+│   ├── RegisteredCollege.java                      [CLASS]
+│   ├── CollegeRegistration.java                    [CLASS]
+│   ├── User.java                                   [CLASS]
+│   ├── Performance.java                            [CLASS]
+│   ├── Payment.java                                [CLASS]
+│   ├── Trainer.java                                [CLASS]
+│   ├── TrainerLogin.java                           [CLASS]
+│   ├── UserLogin.java                              [CLASS]
+│   ├── Stipend.java                                [CLASS]
+│   ├── Feedback.java                               [CLASS]
+│   └── Attendance.java                             [CLASS]
+├── repository
+│   ├── InternshipBatchRepository.java              [INTERFACE]
+│   ├── RegisteredCollegeRepository.java            [INTERFACE]
+│   ├── CollegeRegistrationRepository.java          [INTERFACE]
+│   ├── UserRepository.java                         [INTERFACE]
+│   ├── PerformanceRepository.java                  [INTERFACE]
+│   ├── PaymentRepository.java                      [INTERFACE]
+│   ├── TrainerRepository.java                      [INTERFACE]
+│   ├── TrainerLoginRepository.java                 [INTERFACE]
+│   ├── UserLoginRepository.java                    [INTERFACE]
+│   ├── StipendRepository.java                      [INTERFACE]
+│   ├── FeedbackRepository.java                     [INTERFACE]
+│   └── AttendanceRepository.java                   [INTERFACE]
+├── service
+│   ├── AdminService.java                           [INTERFACE]
+│   ├── AdminServiceImpl.java                       [CLASS]
+│   ├── TrainerService.java                         [INTERFACE]
+│   ├── TrainerServiceImpl.java                     [CLASS]
+│   ├── UserService.java                            [INTERFACE]
+│   ├── UserServiceImpl.java                        [CLASS]
+│   ├── AuthService.java                            [INTERFACE]
+│   └── AuthServiceImpl.java                        [CLASS]
+├── util
+│   ├── JwtUtil.java                                [CLASS]
+│   └── Roles.java                                  [CLASS]
+└── security
+    ├── SecurityConfig.java                         [CLASS]
+    ├── JwtAuthFilter.java                          [CLASS]
+    ├── CustomUserDetailsService.java               [CLASS]
+    └── PasswordConfig.java                         [CLASS]
+🔑 Quick rules to identify
+Repository files → always interface (they extend JpaRepository or CrudRepository).
+
+Service files → split:
+
+*Service.java → interface (contract).
+
+*ServiceImpl.java → class (implementation).
+
+Controllers, Models, DTOs, Exceptions, Util, Security → all classes.
+
+Would you like me to also add what each interface extends (e.g., JpaRepository<User, Long>) so you can copy-paste directly? That way you’ll know not only which are interfaces but also their exact base type.
+
+
+
+
+
 
 Edit in a page
+
 Message Copilot
 
 
