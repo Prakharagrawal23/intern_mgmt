@@ -1,0 +1,112 @@
+-- 1) Internship Batches
+CREATE TABLE internship_batches (
+    batch_code BIGINT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(255) NOT NULL,
+    trainer_name VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_seats INT NOT NULL,
+    available_seats INT NOT NULL
+);
+
+-- 2) Registered Colleges
+CREATE TABLE registered_colleges (
+    college_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    college_name VARCHAR(255) UNIQUE NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    pincode VARCHAR(20) NOT NULL
+);
+
+-- 3) College Registration
+CREATE TABLE college_registration (
+    registration_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    college_id BIGINT NOT NULL,
+    college_name VARCHAR(255) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    pincode VARCHAR(20) NOT NULL,
+    FOREIGN KEY (college_id) REFERENCES registered_colleges(college_id)
+);
+
+-- 4) Users
+CREATE TABLE users (
+    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL,
+    college_name VARCHAR(255) NOT NULL,
+    contact_no VARCHAR(20) NOT NULL,
+    course_name VARCHAR(255) NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    batch_code BIGINT NOT NULL,
+    FOREIGN KEY (batch_code) REFERENCES internship_batches(batch_code)
+);
+
+-- 5) Performance
+CREATE TABLE performance (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    performance VARCHAR(255),
+    stipend DECIMAL(10,2),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- 6) Payment
+CREATE TABLE payment (
+    payment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    registration_id BIGINT NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_mode VARCHAR(50) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (registration_id) REFERENCES college_registration(registration_id)
+);
+
+-- 7) Trainer
+CREATE TABLE trainer (
+    trainer_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    trainer_name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    contact_no VARCHAR(20) NOT NULL,
+    experience INT NOT NULL,
+    certifications VARCHAR(500)
+);
+
+-- 8) Trainer Login
+CREATE TABLE trainer_login (
+    trainer_id BIGINT PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
+);
+
+-- 9) User Login
+CREATE TABLE user_login (
+    user_id BIGINT PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- 10) Stipend
+CREATE TABLE stipend (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_mode VARCHAR(50) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- 11) Feedback
+CREATE TABLE feedback (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    batch_code BIGINT NOT NULL,
+    trainer_name VARCHAR(255) NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    feedback TEXT,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (batch_code) REFERENCES internship_batches(batch_code)
+);
