@@ -1,42 +1,586 @@
+http://localhost:9090//api/admin/batches
 
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v3.1.2)
+{
+  "batchName": "Batch 1",
+  "courseName": "Java Full Stack",
+  "trainerId": 1,
+  "startDate": "2025-01-10",
+  "endDate": "2025-03-20",
+  "totalSeats": 50,
+  "availableSeats": 50
+}
 
-2025-11-22T16:49:10.917+05:30  INFO 23164 --- [           main] c.f.i.InternMgmtSystemApplication        : Starting InternMgmtSystemApplication using Java 17.0.1 with PID 23164 (C:\Users\703440062\Desktop\finalproject\internMgmtSystem\target\classes started by 703440062 in C:\Users\703440062\Desktop\finalproject\internMgmtSystem)
-2025-11-22T16:49:10.921+05:30  INFO 23164 --- [           main] c.f.i.InternMgmtSystemApplication        : No active profile set, falling back to 1 default profile: "default"
-2025-11-22T16:49:12.355+05:30  INFO 23164 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-11-22T16:49:12.437+05:30  INFO 23164 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 62 ms. Found 0 JPA repository interfaces.
-2025-11-22T16:49:13.797+05:30  INFO 23164 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 9090 (http)
-2025-11-22T16:49:13.807+05:30  INFO 23164 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-11-22T16:49:13.807+05:30  INFO 23164 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.11]
-2025-11-22T16:49:14.004+05:30  INFO 23164 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-11-22T16:49:14.006+05:30  INFO 23164 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2971 ms
-2025-11-22T16:49:14.371+05:30  INFO 23164 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-11-22T16:49:14.506+05:30  INFO 23164 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.6.Final
-2025-11-22T16:49:14.511+05:30  INFO 23164 --- [           main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
-2025-11-22T16:49:14.776+05:30  INFO 23164 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
-2025-11-22T16:49:15.051+05:30  INFO 23164 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-11-22T16:49:15.086+05:30  INFO 23164 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-11-22T16:49:15.370+05:30  INFO 23164 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@67b560fe
-2025-11-22T16:49:15.374+05:30  INFO 23164 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-11-22T16:49:15.628+05:30  INFO 23164 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
-2025-11-22T16:49:15.898+05:30  INFO 23164 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2025-11-22T16:49:15.904+05:30  INFO 23164 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-11-22T16:49:16.267+05:30  WARN 23164 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-11-22T16:49:16.851+05:30  INFO 23164 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5ba63110, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1c0680b0, org.springframework.security.web.context.SecurityContextHolderFilter@70bc3a9c, org.springframework.security.web.header.HeaderWriterFilter@29ea5e0, org.springframework.security.web.authentication.logout.LogoutFilter@3a7d914c, com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter@6ff0b1cc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@229749f0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@26888c31, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2f3cd727, org.springframework.security.web.session.SessionManagementFilter@33568e26, org.springframework.security.web.access.ExceptionTranslationFilter@25dad235, org.springframework.security.web.access.intercept.AuthorizationFilter@1bcb8599]
-2025-11-22T16:49:17.374+05:30  INFO 23164 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 9090 (http) with context path ''
-2025-11-22T16:49:17.384+05:30  INFO 23164 --- [           main] c.f.i.InternMgmtSystemApplication        : Started InternMgmtSystemApplication in 7.008 seconds (process running for 7.651)
-2025-11-22T16:49:24.391+05:30  INFO 23164 --- [nio-9090-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-11-22T16:49:24.393+05:30  INFO 23164 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-11-22T16:49:24.396+05:30  INFO 23164 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
-2025-11-22T16:49:25.163+05:30 DEBUG 23164 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2025-11-22T16:49:25.166+05:30 DEBUG 23164 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM users WHERE email = ?]
-2025-11-22T16:49:25.200+05:30 TRACE 23164 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
-2025-11-22T16:49:25.215+05:30 DEBUG 23164 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2025-11-22T16:49:25.215+05:30 DEBUG 23164 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM trainers WHERE email = ?]
-2025-11-22T16:49:25.216+05:30 TRACE 23164 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
+TYPE
+The authorization header will be automatically generated when you send the request. Learn more about authorization
+Heads up! These parameters hold sensitive data. To keep this data secure while working in a collaborative environment, we recommend using variables. Learn more about variables
+Token
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjM4Mzg5OTcsImV4cCI6MTc2Mzg3NDk5N30.Gtdywlk0brpXOgWOaJdsXTSwRFTjkuiDuZnxTDRvEb8
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+            return jwtUtil.generateToken(user.getEmail(), user.getRole());
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateToken(trainer.getEmail(), trainer.getRole());
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AdminService {
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailUtil emailUtil;
+
+    public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+        Trainer exists = trainerDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+        }
+
+        Trainer trainer = new Trainer();
+        trainer.setName(dto.getName());
+        trainer.setEmail(dto.getEmail());
+        trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        trainer.setContact(dto.getContact());
+        trainer.setExperience(dto.getExperience());
+        trainer.setSkills(dto.getSkills());
+        trainer.setProfilePic(dto.getProfilePic());
+        trainer.setBio(dto.getBio());
+        trainer.setRole("TRAINER");
+
+        Trainer saved = trainerDao.save(trainer);
+
+        emailUtil.sendEmail(dto.getEmail(),
+                "Trainer Account Created",
+                "Hello " + dto.getName() + "\nYour trainer account has been created.");
+
+        return saved;
+    }
+
+    public InternshipBatch createBatch(BatchDto dto) {
+        InternshipBatch batch = new InternshipBatch();
+
+        batch.setBatchName(dto.getBatchName());
+        batch.setCourseName(dto.getCourseName());
+        batch.setTrainerId(dto.getTrainerId());
+        batch.setStartDate(dto.getStartDate());
+        batch.setEndDate(dto.getEndDate());
+        batch.setTotalSeats(dto.getTotalSeats());
+        batch.setAvailableSeats(dto.getAvailableSeats());
+
+        return batchDao.save(batch);
+    }
+
+    public Stipend giveStipend(StipendDto dto) {
+
+        User user = userDao.findById(dto.getUserId());
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+        }
+
+        Stipend stipend = new Stipend();
+        stipend.setUserId(dto.getUserId());
+        stipend.setUserName(dto.getUserName());
+        stipend.setPaymentMode(dto.getPaymentMode());
+        stipend.setAmount(dto.getAmount());
+
+        return stipendDao.save(stipend);
+    }
+
+    public List<User> getAllUsers() {
+        return userDao.findAll();
+    }
+
+    public List<Trainer> getAllTrainers() {
+        return trainerDao.findAll();
+    }
+
+    public List<InternshipBatch> getAllBatches() {
+        return batchDao.findAll();
+    }
+
+    public void deleteTrainer(Long id) {
+        if (trainerDao.findById(id) == null) {
+            throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+        }
+        trainerDao.deleteById(id);
+    }
+
+    public void deleteUser(Long id) {
+        if (userDao.findById(id) == null) {
+            throw new ResourceNotFoundException("User not found with ID: " + id);
+        }
+        userDao.deleteById(id);
+    }
+}
+
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/auth/create-admin",
+                        "/api/user/register"
+                ).permitAll()
+
+                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("USER")
+
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    public String generateToken(String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String email = jwtUtil.extractEmail(token);
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_USER"))
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_TRAINER"))
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.service.AdminService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin
+public class AdminController {
+
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/trainers")
+    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
+        return adminService.registerTrainer(dto);
+    }
+
+    @PostMapping("/batches")
+    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
+        return adminService.createBatch(dto);
+    }
+
+    @PostMapping("/stipend")
+    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
+        return adminService.giveStipend(dto);
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
+    @GetMapping("/trainers")
+    public List<Trainer> getAllTrainers() {
+        return adminService.getAllTrainers();
+    }
+
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatches() {
+        return adminService.getAllBatches();
+    }
+}
+not able to create any batches here 
+
+not 
