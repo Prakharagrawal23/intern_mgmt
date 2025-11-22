@@ -1,44 +1,311 @@
-Here you can see how the project is structure
- 													INTERN-CONNECT
-the admin can do
--> 
--> the admin can add the register college || endpoint will be - /api/admin/registered-colleges
--> the admin can make payment for registration || endpoint- 	/api/admin/registration-payment
--> the admin can register a trainer || endpoint- 		/api/admin/trainers
--> create the trainer password || endpoint -/api/admin/trainers/{trainerId}/password?password=xyz  // trainerId is coming from trainer table where we register the trainer
--> create the batches || endpoint - /api/admin/batches
--> admin can initiate the stipend for particular user -------------------- /api/admin/stipend
--> View all payments	endpoint	/api/admin/payments
--> View all users	endpoint	/api/admin/users
--> View all batches	endpoint	/api/admin/batches
--> View all trainers	endpoint	/api/admin/trainers
+http://localhost:9090/api/admin/trainers
 
--> we can also give some more access to admin like to delete the trainer or user or college
+{
+  "name": "prakhar agrawal",
+  "email": "prakhar.ag3132gmail.com",
+  "password": "123456",
+  "contact": "9898983298",
+  "experience": 4,
+  "skills": "python dev",
+  "profilePic": "prakhar.jpg",
+  "bio": "Senior python Trainer"
+}
 
-the user can do
--> fill the user details -> 
--> firstly user can check available college endpoint -/api/user/college/{collegeName}
--> enroll in a intership endpoint ---------------------- /api/user/enroll
--> create the password ---------------------------/api/user/{userId}/password?password=abcd
- 				// fetching the userid form the user table
--> user login ----------------------------------/api/user/login
--> view user performance -----------------/api/user/{userId}/performance
--> view stipend history ------------------/api/user/{userId}/stipend-history
--> user can give feed back --------------/api/user/feedback
--> user can view batch details -----------/api/user/batch/{batchCode}
--> USEE EMAIL
 
-the trainer can do ---- (temp mail)
-/// here i want to implement the email thing like when the admin is registering the trainer and creating the password the trainer should receive the email of trainer id and password
-// use the smtp connection for the email sending to the particular trainer like hey Prakhar this is you trainer id and password 
+{
+    "email": "admin@gmail.com",
+  "password": "Admin@123"
+}
 
-//// validation
-// popups
--> login 				----------/api/trainer/login
--> trainer can see their batches ----------------/api/trainer/batches?trainerName=prakhar
--> trainer can see students in batches ---------/api/trainer/batches/{batchCode}/students
--> trainer can update the user performance -----/api/trainer/performance
--> trainer can add stipend ----------------------/api/trainer/stipend  ----- trainer can only update the performance table but payment will be initiated by the admin (stipend)
--> trainer can view feedback form their batches----/api/trainer/feedback?trainerName=Prakhar
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc2MzgwMDQ5NiwiZXhwIjoxNzYzODM2NDk2fQ.QXTBT59Cm9yqgAXmD_Y2HOZSCw6OSPkKC8A6tiGANuM
 
-------one more features we can add like attendance trainer can give the attendance to user and the user can see their attendance.
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.service.AdminService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin
+public class AdminController {
+
+    @Autowired
+    private AdminService adminService;
+
+    // Register Trainer
+    @PostMapping("/trainers")
+    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
+        return adminService.registerTrainer(dto);
+    }
+
+    // Create Batch
+    @PostMapping("/batches")
+    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
+        return adminService.createBatch(dto);
+    }
+
+    // Give Stipend
+    @PostMapping("/stipend")
+    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
+        return adminService.giveStipend(dto);
+    }
+
+    // View all users
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
+    // View all trainers
+    @GetMapping("/trainers")
+    public List<Trainer> getAllTrainers() {
+        return adminService.getAllTrainers();
+    }
+
+    // View all batches
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatches() {
+        return adminService.getAllBatches();
+    }
+
+    // Delete trainer
+    @DeleteMapping("/trainer/{trainerId}")
+    public String deleteTrainer(@PathVariable Long trainerId) {
+        adminService.deleteTrainer(trainerId);
+        return "Trainer deleted successfully";
+    }
+
+    // Delete user
+    @DeleteMapping("/user/{userId}")
+    public String deleteUser(@PathVariable Long userId) {
+        adminService.deleteUser(userId);
+        return "User deleted successfully";
+    }
+}
+
+package com.finalproject.internMgmtSystem.model;
+
+import java.sql.Timestamp;
+
+public class Trainer {
+
+    private Long trainerId;
+    private String name;
+    private String email;
+    private String password;
+    private String contact;
+    private String experience;
+    private String skills;
+    private String profilePic;
+    private String bio;
+    private String role;
+    private Timestamp createdAt;
+
+    public Trainer() {}
+
+    public Trainer(Long trainerId, String name, String email, String password, String contact, String experience, String skills,
+                   String profilePic, String bio, String role, Timestamp createdAt) {
+
+        this.trainerId = trainerId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.contact = contact;
+        this.experience = experience;
+        this.skills = skills;
+        this.profilePic = profilePic;
+        this.bio = bio;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import java.util.List;
+
+public interface TrainerDao {
+
+    Trainer save(Trainer trainer);
+
+    Trainer findByEmail(String email);
+
+    Trainer findById(Long id);
+
+    List<Trainer> findAll();
+
+    void update(Trainer trainer);
+
+    void deleteById(Long id);
+}
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class TrainerDaoImpl implements TrainerDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Trainer> mapper = (rs, rowNum) -> {
+        Trainer t = new Trainer();
+        t.setTrainerId(rs.getLong("trainer_id"));
+        t.setName(rs.getString("name"));
+        t.setEmail(rs.getString("email"));
+        t.setPassword(rs.getString("password"));
+        t.setContact(rs.getString("contact"));
+        t.setExperience(rs.getString("experience"));
+        t.setSkills(rs.getString("skills"));
+        t.setProfilePic(rs.getString("profile_pic"));
+        t.setBio(rs.getString("bio"));
+        t.setRole(rs.getString("role"));
+        t.setCreatedAt(rs.getTimestamp("created_at"));
+        return t;
+    };
+
+    @Override
+    public Trainer save(Trainer trainer) {
+        String sql = "INSERT INTO trainers (name, email, password, contact, experience, skills, profile_pic, bio, role) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getEmail(),
+                trainer.getPassword(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getRole()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        trainer.setTrainerId(id);
+        return trainer;
+    }
+
+    @Override
+    public Trainer findByEmail(String email) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE email = ?",
+                mapper,
+                email
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public Trainer findById(Long id) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE trainer_id = ?",
+                mapper,
+                id
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<Trainer> findAll() {
+        return jdbcTemplate.query(
+                "SELECT * FROM trainers",
+                mapper
+        );
+    }
+
+    @Override
+    public void update(Trainer trainer) {
+        String sql = "UPDATE trainers SET name=?, contact=?, experience=?, skills=?, profile_pic=?, bio=? "
+                   + "WHERE trainer_id=?";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getTrainerId()
+        );
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update(
+                "DELETE FROM trainers WHERE trainer_id = ?",
+                id
+        );
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("No account found with email: " + loginRequest.getEmail());
+        }
+
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+            return jwtUtil.generateToken(user.getEmail(), "USER");
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateToken(trainer.getEmail(), "TRAINER");
+    }
+}
