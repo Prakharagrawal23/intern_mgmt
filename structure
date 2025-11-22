@@ -432,3 +432,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 
+mysql> select * from internship_batches;
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+| batch_code | batch_name               | course_name               | trainer_id | start_date | end_date   | total_seats | available_seats |
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+|          1 | Java Batch Feb-2025      | Java Full Stack           |          1 | 2025-02-01 | 2025-04-01 |          30 |              28 |
+|          2 | Python ML Batch Feb-2025 | Python + Machine Learning |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+2 rows in set (0.00 sec)
