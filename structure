@@ -1,176 +1,108 @@
+package com.finalproject.internMgmtSystem.dto;
 
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v3.1.2)
+import jakarta.validation.constraints.*;
+import java.sql.Date;
 
-2025-11-22T15:17:17.282+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : Starting InternMgmtSystemApplication using Java 17.0.1 with PID 30108 (C:\Users\703440062\Desktop\finalproject\internMgmtSystem\target\classes started by 703440062 in C:\Users\703440062\Desktop\finalproject\internMgmtSystem)
-2025-11-22T15:17:17.285+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : No active profile set, falling back to 1 default profile: "default"
-2025-11-22T15:17:18.397+05:30  INFO 30108 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-11-22T15:17:18.457+05:30  INFO 30108 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 40 ms. Found 0 JPA repository interfaces.
-2025-11-22T15:17:19.630+05:30  INFO 30108 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 9090 (http)
-2025-11-22T15:17:19.640+05:30  INFO 30108 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-11-22T15:17:19.640+05:30  INFO 30108 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.11]
-2025-11-22T15:17:19.779+05:30  INFO 30108 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-11-22T15:17:19.781+05:30  INFO 30108 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2429 ms
-2025-11-22T15:17:20.123+05:30  INFO 30108 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-11-22T15:17:20.225+05:30  INFO 30108 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.6.Final
-2025-11-22T15:17:20.227+05:30  INFO 30108 --- [           main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
-2025-11-22T15:17:20.347+05:30  INFO 30108 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
-2025-11-22T15:17:20.564+05:30  INFO 30108 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-11-22T15:17:20.598+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-11-22T15:17:20.839+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5da57a64
-2025-11-22T15:17:20.842+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-11-22T15:17:20.986+05:30  INFO 30108 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
-2025-11-22T15:17:21.198+05:30  INFO 30108 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2025-11-22T15:17:21.206+05:30  INFO 30108 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-11-22T15:17:21.362+05:30  WARN 30108 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-11-22T15:17:21.864+05:30  INFO 30108 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1bcb8599, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@b671dda, org.springframework.security.web.context.SecurityContextHolderFilter@33568e26, org.springframework.security.web.header.HeaderWriterFilter@c6244e7, org.springframework.security.web.authentication.logout.LogoutFilter@5e46a125, com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter@62f11ebb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@35555145, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3d57fb9e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@25b20860, org.springframework.security.web.session.SessionManagementFilter@7e0883f3, org.springframework.security.web.access.ExceptionTranslationFilter@4f2b1e9f, org.springframework.security.web.access.intercept.AuthorizationFilter@12404f9d]
-2025-11-22T15:17:22.284+05:30  INFO 30108 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 9090 (http) with context path ''
-2025-11-22T15:17:22.297+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : Started InternMgmtSystemApplication in 5.453 seconds (process running for 5.995)
-2025-11-22T15:17:33.070+05:30  INFO 30108 --- [nio-9090-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-11-22T15:17:33.071+05:30  INFO 30108 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-11-22T15:17:33.074+05:30  INFO 30108 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
-2025-11-22T15:17:33.877+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2025-11-22T15:17:33.878+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM users WHERE email = ?]
-2025-11-22T15:17:33.912+05:30 TRACE 30108 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
-2025-11-22T15:17:33.928+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2025-11-22T15:17:33.929+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM trainers WHERE email = ?]
-2025-11-22T15:17:33.930+05:30 TRACE 30108 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
-2025-11-22T15:17:56.402+05:30 DEBUG 30108 --- [nio-9090-exec-3] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
-2025-11-22T15:17:56.403+05:30 DEBUG 30108 --- [nio-9090-exec-3] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM users WHERE email = ?]
-2025-11-22T15:17:56.404+05:30 TRACE 30108 --- [nio-9090-exec-3] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
+public class BatchDto {
 
+	@NotBlank(message = "Batch name is required")
+	private String batchName;
 
+	@NotBlank(message = "Course name is required")
+	private String courseName;
 
+	@NotNull(message = "Trainer ID is required")
+	@Min(value = 1, message = "Trainer ID must be > 0")
+	private Long trainerId;
 
-package com.finalproject.internMgmtSystem.repository;
+	@NotNull(message = "Start date is required")
+	private Date startDate;
 
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+	@NotNull(message = "End date is required")
+	private Date endDate;
 
-import java.sql.Types;
-import java.util.List;
+	@NotNull(message = "Total seats are required")
+	@Min(value = 1, message = "Total seats must be >= 1")
+	private Integer totalSeats;
 
-@Repository
-public class UserDaoImpl implements UserDao {
+	@NotNull(message = "Available seats are required")
+	@Min(value = 0, message = "Available seats cannot be negative")
+	private Integer availableSeats;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+	public BatchDto() {
+	}
 
-    private RowMapper<User> mapper = (rs, rowNum) -> {
-        User u = new User();
-        u.setUserId(rs.getLong("user_id"));
-        u.setUserName(rs.getString("user_name"));
-        u.setEmail(rs.getString("email"));
-        u.setPassword(rs.getString("password"));
-        u.setDob(rs.getDate("dob"));
-        u.setContactNo(rs.getString("contact_no"));
-        u.setAddress(rs.getString("address"));
-        u.setCollegeName(rs.getString("college_name"));
-        u.setGrade(rs.getString("grade"));
-        u.setMajor(rs.getString("major"));
-        u.setTeam(rs.getString("team"));
-        u.setStartDate(rs.getDate("start_date"));
-        u.setEndDate(rs.getDate("end_date"));
-        u.setGraduatingYear(rs.getInt("graduating_year"));
-        u.setResume(rs.getString("resume"));
-        u.setProfilePic(rs.getString("profile_pic"));
-        u.setRole(rs.getString("role"));
-        u.setCreatedAt(rs.getTimestamp("created_at"));
-        return u;
-    };
+	public BatchDto(@NotBlank(message = "Batch name is required") String batchName,
+			@NotBlank(message = "Course name is required") String courseName,
+			@NotNull(message = "Trainer ID is required") @Min(value = 1, message = "Trainer ID must be > 0") Long trainerId,
+			@NotNull(message = "Start date is required") Date startDate,
+			@NotNull(message = "End date is required") Date endDate,
+			@NotNull(message = "Total seats are required") @Min(value = 1, message = "Total seats must be >= 1") Integer totalSeats,
+			@NotNull(message = "Available seats are required") @Min(value = 0, message = "Available seats cannot be negative") Integer availableSeats) {
+		super();
+		this.batchName = batchName;
+		this.courseName = courseName;
+		this.trainerId = trainerId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.totalSeats = totalSeats;
+		this.availableSeats = availableSeats;
+	}
 
-    @Override
-    public User save(User user) {
-        String sql = """
-            INSERT INTO users (user_name, email, password, dob, contact_no, address, college_name, grade, major, 
-            team, start_date, end_date, graduating_year, resume, profile_pic, role)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """;
+	// getters & setters
+	public String getBatchName() {
+		return batchName;
+	}
 
-        jdbcTemplate.update(sql,
-                user.getUserName(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getDob(),
-                user.getContactNo(),
-                user.getAddress(),
-                user.getCollegeName(),
-                user.getGrade(),
-                user.getMajor(),
-                user.getTeam(),
-                user.getStartDate(),
-                user.getEndDate(),
-                user.getGraduatingYear(),
-                user.getResume(),
-                user.getProfilePic(),
-                user.getRole()
-        );
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
 
-        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        user.setUserId(id);
-        return user;
-    }
+	public String getCourseName() {
+		return courseName;
+	}
 
-    @Override
-    public User findByEmail(String email) {
-        List<User> list = jdbcTemplate.query(
-                "SELECT * FROM users WHERE email = ?",
-                mapper,
-                email
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
 
-    @Override
-    public User findById(Long id) {
-        List<User> list = jdbcTemplate.query(
-                "SELECT * FROM users WHERE user_id = ?",
-                mapper,
-                id
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
+	public Long getTrainerId() {
+		return trainerId;
+	}
 
-    @Override
-    public List<User> findAll() {
-        return jdbcTemplate.query("SELECT * FROM users", mapper);
-    }
+	public void setTrainerId(Long trainerId) {
+		this.trainerId = trainerId;
+	}
 
-    @Override
-    public void update(User user) {
-        String sql = """
-            UPDATE users SET user_name=?, contact_no=?, address=?, college_name=?, grade=?, major=?, 
-            team=?, start_date=?, end_date=?, graduating_year=?, resume=?, profile_pic=? WHERE user_id=?
-        """;
+	public Date getStartDate() {
+		return startDate;
+	}
 
-        jdbcTemplate.update(sql,
-                user.getUserName(),
-                user.getContactNo(),
-                user.getAddress(),
-                user.getCollegeName(),
-                user.getGrade(),
-                user.getMajor(),
-                user.getTeam(),
-                user.getStartDate(),
-                user.getEndDate(),
-                user.getGraduatingYear(),
-                user.getResume(),
-                user.getProfilePic(),
-                user.getUserId()
-        );
-    }
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
-    @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getTotalSeats() {
+		return totalSeats;
+	}
+
+	public void setTotalSeats(Integer totalSeats) {
+		this.totalSeats = totalSeats;
+	}
+
+	public Integer getAvailableSeats() {
+		return availableSeats;
+	}
+
+	public void setAvailableSeats(Integer availableSeats) {
+		this.availableSeats = availableSeats;
+	}
 }
