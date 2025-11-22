@@ -1,155 +1,50 @@
-package com.finalproject.internMgmtSystem.controller;
 
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.service.AdminService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.1.2)
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/admin")
-@CrossOrigin
-public class AdminController {
-
-    @Autowired
-    private AdminService adminService;
-
-    // Register Trainer
-    @PostMapping("/trainers")
-    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
-        return adminService.registerTrainer(dto);
-    }
-
-    // Create Batch
-    @PostMapping("/batches")
-    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
-        return adminService.createBatch(dto);
-    }
-
-    // Give Stipend
-    @PostMapping("/stipend")
-    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
-        return adminService.giveStipend(dto);
-    }
-
-    // View all users
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
-
-    // View all trainers
-    @GetMapping("/trainers")
-    public List<Trainer> getAllTrainers() {
-        return adminService.getAllTrainers();
-    }
-
-    // View all batches
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatches() {
-        return adminService.getAllBatches();
-    }
-
-    // Delete trainer
-    @DeleteMapping("/trainer/{trainerId}")
-    public String deleteTrainer(@PathVariable Long trainerId) {
-        adminService.deleteTrainer(trainerId);
-        return "Trainer deleted successfully";
-    }
-
-    // Delete user
-    @DeleteMapping("/user/{userId}")
-    public String deleteUser(@PathVariable Long userId) {
-        adminService.deleteUser(userId);
-        return "User deleted successfully";
-    }
-}
+2025-11-22T15:17:17.282+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : Starting InternMgmtSystemApplication using Java 17.0.1 with PID 30108 (C:\Users\703440062\Desktop\finalproject\internMgmtSystem\target\classes started by 703440062 in C:\Users\703440062\Desktop\finalproject\internMgmtSystem)
+2025-11-22T15:17:17.285+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : No active profile set, falling back to 1 default profile: "default"
+2025-11-22T15:17:18.397+05:30  INFO 30108 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-22T15:17:18.457+05:30  INFO 30108 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 40 ms. Found 0 JPA repository interfaces.
+2025-11-22T15:17:19.630+05:30  INFO 30108 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 9090 (http)
+2025-11-22T15:17:19.640+05:30  INFO 30108 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-22T15:17:19.640+05:30  INFO 30108 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.11]
+2025-11-22T15:17:19.779+05:30  INFO 30108 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-22T15:17:19.781+05:30  INFO 30108 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2429 ms
+2025-11-22T15:17:20.123+05:30  INFO 30108 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-22T15:17:20.225+05:30  INFO 30108 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.2.6.Final
+2025-11-22T15:17:20.227+05:30  INFO 30108 --- [           main] org.hibernate.cfg.Environment            : HHH000406: Using bytecode reflection optimizer
+2025-11-22T15:17:20.347+05:30  INFO 30108 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2025-11-22T15:17:20.564+05:30  INFO 30108 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-22T15:17:20.598+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-22T15:17:20.839+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5da57a64
+2025-11-22T15:17:20.842+05:30  INFO 30108 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-22T15:17:20.986+05:30  INFO 30108 --- [           main] o.h.b.i.BytecodeProviderInitiator        : HHH000021: Bytecode provider name : bytebuddy
+2025-11-22T15:17:21.198+05:30  INFO 30108 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-11-22T15:17:21.206+05:30  INFO 30108 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-22T15:17:21.362+05:30  WARN 30108 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-22T15:17:21.864+05:30  INFO 30108 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1bcb8599, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@b671dda, org.springframework.security.web.context.SecurityContextHolderFilter@33568e26, org.springframework.security.web.header.HeaderWriterFilter@c6244e7, org.springframework.security.web.authentication.logout.LogoutFilter@5e46a125, com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter@62f11ebb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@35555145, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3d57fb9e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@25b20860, org.springframework.security.web.session.SessionManagementFilter@7e0883f3, org.springframework.security.web.access.ExceptionTranslationFilter@4f2b1e9f, org.springframework.security.web.access.intercept.AuthorizationFilter@12404f9d]
+2025-11-22T15:17:22.284+05:30  INFO 30108 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 9090 (http) with context path ''
+2025-11-22T15:17:22.297+05:30  INFO 30108 --- [           main] c.f.i.InternMgmtSystemApplication        : Started InternMgmtSystemApplication in 5.453 seconds (process running for 5.995)
+2025-11-22T15:17:33.070+05:30  INFO 30108 --- [nio-9090-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-22T15:17:33.071+05:30  INFO 30108 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-22T15:17:33.074+05:30  INFO 30108 --- [nio-9090-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-11-22T15:17:33.877+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2025-11-22T15:17:33.878+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM users WHERE email = ?]
+2025-11-22T15:17:33.912+05:30 TRACE 30108 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
+2025-11-22T15:17:33.928+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2025-11-22T15:17:33.929+05:30 DEBUG 30108 --- [nio-9090-exec-2] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM trainers WHERE email = ?]
+2025-11-22T15:17:33.930+05:30 TRACE 30108 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
+2025-11-22T15:17:56.402+05:30 DEBUG 30108 --- [nio-9090-exec-3] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL query
+2025-11-22T15:17:56.403+05:30 DEBUG 30108 --- [nio-9090-exec-3] o.s.jdbc.core.JdbcTemplate               : Executing prepared SQL statement [SELECT * FROM users WHERE email = ?]
+2025-11-22T15:17:56.404+05:30 TRACE 30108 --- [nio-9090-exec-3] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [admin@gmail.com], value class [java.lang.String], SQL type unknown
 
 
-
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserDao userDao;              // instance DAO
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // injected password encoder
-
-    // LOGIN (existing)
-    @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
-    }
-
-    /**
-     * Temporary endpoint to create the one-time ADMIN via Postman.
-     * - Ensures only ONE admin exists in the system.
-     * - After successful admin creation you should REMOVE this endpoint
-     *   (or at least lock it) from SecurityConfig.
-     */
-    
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
-
-        // 1) Check if an admin already exists
-        List<User> allUsers = userDao.findAll();
-        boolean adminExists = allUsers.stream()
-                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
-
-        if (adminExists) {
-            throw new UserAlreadyExistsException("Admin already exists!");
-        }
-
-        // 2) Check if email already used
-        User existing = userDao.findByEmail(dto.getEmail());
-        if (existing != null) {
-            throw new UserAlreadyExistsException("Email already registered!");
-        }
-
-        // 3) Create admin
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ADMIN");
-
-        userDao.save(user);
-
-        return "Admin created successfully!";
-    }
-
-}
 
 
 package com.finalproject.internMgmtSystem.repository;
@@ -279,248 +174,3 @@ public class UserDaoImpl implements UserDao {
         jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
     }
 }
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                // PUBLIC ENDPOINTS
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register",
-                        "/api/auth/create-admin"     // TEMPORARY → remove after creating admin
-                ).permitAll()
-
-                // ROLE-BASED ENDPOINTS
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/trainer/**").hasRole("TRAINER")
-                .requestMatchers("/api/user/**").hasRole("USER")
-
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
-
-        // ADD JWT FILTER BEFORE SPRING'S DEFAULT AUTH FILTER
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();   // generates & validates BCrypt passwords
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    public String generateToken(String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return (String) extractAllClaims(token).get("role");
-    }
-//    public String extractRole(String token) {
-//    	return extractAllClaims(token).get("role",String.class);
-//    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.*;
-import com.finalproject.internMgmtSystem.util.EmailUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class AdminService {
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private StipendDao stipendDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private EmailUtil emailUtil;
-
-    public Trainer registerTrainer(RegisterTrainerDto dto) {
-
-        Trainer exists = trainerDao.findByEmail(dto.getEmail());
-        if (exists != null) {
-            throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
-        }
-
-        Trainer trainer = new Trainer();
-        trainer.setName(dto.getName());
-        trainer.setEmail(dto.getEmail());
-        trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
-        trainer.setContact(dto.getContact());
-        trainer.setExperience(dto.getExperience());
-        trainer.setSkills(dto.getSkills());
-        trainer.setProfilePic(dto.getProfilePic());
-        trainer.setBio(dto.getBio());
-        trainer.setRole("TRAINER");
-
-        Trainer saved = trainerDao.save(trainer);
-
-        emailUtil.sendEmail(dto.getEmail(),
-                "Trainer Account Created",
-                "Hello " + dto.getName() + "\nYour trainer account has been created.");
-
-        return saved;
-    }
-
-    public InternshipBatch createBatch(BatchDto dto) {
-        InternshipBatch batch = new InternshipBatch();
-
-        batch.setBatchName(dto.getBatchName());
-        batch.setCourseName(dto.getCourseName());
-        batch.setTrainerId(dto.getTrainerId());
-        batch.setStartDate(dto.getStartDate());
-        batch.setEndDate(dto.getEndDate());
-        batch.setTotalSeats(dto.getTotalSeats());
-        batch.setAvailableSeats(dto.getAvailableSeats());
-
-        return batchDao.save(batch);
-    }
-
-    public Stipend giveStipend(StipendDto dto) {
-
-        User user = userDao.findById(dto.getUserId());
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
-        }
-
-        Stipend stipend = new Stipend();
-        stipend.setUserId(dto.getUserId());
-        stipend.setUserName(dto.getUserName());
-        stipend.setPaymentMode(dto.getPaymentMode());
-        stipend.setAmount(dto.getAmount());
-
-        return stipendDao.save(stipend);
-    }
-
-    public List<User> getAllUsers() {
-        return userDao.findAll();
-    }
-
-    public List<Trainer> getAllTrainers() {
-        return trainerDao.findAll();
-    }
-
-    public List<InternshipBatch> getAllBatches() {
-        return batchDao.findAll();
-    }
-
-    public void deleteTrainer(Long id) {
-        if (trainerDao.findById(id) == null) {
-            throw new ResourceNotFoundException("Trainer not found with ID: " + id);
-        }
-        trainerDao.deleteById(id);
-    }
-
-    public void deleteUser(Long id) {
-        if (userDao.findById(id) == null) {
-            throw new ResourceNotFoundException("User not found with ID: " + id);
-        }
-        userDao.deleteById(id);
-    }
-}
-
-
