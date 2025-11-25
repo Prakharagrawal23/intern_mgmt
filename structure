@@ -1,102 +1,491 @@
-select * from users;l
-+---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-| user_id | user_name       | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team   | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
-+---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-|       1 | Prakhar         | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java   | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
-|       2 | Prakhar Agrawal | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java   | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
-|       3 | Rohan Singh     | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
-|       9 | System Admin    | admin@gmail.com           | $2a$10$XMxNgISL52QTbXHLhIkT2uW16tamp6JBlWzU8W15kGQSegYZCUy7y | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL   | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-22 13:44:23 |          4 |
-|      10 | Rohit Sharma    | rohit.user123@gmail.com   | $2a$10$6i1VFEG0wKTs3FcIj18/pu/AF7/pkv3zs3hd9uaMViXkf45vMdd9O | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java   | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-22 14:56:15 |          5 |
-|      13 | Rohit Sharma2   | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java   | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
-+---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-6 rows in set (0.01 sec)
+package com.finalproject.internMgmtSystem.controller;
 
-    -> ^C
-mysql> select * from trainers;
-+------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-| trainer_id | name            | email                     | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
-+------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-|          1 | Ram Kumar       | ram.trainer@gmail.com     | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
-|          2 | Amit Verma      | amit.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
-|          3 | prakhar agrawal | prakhar@gmail.com         | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
-|          4 | aryan           | aryanr@gmail.com          | $2a$10$HNZlDQ.xVKokNxakG70LYOUcf21k0Yyyu/BSsFw1mBSitpmKYZXYC | 98989298   |          1 | sleeping                 | aryan.jpg      | Senior python Trainer | TRAINER | 2025-11-22 15:55:24 |
-|          5 | iron man        | iron@gmail.com            | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
-|          6 | iron man1       | iron2@gmail.com           | $2a$10$kMQ6m97xJ/73P7350PiI/OVfDF8ESF.JJjU86jDvBgXJmfZB04Zf2 | 989829298  |          6 | tech1                    | iron2.jpg      | Senior Trainer2       | TRAINER | 2025-11-24 17:02:40 |
-|          9 | prakhar         | prakhar.ag9839@gmail.com  | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
-|         10 | rohit           | prakhar.ag1123@gmail.com  | $2a$10$TDlj7QcbCovRmHLQWw69zu7IV2EmnXqqcvVDwHahDv3pv2MvBV0H. | 8887876232 |          1 | sql core                 | rohit.jpg      | Senior sql Trainer    | TRAINER | 2025-11-25 15:23:18 |
-|         11 | jhon            | returnbydeath16@gmail.com | $2a$10$e52mTtRi1UOl2HkLISRqz.tYyFlxGyhuRSp1VgX6c//oW6w92CgAC | 23123132   |          2 | sql core                 | rohit.jpg      | Senior sql Trainer    | TRAINER | 2025-11-25 15:39:36 |
-+------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-9 rows in set (0.00 sec)
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.service.AdminService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-mysql> select * from internship_batches;
-+------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
-| batch_code | batch_name               | course_name               | trainer_id | start_date | end_date   | total_seats | available_seats |
-+------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
-|          1 | Java Batch Feb-2025      | Java Full Stack           |          1 | 2025-02-01 | 2025-04-01 |          30 |              28 |
-|          2 | Python ML Batch Feb-2025 | Python + Machine Learning |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
-|          3 | Batch 1                  | Java Full Stack           |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
-|          4 | Batch 9                  | python Full Stack         |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
-|          5 | Batch 10                 | golang Full Stack         |          9 | 2025-01-10 | 2025-03-20 |          10 |               5 |
-+------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
-5 rows in set (0.00 sec)
+import java.util.List;
 
-mysql> describe users;
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| Field           | Type         | Null | Key | Default           | Extra             |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_name       | varchar(255) | NO   |     | NULL              |                   |
-| email           | varchar(255) | NO   | UNI | NULL              |                   |
-| password        | varchar(255) | NO   |     | NULL              |                   |
-| dob             | date         | YES  |     | NULL              |                   |
-| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
-| address         | varchar(255) | YES  |     | NULL              |                   |
-| college_name    | varchar(255) | YES  |     | NULL              |                   |
-| grade           | varchar(50)  | YES  |     | NULL              |                   |
-| major           | varchar(255) | YES  |     | NULL              |                   |
-| team            | varchar(255) | YES  |     | NULL              |                   |
-| start_date      | date         | YES  |     | NULL              |                   |
-| end_date        | date         | YES  |     | NULL              |                   |
-| graduating_year | int          | YES  |     | NULL              |                   |
-| resume          | varchar(255) | YES  |     | NULL              |                   |
-| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
-| role            | varchar(50)  | NO   |     | USER              |                   |
-| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-| batch_code      | bigint       | YES  | MUL | NULL              |                   |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-19 rows in set (0.00 sec)
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin
+public class AdminController {
 
-mysql> describe trainers;
-+-------------+--------------+------+-----+-------------------+-------------------+
-| Field       | Type         | Null | Key | Default           | Extra             |
-+-------------+--------------+------+-----+-------------------+-------------------+
-| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
-| name        | varchar(255) | NO   |     | NULL              |                   |
-| email       | varchar(255) | NO   | UNI | NULL              |                   |
-| password    | varchar(255) | NO   |     | NULL              |                   |
-| contact     | varchar(20)  | YES  |     | NULL              |                   |
-| experience  | int          | YES  |     | NULL              |                   |
-| skills      | text         | YES  |     | NULL              |                   |
-| profile_pic | varchar(255) | YES  |     | NULL              |                   |
-| bio         | text         | YES  |     | NULL              |                   |
-| role        | varchar(50)  | NO   |     | TRAINER           |                   |
-| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-+-------------+--------------+------+-----+-------------------+-------------------+
-11 rows in set (0.00 sec)
+    @Autowired
+    private AdminService adminService;
 
-mysql> describe internship_batches;
-+-----------------+--------------+------+-----+---------+----------------+
-| Field           | Type         | Null | Key | Default | Extra          |
-+-----------------+--------------+------+-----+---------+----------------+
-| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
-| batch_name      | varchar(255) | NO   |     | NULL    |                |
-| course_name     | varchar(255) | NO   |     | NULL    |                |
-| trainer_id      | bigint       | NO   | MUL | NULL    |                |
-| start_date      | date         | NO   |     | NULL    |                |
-| end_date        | date         | NO   |     | NULL    |                |
-| total_seats     | int          | NO   |     | NULL    |                |
-| available_seats | int          | NO   |     | NULL    |                |
-+-----------------+--------------+------+-----+---------+----------------+
-8 rows in set (0.00 sec)
+    @PostMapping("/trainers")
+    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
+        return adminService.registerTrainer(dto);
+    }
 
-mysql>
+    @PostMapping("/batches")
+    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
+        return adminService.createBatch(dto);
+    }
+
+    @PostMapping("/stipend")
+    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
+        return adminService.giveStipend(dto);
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
+    @GetMapping("/trainers")
+    public List<Trainer> getAllTrainers() {
+        return adminService.getAllTrainers();
+    }
+
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatches() {
+        return adminService.getAllBatches();
+    }
+    
+ // DELETE USER BY EMAIL
+    @DeleteMapping("/user/email/{email}")
+    public String deleteUserByEmail(@PathVariable String email) {
+        adminService.deleteUserByEmail(email);
+        return "User deleted successfully with email: " + email;
+    }
+
+    // DELETE TRAINER BY EMAIL
+    @DeleteMapping("/trainers/email/{email}")
+    public String deleteTrainerByEmail(@PathVariable String email) {
+        adminService.deleteTrainerByEmail(email);
+        return "Trainer deleted successfully with email: " + email;
+    }
+
+//     DELETE BATCH BY BATCH NAME
+    @DeleteMapping("/batch/name/{batchName}")
+    public String deleteBatchByName(@PathVariable String batchName) {
+        adminService.deleteBatchByName(batchName);
+        return "Batch deleted successfully with batch name: " + batchName;
+    }
+
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AdminService {
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailUtil emailUtil;
+
+    public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+        Trainer exists = trainerDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+        }
+
+        Trainer trainer = new Trainer();
+        trainer.setName(dto.getName());
+        trainer.setEmail(dto.getEmail());
+        trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        trainer.setContact(dto.getContact());
+        trainer.setExperience(dto.getExperience());
+        trainer.setSkills(dto.getSkills());
+        trainer.setProfilePic(dto.getProfilePic());
+        trainer.setBio(dto.getBio());
+        trainer.setRole("TRAINER");
+
+        Trainer saved = trainerDao.save(trainer);
+
+        emailUtil.sendEmail(
+        	    dto.getEmail(),
+        	    "Trainer Account Created",
+        	    "Hello " + dto.getName() + ",\n\n" +
+        	    "We are excited to inform you that your trainer account has been successfully created.\n\n" +
+        	    "You can log in using the following credentials:\n" +
+        	    "Email: " + dto.getEmail() + "\n" +
+        	    "Password: " + dto.getPassword() + "\n\n" +
+        	    "Please keep your login details secure.\n\n" +
+        	    "Thank you,\n" +
+        	    "Intern Management System Team"
+        	);
+
+        return saved;
+    }
+
+    public InternshipBatch createBatch(BatchDto dto) {
+        InternshipBatch batch = new InternshipBatch();
+
+        batch.setBatchName(dto.getBatchName());
+        batch.setCourseName(dto.getCourseName());
+        batch.setTrainerId(dto.getTrainerId());
+        batch.setStartDate(dto.getStartDate());
+        batch.setEndDate(dto.getEndDate());
+        batch.setTotalSeats(dto.getTotalSeats());
+        batch.setAvailableSeats(dto.getAvailableSeats());
+
+        return batchDao.save(batch);
+    }
+
+    public Stipend giveStipend(StipendDto dto) {
+
+        User user = userDao.findById(dto.getUserId());
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+        }
+
+        Stipend stipend = new Stipend();
+        stipend.setUserId(dto.getUserId());
+        stipend.setUserName(dto.getUserName());
+        stipend.setPaymentMode(dto.getPaymentMode());
+        stipend.setAmount(dto.getAmount());
+
+        return stipendDao.save(stipend);
+    }
+
+    public List<User> getAllUsers() {
+        return userDao.findAll();
+    }
+
+    public List<Trainer> getAllTrainers() {
+        return trainerDao.findAll();
+    }
+
+    public List<InternshipBatch> getAllBatches() {
+        return batchDao.findAll();
+    }
+
+    public void deleteTrainer(Long id) {
+        if (trainerDao.findById(id) == null) {
+            throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+        }
+        trainerDao.deleteById(id);
+    }
+
+    public void deleteUser(Long id) {
+        if (userDao.findById(id) == null) {
+            throw new ResourceNotFoundException("User not found with ID: " + id);
+        }
+        userDao.deleteById(id);
+    }
+    
+ // DELETE USER BY EMAIL
+    public void deleteUserByEmail(String email) {
+        User user = userDao.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found with email: " + email);
+        }
+        userDao.deleteById(user.getUserId());
+    }
+
+    // DELETE TRAINER BY EMAIL
+    public void deleteTrainerByEmail(String email) {
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer == null) {
+            throw new ResourceNotFoundException("Trainer not found with email: " + email);
+        }
+        trainerDao.deleteByEmail(email);
+    }
+
+    // DELETE BATCH BY NAME
+    public void deleteBatchByName(String batchName) {
+        InternshipBatch batch = batchDao.findByName(batchName);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with name: " + batchName);
+        }
+        batchDao.delete(batch.getBatchCode());
+    }
+
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class TrainerDaoImpl implements TrainerDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Trainer> mapper = (rs, rowNum) -> {
+        Trainer t = new Trainer();
+        t.setTrainerId(rs.getLong("trainer_id"));
+        t.setName(rs.getString("name"));
+        t.setEmail(rs.getString("email"));
+        t.setPassword(rs.getString("password"));
+        t.setContact(rs.getString("contact"));
+        t.setExperience(rs.getString("experience"));
+        t.setSkills(rs.getString("skills"));
+        t.setProfilePic(rs.getString("profile_pic"));
+        t.setBio(rs.getString("bio"));
+        t.setRole(rs.getString("role"));
+        t.setCreatedAt(rs.getTimestamp("created_at"));
+        return t;
+    };
+
+    @Override
+    public Trainer save(Trainer trainer) {
+        String sql = "INSERT INTO trainers (name, email, password, contact, experience, skills, profile_pic, bio, role) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getEmail(),
+                trainer.getPassword(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getRole()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        trainer.setTrainerId(id);
+        return trainer;
+    }
+
+    @Override
+    public Trainer findByEmail(String email) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE email = ?",
+                mapper,
+                email
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public Trainer findById(Long id) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE trainer_id = ?",
+                mapper,
+                id
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<Trainer> findAll() {
+        return jdbcTemplate.query(
+                "SELECT * FROM trainers",
+                mapper
+        );
+    }
+
+    @Override
+    public void update(Trainer trainer) {
+        String sql = "UPDATE trainers SET name=?, contact=?, experience=?, skills=?, profile_pic=?, bio=? "
+                   + "WHERE trainer_id=?";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getTrainerId()
+        );
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update(
+                "DELETE FROM trainers WHERE trainer_id = ?",
+                id
+        );
+    }
+    
+    @Override
+    public void deleteByEmail(String email) {
+        jdbcTemplate.update("DELETE FROM trainers WHERE email = ?", email);
+    }
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.Types;
+import java.util.List;
+
+@Repository
+public class UserDaoImpl implements UserDao {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private RowMapper<User> mapper = (rs, rowNum) -> {
+		User u = new User();
+		u.setUserId(rs.getLong("user_id"));
+		u.setUserName(rs.getString("user_name"));
+		u.setEmail(rs.getString("email"));
+		u.setPassword(rs.getString("password"));
+		u.setDob(rs.getDate("dob"));
+		u.setContactNo(rs.getString("contact_no"));
+		u.setAddress(rs.getString("address"));
+		u.setCollegeName(rs.getString("college_name"));
+		u.setGrade(rs.getString("grade"));
+		u.setMajor(rs.getString("major"));
+		u.setTeam(rs.getString("team"));
+		u.setBatchCode(rs.getLong("batch_code"));
+		u.setStartDate(rs.getDate("start_date"));
+		u.setEndDate(rs.getDate("end_date"));
+		u.setGraduatingYear(rs.getInt("graduating_year"));
+		u.setResume(rs.getString("resume"));
+		u.setProfilePic(rs.getString("profile_pic"));
+		u.setRole(rs.getString("role"));
+		u.setCreatedAt(rs.getTimestamp("created_at"));
+		return u;
+	};
+
+	@Override
+	public User save(User user) {
+		String sql = """
+				INSERT INTO users
+				(user_name, email, password, dob, contact_no, address, college_name, grade, major,
+				team, batch_code, start_date, end_date, graduating_year, resume, profile_pic, role)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getEmail(), user.getPassword(), user.getDob(),
+				user.getContactNo(), user.getAddress(), user.getCollegeName(), user.getGrade(), user.getMajor(),
+				user.getTeam(), user.getBatchCode(), user.getStartDate(), user.getEndDate(), user.getGraduatingYear(),
+				user.getResume(), user.getProfilePic(), user.getRole());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		user.setUserId(id);
+		return user;
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", mapper, email);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public User findById(Long id) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", mapper, id);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<User> findAll() {
+		return jdbcTemplate.query("SELECT * FROM users", mapper);
+	}
+
+	@Override
+	public void update(User user) {
+		String sql = """
+				    UPDATE users SET user_name=?, contact_no=?, address=?, college_name=?, grade=?, major=?,
+				    team=?, start_date=?, end_date=?, graduating_year=?, resume=?, profile_pic=? WHERE user_id=?
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getContactNo(), user.getAddress(), user.getCollegeName(),
+				user.getGrade(), user.getMajor(), user.getTeam(), user.getBatchCode(), user.getStartDate(),
+				user.getEndDate(), user.getGraduatingYear(), user.getResume(), user.getProfilePic(), user.getUserId());
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
+	}
+}
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import java.util.List;
+
+public interface TrainerDao {
+
+    Trainer save(Trainer trainer);
+
+    Trainer findByEmail(String email);
+
+    Trainer findById(Long id);
+
+    List<Trainer> findAll();
+
+    void update(Trainer trainer);
+
+    void deleteById(Long id);
+
+    void deleteByEmail(String email);
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.User;
+import java.util.List;
+
+public interface UserDao {
+
+    User save(User user);
+
+    User findByEmail(String email);
+
+    User findById(Long id);
+
+    List<User> findAll();
+
+    void update(User user);
+
+    void deleteById(Long id);
+}
+
