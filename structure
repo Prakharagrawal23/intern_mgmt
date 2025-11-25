@@ -1,80 +1,285 @@
-{
-    "error": "PreparedStatementCallback; uncategorized SQLException for SQL [    INSERT INTO performance (user_id, trainer_id, remarks, task_evaluation_score)\n    VALUES (?, ?, ?, ?)\n]; SQL state [HY000]; error code [3819]; Check constraint 'performance_chk_1' is violated."
+import React, { useEffect, useState } from "react";
+import "./App.css";
+
+import HotelPostForm from "./components/HotelPostForm";
+import HotelList from "./components/HotelList";
+import HotelEditForm from "./components/HotelEditForm";
+
+function App() {
+  const [isLightMode, setIsLightMode] = useState(false);
+
+  // Load saved theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setIsLightMode(true);
+      document.body.classList.add("light-mode");
+    }
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    if (isLightMode) {
+      document.body.classList.remove("light-mode");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.add("light-mode");
+      localStorage.setItem("theme", "light");
+    }
+    setIsLightMode(!isLightMode);
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Hotel Management</h1>
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {isLightMode ? "🌙" : "☀️"}
+        </button>
+      </header>
+      <main>
+        <HotelPostForm />
+        <HotelList />
+        <HotelEditForm />
+      </main>
+    </div>
+  );
 }
 
-package com.finalproject.internMgmtSystem.repository;
+export default App;
 
-import com.finalproject.internMgmtSystem.model.Performance;
-import com.finalproject.internMgmtSystem.repository.PerformanceDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
-@Repository
-public class PerformanceDaoImpl implements PerformanceDao {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    private RowMapper<Performance> mapper = (rs, rowNum) -> {
-        Performance p = new Performance();
-        p.setId(rs.getLong("id"));
-        p.setUserId(rs.getLong("user_id"));
-        p.setTrainerId(rs.getLong("trainer_id"));
-        p.setRemarks(rs.getString("remarks"));
-        p.setTaskEvaluationScore(rs.getInt("task_evaluation_score"));
-        p.setCreatedAt(rs.getTimestamp("created_at"));
-        return p;
-    };
-
-    @Override
-    public Performance save(Performance performance) {
-        String sql = """
-            INSERT INTO performance (user_id, trainer_id, remarks, task_evaluation_score)
-            VALUES (?, ?, ?, ?)
-        """;
-
-        jdbcTemplate.update(sql,
-                performance.getUserId(),
-                performance.getTrainerId(),
-                performance.getRemarks(),
-                performance.getTaskEvaluationScore()
-        );
-
-        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        performance.setId(id);
-        return performance;
-    }
-
-    @Override
-    public List<Performance> findByUserId(Long userId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM performance WHERE user_id = ? ORDER BY created_at DESC",
-                mapper,
-                userId
-        );
-    }
-
-    @Override
-    public List<Performance> findByTrainerId(Long trainerId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM performance WHERE trainer_id = ? ORDER BY created_at DESC",
-                mapper,
-                trainerId
-        );
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update("DELETE FROM performance WHERE id = ?", id);
-    }
+/* Global reset */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at top left, #0d0d0d, #1a1a1a, #000000);
+  color: #e0e0e0;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
+  line-height: 1.6;
+  scroll-behavior: smooth;
 }
-{
-    "userId": 13,
-    "trainerId": 9,
-    "remarks": "Excellent work on the assignment. Code is clean and well-documented.",
-    "taskEvaluationScore": 87
+
+/* App container */
+.App {
+  text-align: center;
+  animation: fadeIn 1.2s ease-in-out;
 }
+
+/* Header */
+.App-header {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+  border-bottom: 2px solid #444;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-shadow: 0 0 12px rgba(0, 180, 255, 0.9);
+  animation: glowPulse 2s infinite alternate;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: 2px solid #66b2ff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #66b2ff;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: #66b2ff;
+  color: #fff;
+  transform: rotate(20deg) scale(1.1);
+}
+
+/* Main layout: two-column dashboard */
+main {
+  max-width: 1300px;
+  margin: 50px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+}
+
+/* Card style with glassmorphism */
+.hotel-post-form,
+.hotel-form,
+.hotel-list {
+  background: rgba(28, 28, 28, 0.85);
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
+  animation: fadeInUp 0.8s ease;
+  backdrop-filter: blur(10px);
+}
+
+.hotel-post-form:hover,
+.hotel-form:hover,
+.hotel-list:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.9);
+  background: rgba(40, 40, 40, 0.9);
+}
+
+/* Titles */
+.hotel-post-form h2,
+.hotel-form h2,
+.hotel-list h2 {
+  margin-bottom: 20px;
+  color: #66b2ff;
+  font-size: 1.6rem;
+  border-bottom: 2px solid #66b2ff;
+  padding-bottom: 6px;
+  text-shadow: 0 0 8px rgba(102,178,255,0.8);
+  letter-spacing: 1px;
+}
+
+/* Floating label form fields */
+.hotel-form div {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.hotel-form label {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  color: #aaa;
+  font-size: 14px;
+  pointer-events: none;
+  transition: 0.3s ease all;
+}
+
+.hotel-form input:focus + label,
+.hotel-form input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: #66b2ff;
+  background: #1a1a1a;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #444;
+  border-radius: 10px;
+  font-size: 15px;
+  background: rgba(17,17,17,0.9);
+  color: #e0e0e0;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+input:focus {
+  border-color: #66b2ff;
+  outline: none;
+  box-shadow: 0 0 10px rgba(102,178,255,0.7);
+  transform: scale(1.02);
+}
+
+/* Buttons */
+button {
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+button:hover {
+  background: linear-gradient(135deg, #3399ff, #007bff);
+  transform: translateY(-2px) scale(1.07);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.8);
+}
+
+button:disabled {
+  background: #555;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Hotel list items */
+.hotel-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  border-bottom: 1px solid #333;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.hotel-item:hover {
+  background: rgba(255,255,255,0.07);
+  transform: scale(1.01);
+}
+
+.hotel-item h3 {
+  margin: 0 0 6px;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+}
+
+.hotel-item p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* Actions */
+.hotel-item .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hotel-item .actions button {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.hotel-item .actions button:last-child {
+  background: linear-gradient(135deg, #dc3545, #a71d2a);
+}
+
+.hotel-item .actions button:last-child:hover {
+  background: linear-gradient(135deg, #ff4d5e, #dc3545);
+}
+
+/* Messages */
+p.error {
+  color: #ff4d5e;
+  font-weight: 600;
+  text-shadow: 0 0 
+
+
+complete the css code 
