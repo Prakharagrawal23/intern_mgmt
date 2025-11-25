@@ -1,289 +1,102 @@
-/* Global reset */
-body {
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: radial-gradient(circle at top left, #0d0d0d, #1a1a1a, #000000);
-  color: #e0e0e0;
-  min-height: 100vh;
-  transition: background 0.4s ease, color 0.4s ease;
-  line-height: 1.6;
-  scroll-behavior: smooth;
-}
+select * from users;l
++---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name       | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team   | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar         | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java   | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java   | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh     | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|       9 | System Admin    | admin@gmail.com           | $2a$10$XMxNgISL52QTbXHLhIkT2uW16tamp6JBlWzU8W15kGQSegYZCUy7y | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL   | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-22 13:44:23 |          4 |
+|      10 | Rohit Sharma    | rohit.user123@gmail.com   | $2a$10$6i1VFEG0wKTs3FcIj18/pu/AF7/pkv3zs3hd9uaMViXkf45vMdd9O | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java   | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-22 14:56:15 |          5 |
+|      13 | Rohit Sharma2   | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java   | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
++---------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+6 rows in set (0.01 sec)
 
-/* Light Mode */
-body.light-mode {
-  background: #f5f5f5;
-  color: #222;
-}
+    -> ^C
+mysql> select * from trainers;
++------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+| trainer_id | name            | email                     | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
++------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+|          1 | Ram Kumar       | ram.trainer@gmail.com     | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
+|          2 | Amit Verma      | amit.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
+|          3 | prakhar agrawal | prakhar@gmail.com         | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
+|          4 | aryan           | aryanr@gmail.com          | $2a$10$HNZlDQ.xVKokNxakG70LYOUcf21k0Yyyu/BSsFw1mBSitpmKYZXYC | 98989298   |          1 | sleeping                 | aryan.jpg      | Senior python Trainer | TRAINER | 2025-11-22 15:55:24 |
+|          5 | iron man        | iron@gmail.com            | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
+|          6 | iron man1       | iron2@gmail.com           | $2a$10$kMQ6m97xJ/73P7350PiI/OVfDF8ESF.JJjU86jDvBgXJmfZB04Zf2 | 989829298  |          6 | tech1                    | iron2.jpg      | Senior Trainer2       | TRAINER | 2025-11-24 17:02:40 |
+|          9 | prakhar         | prakhar.ag9839@gmail.com  | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
+|         10 | rohit           | prakhar.ag1123@gmail.com  | $2a$10$TDlj7QcbCovRmHLQWw69zu7IV2EmnXqqcvVDwHahDv3pv2MvBV0H. | 8887876232 |          1 | sql core                 | rohit.jpg      | Senior sql Trainer    | TRAINER | 2025-11-25 15:23:18 |
+|         11 | jhon            | returnbydeath16@gmail.com | $2a$10$e52mTtRi1UOl2HkLISRqz.tYyFlxGyhuRSp1VgX6c//oW6w92CgAC | 23123132   |          2 | sql core                 | rohit.jpg      | Senior sql Trainer    | TRAINER | 2025-11-25 15:39:36 |
++------------+-----------------+---------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+9 rows in set (0.00 sec)
 
-body.light-mode .App-header {
-  background: linear-gradient(135deg, #88c0ff, #6ca8ff, #4e8bff);
-  color: #000;
-}
+mysql> select * from internship_batches;
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+| batch_code | batch_name               | course_name               | trainer_id | start_date | end_date   | total_seats | available_seats |
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+|          1 | Java Batch Feb-2025      | Java Full Stack           |          1 | 2025-02-01 | 2025-04-01 |          30 |              28 |
+|          2 | Python ML Batch Feb-2025 | Python + Machine Learning |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
+|          3 | Batch 1                  | Java Full Stack           |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
+|          4 | Batch 9                  | python Full Stack         |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
+|          5 | Batch 10                 | golang Full Stack         |          9 | 2025-01-10 | 2025-03-20 |          10 |               5 |
++------------+--------------------------+---------------------------+------------+------------+------------+-------------+-----------------+
+5 rows in set (0.00 sec)
 
-body.light-mode .theme-toggle {
-  border-color: #004aad;
-  color: #004aad;
-}
+mysql> describe users;
++-----------------+--------------+------+-----+-------------------+-------------------+
+| Field           | Type         | Null | Key | Default           | Extra             |
++-----------------+--------------+------+-----+-------------------+-------------------+
+| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_name       | varchar(255) | NO   |     | NULL              |                   |
+| email           | varchar(255) | NO   | UNI | NULL              |                   |
+| password        | varchar(255) | NO   |     | NULL              |                   |
+| dob             | date         | YES  |     | NULL              |                   |
+| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
+| address         | varchar(255) | YES  |     | NULL              |                   |
+| college_name    | varchar(255) | YES  |     | NULL              |                   |
+| grade           | varchar(50)  | YES  |     | NULL              |                   |
+| major           | varchar(255) | YES  |     | NULL              |                   |
+| team            | varchar(255) | YES  |     | NULL              |                   |
+| start_date      | date         | YES  |     | NULL              |                   |
+| end_date        | date         | YES  |     | NULL              |                   |
+| graduating_year | int          | YES  |     | NULL              |                   |
+| resume          | varchar(255) | YES  |     | NULL              |                   |
+| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
+| role            | varchar(50)  | NO   |     | USER              |                   |
+| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code      | bigint       | YES  | MUL | NULL              |                   |
++-----------------+--------------+------+-----+-------------------+-------------------+
+19 rows in set (0.00 sec)
 
-body.light-mode .hotel-post-form,
-body.light-mode .hotel-form,
-body.light-mode .hotel-list {
-  background: rgba(255, 255, 255, 0.85);
-  color: #222;
-}
+mysql> describe trainers;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
+| name        | varchar(255) | NO   |     | NULL              |                   |
+| email       | varchar(255) | NO   | UNI | NULL              |                   |
+| password    | varchar(255) | NO   |     | NULL              |                   |
+| contact     | varchar(20)  | YES  |     | NULL              |                   |
+| experience  | int          | YES  |     | NULL              |                   |
+| skills      | text         | YES  |     | NULL              |                   |
+| profile_pic | varchar(255) | YES  |     | NULL              |                   |
+| bio         | text         | YES  |     | NULL              |                   |
+| role        | varchar(50)  | NO   |     | TRAINER           |                   |
+| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+11 rows in set (0.00 sec)
 
-body.light-mode input {
-  background: #fff;
-  color: #000;
-  border-color: #999;
-}
+mysql> describe internship_batches;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
+| batch_name      | varchar(255) | NO   |     | NULL    |                |
+| course_name     | varchar(255) | NO   |     | NULL    |                |
+| trainer_id      | bigint       | NO   | MUL | NULL    |                |
+| start_date      | date         | NO   |     | NULL    |                |
+| end_date        | date         | NO   |     | NULL    |                |
+| total_seats     | int          | NO   |     | NULL    |                |
+| available_seats | int          | NO   |     | NULL    |                |
++-----------------+--------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
 
-body.light-mode .hotel-post-form h2,
-body.light-mode .hotel-form h2,
-body.light-mode .hotel-list h2 {
-  color: #004aad;
-  border-color: #004aad;
-}
-
-/* App container */
-.App {
-  text-align: center;
-  animation: fadeIn 1.2s ease-in-out;
-}
-
-/* Header */
-.App-header {
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  color: #fff;
-  padding: 25px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-  border-bottom: 2px solid #444;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(6px);
-}
-
-.App-header h1 {
-  margin: 0;
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-  text-shadow: 0 0 12px rgba(0, 180, 255, 0.9);
-  animation: glowPulse 2s infinite alternate;
-}
-
-/* Theme toggle button */
-.theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: transparent;
-  border: 2px solid #66b2ff;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
-  cursor: pointer;
-  color: #66b2ff;
-  transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background: #66b2ff;
-  color: #fff;
-  transform: rotate(20deg) scale(1.1);
-}
-
-/* Main layout */
-main {
-  max-width: 1300px;
-  margin: 50px auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 40px;
-}
-
-/* Card style */
-.hotel-post-form,
-.hotel-form,
-.hotel-list {
-  background: rgba(28, 28, 28, 0.85);
-  padding: 35px;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.8);
-  text-align: left;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
-  animation: fadeInUp 0.8s ease;
-  backdrop-filter: blur(10px);
-}
-
-.hotel-post-form:hover,
-.hotel-form:hover,
-.hotel-list:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.9);
-  background: rgba(40, 40, 40, 0.9);
-}
-
-/* Titles */
-.hotel-post-form h2,
-.hotel-form h2,
-.hotel-list h2 {
-  margin-bottom: 20px;
-  color: #66b2ff;
-  font-size: 1.6rem;
-  border-bottom: 2px solid #66b2ff;
-  padding-bottom: 6px;
-  text-shadow: 0 0 8px rgba(102,178,255,0.8);
-  letter-spacing: 1px;
-}
-
-/* Floating labels */
-.hotel-form div {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.hotel-form label {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-  color: #aaa;
-  font-size: 14px;
-  pointer-events: none;
-  transition: 0.3s ease all;
-}
-
-.hotel-form input:focus + label,
-.hotel-form input:not(:placeholder-shown) + label {
-  top: -8px;
-  left: 10px;
-  font-size: 12px;
-  color: #66b2ff;
-  background: #1a1a1a;
-  padding: 0 4px;
-  border-radius: 4px;
-}
-
-/* Inputs */
-input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #444;
-  border-radius: 10px;
-  font-size: 15px;
-  background: rgba(17,17,17,0.9);
-  color: #e0e0e0;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-}
-
-input:focus {
-  border-color: #66b2ff;
-  outline: none;
-  box-shadow: 0 0 10px rgba(102,178,255,0.7);
-  transform: scale(1.02);
-}
-
-/* Buttons */
-button {
-  padding: 12px 18px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-}
-
-button:hover {
-  background: linear-gradient(135deg, #3399ff, #007bff);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.8);
-}
-
-button:disabled {
-  background: #555;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Hotel list items */
-.hotel-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px;
-  border-bottom: 1px solid #333;
-  transition: background 0.25s ease, transform 0.2s ease;
-}
-
-.hotel-item:hover {
-  background: rgba(255,255,255,0.07);
-  transform: scale(1.01);
-}
-
-.hotel-item h3 {
-  margin: 0 0 6px;
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255,255,255,0.4);
-}
-
-.hotel-item p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #ccc;
-}
-
-/* Actions */
-.hotel-item .actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.hotel-item .actions button {
-  padding: 7px 12px;
-  font-size: 13px;
-}
-
-.hotel-item .actions button:last-child {
-  background: linear-gradient(135deg, #dc3545, #a71d2a);
-}
-
-.hotel-item .actions button:last-child:hover {
-  background: linear-gradient(135deg, #ff4d5e, #dc3545);
-}
-
-/* Messages */
-p.error {
-  color: #ff4d5e;
-  font-weight: 600;
-  text-shadow: 0 0 6px rgba(255,77,94,0.6);
-}
-
-p.success {
-  color: #4dff91;
-  font-weight: 600;
-  text-shadow: 0 0 6px rgba(77,255,145,0.6);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes glowPulse {
-  0% { text-shadow: 0 0 5px #00b4ff; }
-  100% { text-shadow: 0 0 15px #33ccff; }
-}
+mysql>
