@@ -1,270 +1,469 @@
-package com.finalproject.internMgmtSystem.repository;
+package com.finalproject.internMgmtSystem.service;
 
-import com.finalproject.internMgmtSystem.model.Attendance;
-import java.sql.Date;
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface AttendanceDao {
+@Service
+public class AdminService {
 
-    Attendance save(Attendance attendance);
+	@Autowired
+	private TrainerDao trainerDao;
 
-    Attendance findByUserIdAndDate(Long userId, Date date);
+	@Autowired
+	private UserDao userDao;
 
-    List<Attendance> findByUserId(Long userId);
+	@Autowired
+	private BatchDao batchDao;
 
-    List<Attendance> findByBatchCode(Long batchCode);
+	@Autowired
+	private StipendDao stipendDao;
 
-    void update(Attendance attendance);
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    void delete(Long attendanceId);
+	@Autowired
+	private EmailUtil emailUtil;
+
+	public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+		Trainer exists = trainerDao.findByEmail(dto.getEmail());
+		if (exists != null) {
+			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+		}
+
+		Trainer trainer = new Trainer();
+		trainer.setName(dto.getName());
+		trainer.setEmail(dto.getEmail());
+		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+		trainer.setContact(dto.getContact());
+		trainer.setExperience(dto.getExperience());
+		trainer.setSkills(dto.getSkills());
+		trainer.setProfilePic(dto.getProfilePic());
+		trainer.setBio(dto.getBio());
+		trainer.setRole("TRAINER");
+
+		Trainer saved = trainerDao.save(trainer);
+
+		// send email (you already had this util)
+		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
+				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
+						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
+						+ "Regards,\nTeam");
+
+		return saved;
+	}
+
+	public InternshipBatch createBatch(BatchDto dto) {
+		InternshipBatch batch = new InternshipBatch();
+
+		batch.setBatchName(dto.getBatchName());
+		batch.setCourseName(dto.getCourseName());
+		batch.setTrainerId(dto.getTrainerId());
+		batch.setStartDate(dto.getStartDate());
+		batch.setEndDate(dto.getEndDate());
+		batch.setTotalSeats(dto.getTotalSeats());
+		batch.setAvailableSeats(dto.getAvailableSeats());
+
+		return batchDao.save(batch);
+	}
+
+	public Stipend giveStipend(StipendDto dto) {
+
+		User user = userDao.findById(dto.getUserId());
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+		}
+
+		Stipend stipend = new Stipend();
+		stipend.setUserId(dto.getUserId());
+		stipend.setUserName(dto.getUserName());
+		stipend.setPaymentMode(dto.getPaymentMode());
+		stipend.setAmount(dto.getAmount());
+
+		return stipendDao.save(stipend);
+	}
+
+	public List<User> getAllUsers() {
+		return userDao.findAll();
+	}
+
+	public List<Trainer> getAllTrainers() {
+		return trainerDao.findAll();
+	}
+
+	public List<InternshipBatch> getAllBatches() {
+		return batchDao.findAll();
+	}
+
+	public void deleteTrainer(Long id) {
+		if (trainerDao.findById(id) == null) {
+			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+		}
+		trainerDao.deleteById(id);
+	}
+
+	public void deleteUser(Long id) {
+		if (userDao.findById(id) == null) {
+			throw new ResourceNotFoundException("User not found with ID: " + id);
+		}
+		userDao.deleteById(id);
+	}
+
+	// --------- NEW: delete by email/name helpers ----------
+
+	// DELETE USER BY EMAIL
+	public void deleteUserByEmail(String email) {
+		User user = userDao.findByEmail(email);
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found with email: " + email);
+		}
+		userDao.deleteById(user.getUserId());
+	}
+
+	// DELETE TRAINER BY EMAIL
+	public void deleteTrainerByEmail(String email) {
+		Trainer trainer = trainerDao.findByEmail(email);
+		if (trainer == null) {
+			throw new ResourceNotFoundException("Trainer not found with email: " + email);
+		}
+		trainerDao.deleteByEmail(email);
+	}
+
+	// DELETE BATCH BY NAME
+	public void deleteBatchByName(String batchName) {
+		InternshipBatch batch = batchDao.findByName(batchName);
+		if (batch == null) {
+			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
+		}
+		batchDao.delete(batch.getBatchCode());
+	}
 }
 
-package com.finalproject.internMgmtSystem.repository;
+package com.finalproject.internMgmtSystem.service;
 
-import com.finalproject.internMgmtSystem.model.Attendance;
-import com.finalproject.internMgmtSystem.repository.AttendanceDao;
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.util.List;
-
-@Repository
-public class AttendanceDaoImpl implements AttendanceDao {
+@Service
+public class AuthService {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private UserDao userDao;
 
-    private RowMapper<Attendance> mapper = (rs, rowNum) -> {
-        Attendance a = new Attendance();
-        a.setAttendanceId(rs.getLong("attendance_id"));
-        a.setUserId(rs.getLong("user_id"));
-        a.setBatchCode(rs.getLong("batch_code"));
-        a.setDate(rs.getDate("date"));
-        a.setPresent(rs.getBoolean("present"));
-        return a;
-    };
+    @Autowired
+    private TrainerDao trainerDao;
 
-    @Override
-    public Attendance save(Attendance attendance) {
-        String sql = """
-            INSERT INTO attendance (user_id, batch_code, date, present)
-            VALUES (?, ?, ?, ?)
-        """;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        jdbcTemplate.update(sql,
-                attendance.getUserId(),
-                attendance.getBatchCode(),
-                attendance.getDate(),
-                attendance.getPresent()
-        );
+    @Autowired
+    private JwtUtil jwtUtil;
 
-        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        attendance.setAttendanceId(id);
-        return attendance;
-    }
+    public String login(LoginRequest loginRequest) {
 
-    @Override
-    public Attendance findByUserIdAndDate(Long userId, Date date) {
-        List<Attendance> list = jdbcTemplate.query(
-                "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
-                mapper,
-                userId,
-                date
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
 
-    @Override
-    public List<Attendance> findByUserId(Long userId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM attendance WHERE user_id = ? ORDER BY date DESC",
-                mapper,
-                userId
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+            return jwtUtil.generateToken(
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()            // FIXED ROLE FORMAT
+            );
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateToken(
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole()           // FIXED ROLE FORMAT
         );
     }
-
-    @Override
-    public List<Attendance> findByBatchCode(Long batchCode) {
-        return jdbcTemplate.query(
-                "SELECT * FROM attendance WHERE batch_code = ? ORDER BY date DESC",
-                mapper,
-                batchCode
-        );
-    }
-
-    @Override
-    public void update(Attendance attendance) {
-        String sql = """
-            UPDATE attendance SET present = ? WHERE attendance_id = ?
-        """;
-        jdbcTemplate.update(sql, attendance.getPresent(), attendance.getAttendanceId());
-    }
-
-    @Override
-    public void delete(Long attendanceId) {
-        jdbcTemplate.update("DELETE FROM attendance WHERE attendance_id = ?", attendanceId);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import java.util.List;
-
-public interface BatchDao {
-
-    InternshipBatch save(InternshipBatch batch);
-
-    InternshipBatch findById(Long batchCode);
-
-    List<InternshipBatch> findAll();
-
-    List<InternshipBatch> findByTrainerId(Long trainerId);
-
-    void update(InternshipBatch batch);
-
-    void delete(Long batchCode);
-
-    InternshipBatch findByName(String batchName);
-    
-    InternshipBatch findByBatchCode(Long batchCode);
-
-    void decrementAvailableSeats(Long batchCode);
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Feedback;
-import java.util.List;
-
-public interface FeedbackDao {
-
-    Feedback save(Feedback feedback);
-
-    List<Feedback> findByTrainerName(String trainerName);
-
-    List<Feedback> findByUserId(Long userId);
-
-    List<Feedback> findAll();
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Performance;
-import java.util.List;
-
-public interface PerformanceDao {
-
-    Performance save(Performance performance);
-
-    List<Performance> findByUserId(Long userId);
-
-    List<Performance> findByTrainerId(Long trainerId);
-
-    void deleteById(Long id);
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Stipend;
-import java.util.List;
-
-public interface StipendDao {
-
-    Stipend save(Stipend stipend);
-
-    List<Stipend> findByUserId(Long userId);
-
-    List<Stipend> findAll();
 }
 
 
 
-package com.finalproject.internMgmtSystem.repository;
+package com.finalproject.internMgmtSystem.service;
 
-import com.finalproject.internMgmtSystem.model.Task;
-import java.util.List;
-
-public interface TaskDao {
-
-    Task save(Task task);
-
-    Task findById(Long id);
-
-    List<Task> findByUserId(Long userId);
-
-    List<Task> findByTrainerId(Long trainerId);
-
-    void update(Task task);
-
-    void delete(Long id);
-}
-
-
-
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import java.util.List;
-
-public interface TrainerDao {
-
-    Trainer save(Trainer trainer);
-
-    Trainer findByEmail(String email);
-
-    Trainer findById(Long id);
-
-    List<Trainer> findAll();
-
-    void update(Trainer trainer);
-
-    void deleteById(Long id);
-
-    void deleteByEmail(String email);
-}
-
-
-
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import java.util.List;
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
 import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface UserBatchDao {
-    List<UserBatchDto> getUsersByTrainerId(int trainerId);
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
 }
 
 
 
+package com.finalproject.internMgmtSystem.service;
 
-package com.finalproject.internMgmtSystem.repository;
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import com.finalproject.internMgmtSystem.model.User;
 import java.util.List;
 
-public interface UserDao {
+@Service
+public class UserService {
 
-    User save(User user);
+    @Autowired
+    private UserDao userDao;
 
-    User findByEmail(String email);
+    @Autowired
+    private TaskDao taskDao;
 
-    User findById(Long id);
+    @Autowired
+    private PerformanceDao performanceDao;
 
-    List<User> findAll();
+    @Autowired
+    private StipendDao stipendDao;
 
-    void update(User user);
+    @Autowired
+    private BatchDao batchDao;
 
-    void deleteById(Long id);
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        // Check if email already exists
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        // Validate batch and decrement seat
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        // Create user
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+
+    public List<Task> getTasks(Long userId) {
+        List<Task> tasks = taskDao.findByUserId(userId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for user ID: " + userId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        List<Performance> list = performanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        List<Stipend> list = stipendDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No stipend records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+
+        // You may also validate if batch or trainer exists
+
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+
+        return feedbackDao.save(f);
+    }
 }
