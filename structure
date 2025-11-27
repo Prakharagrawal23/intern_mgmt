@@ -1,61 +1,151 @@
-intern-mgmt-frontend/
-│
-├── public/
-├── src/
-│   ├── api/
-│   │   ├── axiosConfig.js
-│   │   ├── authApi.js
-│   │   ├── adminApi.js
-│   │   ├── trainerApi.js
-│   │   ├── userApi.js
-│   │
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Sidebar.jsx
-│   │   ├── ProtectedRoute.jsx
-│   │   ├── FileUploader.jsx
-│   │
-│   ├── pages/
-│   │   ├── Home.jsx
-│   │   │
-│   │   ├── auth/
-│   │   │   ├── AdminLogin.jsx
-│   │   │   ├── TrainerLogin.jsx
-│   │   │   ├── UserLogin.jsx
-│   │   │
-│   │   ├── admin/
-│   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── RegisterTrainer.jsx
-│   │   │   ├── ViewTrainers.jsx
-│   │   │   ├── ViewUsers.jsx
-│   │   │   ├── CreateBatch.jsx
-│   │   │   ├── ViewBatches.jsx
-│   │   │   ├── GiveStipend.jsx
-│   │
-│   │   ├── trainer/
-│   │   │   ├── TrainerDashboard.jsx
-│   │   │   ├── TrainerBatches.jsx
-│   │   │   ├── BatchUsers.jsx
-│   │   │   ├── CreateTask.jsx
-│   │   │   ├── UpdateTask.jsx
-│   │   │   ├── GiveAttendance.jsx
-│   │   │   ├── GivePerformance.jsx
-│   │
-│   │   ├── user/
-│   │   │   ├── UserDashboard.jsx
-│   │   │   ├── UserRegister.jsx
-│   │   │   ├── UserTasks.jsx
-│   │   │   ├── UserPerformance.jsx
-│   │   │   ├── BatchDetails.jsx
-│   │   │   ├── GiveFeedback.jsx
-│   │
-│   ├── hooks/
-│   │   ├── useAuth.js
-│   │
-│   ├── utils/
-│   │   ├── Toast.js
-│   │
-│   ├── App.jsx
-│   ├── index.js
-│
-├── package.json
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+
+import AdminLogin from "./pages/auth/AdminLogin";
+import TrainerLogin from "./pages/auth/TrainerLogin";
+import UserLogin from "./pages/auth/UserLogin";
+
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import RegisterTrainer from "./pages/admin/RegisterTrainer";
+import ViewUsers from "./pages/admin/ViewUsers";
+import ViewTrainers from "./pages/admin/ViewTrainers";
+import CreateBatch from "./pages/admin/CreateBatch";
+import ViewBatches from "./pages/admin/ViewBatches";
+import GiveStipend from "./pages/admin/GiveStipend";
+
+import TrainerDashboard from "./pages/trainer/TrainerDashboard";
+import TrainerBatches from "./pages/trainer/TrainerBatches";
+import BatchUsers from "./pages/trainer/BatchUsers";
+import CreateTask from "./pages/trainer/CreateTask";
+import UpdateTask from "./pages/trainer/UpdateTask";
+import GiveAttendance from "./pages/trainer/GiveAttendance";
+import GivePerformance from "./pages/trainer/GivePerformance";
+
+import UserDashboard from "./pages/user/UserDashboard";
+import UserRegister from "./pages/user/UserRegister";
+import UserTasks from "./pages/user/UserTasks";
+import UserPerformance from "./pages/user/UserPerformance";
+import BatchDetails from "./pages/user/BatchDetails";
+import GiveFeedback from "./pages/user/GiveFeedback";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+
+        <Route path="/" element={<Home />} />
+
+        {/* AUTH */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/trainer/login" element={<TrainerLogin />} />
+        <Route path="/user/login" element={<UserLogin />} />
+
+        {/* REGISTER USER */}
+        <Route path="/user/register" element={<UserRegister />} />
+
+        {/* ADMIN */}
+        <Route
+          path="/admin/dashboard"
+          element={<ProtectedRoute role="ADMIN"><AdminDashboard /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/register-trainer"
+          element={<ProtectedRoute role="ADMIN"><RegisterTrainer /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/users"
+          element={<ProtectedRoute role="ADMIN"><ViewUsers /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/trainers"
+          element={<ProtectedRoute role="ADMIN"><ViewTrainers /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/create-batch"
+          element={<ProtectedRoute role="ADMIN"><CreateBatch /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/batches"
+          element={<ProtectedRoute role="ADMIN"><ViewBatches /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/admin/stipend"
+          element={<ProtectedRoute role="ADMIN"><GiveStipend /></ProtectedRoute>}
+        />
+
+        {/* TRAINER */}
+        <Route
+          path="/trainer/dashboard"
+          element={<ProtectedRoute role="TRAINER"><TrainerDashboard /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/batches"
+          element={<ProtectedRoute role="TRAINER"><TrainerBatches /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/batch-users/:trainerId"
+          element={<ProtectedRoute role="TRAINER"><BatchUsers /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/create-task"
+          element={<ProtectedRoute role="TRAINER"><CreateTask /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/update-task/:id"
+          element={<ProtectedRoute role="TRAINER"><UpdateTask /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/attendance"
+          element={<ProtectedRoute role="TRAINER"><GiveAttendance /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/trainer/performance"
+          element={<ProtectedRoute role="TRAINER"><GivePerformance /></ProtectedRoute>}
+        />
+
+        {/* USER */}
+        <Route
+          path="/user/dashboard"
+          element={<ProtectedRoute role="USER"><UserDashboard /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/user/tasks"
+          element={<ProtectedRoute role="USER"><UserTasks /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/user/performance"
+          element={<ProtectedRoute role="USER"><UserPerformance /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/user/batch-details"
+          element={<ProtectedRoute role="USER"><BatchDetails /></ProtectedRoute>}
+        />
+
+        <Route
+          path="/user/feedback"
+          element={<ProtectedRoute role="USER"><GiveFeedback /></ProtectedRoute>}
+        />
+
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
