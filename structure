@@ -1,51 +1,35 @@
-intern-mgmt-frontend/
-│── public/
-│── src/
-│   ├── api/
-│   │     ├── axiosConfig.js
-│   │     ├── adminApi.js
-│   │     ├── trainerApi.js
-│   │     ├── userApi.js
-│   │     └── authApi.js
-│   │
-│   ├── components/
-│   │     ├── Navbar.jsx
-│   │     ├── Sidebar.jsx
-│   │     ├── ProtectedRoute.jsx
-│   │     ├── FileUpload.jsx      // profile pic
-│   │     ├── BatchCard.jsx
-│   │     ├── UserCard.jsx
-│   │     └── TaskCard.jsx
-│   │
-│   ├── pages/
-│   │     ├── Home.jsx
-│   │     ├── Login.jsx
-│   │     ├── AdminDashboard.jsx
-│   │     ├── AdminTrainers.jsx
-│   │     ├── AdminCreateTrainer.jsx
-│   │     ├── AdminCreateBatch.jsx
-│   │     ├── AdminGiveStipend.jsx
-│   │     ├── TrainerDashboard.jsx
-│   │     ├── TrainerBatchUsers.jsx
-│   │     ├── TrainerAttendance.jsx
-│   │     ├── TrainerTasks.jsx
-│   │     ├── UserDashboard.jsx
-│   │     ├── UserTasks.jsx
-│   │     ├── UserPerformance.jsx
-│   │     ├── UserStipend.jsx
-│   │     └── UserFeedback.jsx
-│   │
-│   ├── styles/
-│   │     ├── global.css
-│   │     ├── form.css
-│   │     ├── dashboard.css
-│   │     └── cards.css
-│   │
-│   ├── context/
-│   │     └── AuthContext.jsx
-│   │
-│   ├── App.jsx
-│   ├── main.jsx
-│
-├── package.json
-└── vite.config.js
+succesfull endpoints
+
+
+
+POST - /api/auth/login                   - trainer/admin/user
+POST - /api/auth/create-admin
+
+
+POST - /api/user/register                - User Registration  - Exception - User exists already
+GET  - /api/user/{user_id}/performance   - User view his performance
+GET  - /api/user/{user_id}/task          - User can view his tasks assigned by trainer
+GET  - /api/user/batch/{batch_id}        - User is fetching the batch details by giving the batch_id
+POST - /api/user/feedback                - User is giving the feedback about the trainer
+
+
+
+POST    - /api/admin/trainers                     - admin register the trainers
+GET     - /api/admin/trainers                     - admin view the trainers
+DELETE  - /api/admin/trainers/email/{email}       - admin deleting the trainer by giving trainer email
+POST    - /api/admin/batches                      - admin creates the batches
+GET     - /api/admin/batches                      - admin views the batches
+DELETE  - /api/admin/batch/batch_code/{batchCode} - admin deletes the batches 
+POST    - /api/admin/stipend                      - admin initiating the stipend to interns 
+DELETE  - /api/admin/user/email/{email}           - admin deleting the user by giving users email
+
+
+
+GET    - /api/trainer/batches/{trainer_id}    - trainer Fetch the batches by using trainer_id
+POST   - /api/trainer/tasks                   - trainer creates a task for the intern
+PUT    - /api/trainer/tasks/{task_id}         - trainer is updating the task of the intern from pending to ongoing and from ongoing to completed
+DELETE - /api/trainer/tasks/{task_id}         - deleting the task_id
+POST   - /api/trainer/attendance              - marking the attendance for the intern
+POST   - /api/trainer/performance             - giving the performance details for the particular users
+GET    - /api/trainer/UserBatch/{trainer_id}  - trainer can fetch his batch and the corresponding users who registered for that batch
+
