@@ -1,698 +1,175 @@
-import api from "./axiosConfig";
-
-// TRAINER
-export const createTrainer = (data) => api.post("/api/admin/trainers", data);
-export const getTrainers = () => api.get("/api/admin/trainers");
-export const deleteTrainerByEmail = (email) =>
-  api.delete(`/api/admin/trainer/email/${email}`);
-
-// BATCH
-export const createBatch = (data) => api.post("/api/admin/batches", data);
-export const getBatches = () => api.get("/api/admin/batches");
-export const deleteBatchByName = (batchName) =>
-  api.delete(`/api/admin/batch/name/${batchName}`);
-
-// USERS
-export const getUsers = () => api.get("/api/admin/users");
-export const deleteUserByEmail = (email) =>
-  api.delete(`/api/admin/user/email/${email}`);
-
-// STIPEND
-export const giveStipend = (data) => api.post("/api/admin/stipend", data);
-
-
-import React from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function AdminDashboard() {
-  const items = [
-    { to: "/admin/create-trainer", label: "Create Trainer" },
-    { to: "/admin/view-trainers", label: "View Trainers" },
-    { to: "/admin/create-batch", label: "Create Batch" },
-    { to: "/admin/view-batches", label: "View Batches" },
-    { to: "/admin/give-stipend", label: "Give Stipend" },
-    { to: "/admin/view-users", label: "View Users" },
-  ];
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-      <div className="main">
-        <h2>Admin Dashboard</h2>
-        <p>Use sidebar to navigate admin features.</p>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useState } from "react";
-import { createBatch } from "../../api/adminApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function CreateBatch() {
-  const [form, setForm] = useState({ batchName: "", courseName: "", trainerId: "", startDate: "", endDate: "", totalSeats: 0, availableSeats: 0 });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createBatch({ 
-        ...form,
-        trainerId: Number(form.trainerId),
-        totalSeats: Number(form.totalSeats),
-        availableSeats: Number(form.availableSeats)
-      });
-      setMsg("Batch created");
-    } catch (e) { setMsg(e?.response?.data || e.message); }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Create Batch</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="Batch Name" value={form.batchName} onChange={e=>setForm({...form,batchName:e.target.value})}/>
-          <input placeholder="Course Name" value={form.courseName} onChange={e=>setForm({...form,courseName:e.target.value})}/>
-          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
-          <input placeholder="Start Date" type="date" value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})}/>
-          <input placeholder="End Date" type="date" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})}/>
-          <input placeholder="Total Seats" value={form.totalSeats} onChange={e=>setForm({...form,totalSeats:e.target.value})}/>
-          <input placeholder="Available Seats" value={form.availableSeats} onChange={e=>setForm({...form,availableSeats:e.target.value})}/>
-          <button className="btn" type="submit">Create</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-
-import React, { useState } from "react";
-import { createTrainer } from "../../api/adminApi";
-import formatError from "../../utils/formatError";
-
-export default function CreateTrainer() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    contact: "",
-    experience: "",
-    skills: "",
-    profilePic: "",
-    bio: "",
-  });
-
-  const [msg, setMsg] = useState("");
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createTrainer(form);
-      setMsg("Trainer created successfully!");
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  return (
-    <div className="container">
-      <h2>Create Trainer</h2>
-      {msg && <p style={{ color: "red" }}>{msg}</p>}
-
-      <form onSubmit={handleSubmit} className="form">
-        <input name="name" placeholder="Name" onChange={handleChange} />
-        <input name="email" placeholder="Email" onChange={handleChange} />
-        <input name="password" placeholder="Password" onChange={handleChange} />
-        <input name="contact" placeholder="Contact" onChange={handleChange} />
-        <input name="experience" type="number" placeholder="Experience (years)" onChange={handleChange} />
-        <input name="skills" placeholder="Skills" onChange={handleChange} />
-        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
-        <textarea name="bio" placeholder="Bio" onChange={handleChange} />
-
-        <button className="btn">Create</button>
-      </form>
-    </div>
-  );
-}
-
-
-
-import React, { useState } from "react";
-import { giveStipend } from "../../api/adminApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function GiveStipend() {
-  const [form, setForm] = useState({ userId: "", userName: "", paymentMode: "", amount: 0 });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await giveStipend({ ...form, userId: Number(form.userId), amount: Number(form.amount) });
-      setMsg("Stipend recorded");
-    } catch (e) { setMsg(e?.response?.data || e.message); }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Give Stipend</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
-          <input placeholder="User Name" value={form.userName} onChange={e=>setForm({...form,userName:e.target.value})}/>
-          <input placeholder="Payment Mode" value={form.paymentMode} onChange={e=>setForm({...form,paymentMode:e.target.value})}/>
-          <input placeholder="Amount" value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/>
-          <button className="btn" type="submit">Give</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-
-import React, { useEffect, useState } from "react";
-import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
-import formatError from "../../utils/formatError";
-
-export default function ViewTrainers() {
-  const [list, setList] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const fetchData = async () => {
-    try {
-      const res = await getTrainers();
-      setList(res.data);
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleDelete = async (email) => {
-    try {
-      await deleteTrainerByEmail(email);
-      setMsg("Trainer deleted: " + email);
-      fetchData();
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  return (
-    <div className="container">
-      <h2>All Trainers</h2>
-      {msg && <p style={{ color: "red" }}>{msg}</p>}
-
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Experience</th>
-            <th>Skills</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {list.map((t) => (
-            <tr key={t.trainerId}>
-              <td>{t.name}</td>
-              <td>{t.email}</td>
-              <td>{t.experience}</td>
-              <td>{t.skills}</td>
-              <td>
-                <button onClick={() => handleDelete(t.email)} className="btn">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-
-
-
-import React, { useEffect, useState } from "react";
-import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function ViewTrainers() {
-  const [list, setList] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const fetch = async () => {
-    try {
-      const res = await getTrainers();
-      setList(res.data);
-    } catch (e) { console.error(e); }
-  };
-
-  useEffect(() => { fetch(); }, []);
-
-  const handleDelete = async (email) => {
-    try {
-      await deleteTrainerByEmail(email);
-      setMsg("Deleted " + email);
-      fetch();
-    } catch (e) { setMsg(e?.response?.data || e.message); }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Trainers</h3>
-        {msg && <div className="info">{msg}</div>}
-        <table className="table">
-          <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Action</th></tr></thead>
-          <tbody>
-            {list.map(t => (
-              <tr key={t.id || t.email}>
-                <td>{t.name}</td>
-                <td>{t.email}</td>
-                <td>{t.contact}</td>
-                <td><button className="btn small" onClick={()=>handleDelete(t.email)}>Delete</button></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-
-
-
-import React, { useEffect, useState } from "react";
-import { getUsers, deleteUserByEmail } from "../../api/adminApi";
-import formatError from "../../utils/formatError";
-
-export default function ViewUsers() {
-  const [list, setList] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const fetchData = async () => {
-    try {
-      const res = await getUsers();
-      setList(res.data);
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleDelete = async (email) => {
-    try {
-      await deleteUserByEmail(email);
-      setMsg("User deleted: " + email);
-      fetchData();
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  return (
-    <div className="container">
-      <h2>All Users</h2>
-      {msg && <p style={{ color: "red" }}>{msg}</p>}
-
-      <table className="table">
-        <thead>
-          <tr>
-            <th>UserName</th>
-            <th>Email</th>
-            <th>Contact</th>
-            <th>BatchCode</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {list.map((u) => (
-            <tr key={u.userId}>
-              <td>{u.userName}</td>
-              <td>{u.email}</td>
-              <td>{u.contactNo}</td>
-              <td>{u.batchCode}</td>
-              <td>
-                <button onClick={() => handleDelete(u.email)} className="btn">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";   // ✅ Dark/Light mode toggle
-
-// Pages
-import Home from "./pages/Home/Home";   // ✅ New Home Page
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
-
-// Admin
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-
-// User
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        {/* ✅ Dark/Light Mode Toggle visible everywhere */}
-        <ThemeToggle />
-
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />   {/* ✅ Home Page */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-          </Route>
-
-          {/* User */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
-
-
-backend 
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.service.AdminService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/admin")
-@CrossOrigin
-public class AdminController {
-
-    @Autowired
-    private AdminService adminService;
-
-    @PostMapping("/trainers")
-    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
-        return adminService.registerTrainer(dto);
-    }
-
-    @PostMapping("/batches")
-    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
-        return adminService.createBatch(dto);
-    }
-
-    @PostMapping("/stipend")
-    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
-        return adminService.giveStipend(dto);
-    }
-
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
-
-    @GetMapping("/trainers")
-    public List<Trainer> getAllTrainers() {
-        return adminService.getAllTrainers();
-    }
-
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatches() {
-        return adminService.getAllBatches();
-    }
-
-    // DELETE USER BY EMAIL
-    @DeleteMapping("/user/email/{email}")
-    public String deleteUserByEmail(@PathVariable String email) {
-        adminService.deleteUserByEmail(email);
-        return "User deleted successfully with email: " + email;
-    }
-
-    // DELETE TRAINER BY EMAIL
-    @DeleteMapping("/trainer/email/{email}")
-    public String deleteTrainerByEmail(@PathVariable String email) {
-        adminService.deleteTrainerByEmail(email);
-        return "Trainer deleted successfully with email: " + email;
-    }
-
-    // DELETE BATCH BY BATCH NAME
-    @DeleteMapping("/batch/name/{batchName}")
-    public String deleteBatchByName(@PathVariable String batchName) {
-        adminService.deleteBatchByName(batchName);
-        return "Batch deleted successfully with name: " + batchName;
-    }
-}
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.*;
-import com.finalproject.internMgmtSystem.util.EmailUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class AdminService {
-
-	@Autowired
-	private TrainerDao trainerDao;
-
-	@Autowired
-	private UserDao userDao;
-
-	@Autowired
-	private BatchDao batchDao;
-
-	@Autowired
-	private StipendDao stipendDao;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private EmailUtil emailUtil;
-
-	public Trainer registerTrainer(RegisterTrainerDto dto) {
-
-		Trainer exists = trainerDao.findByEmail(dto.getEmail());
-		if (exists != null) {
-			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
-		}
-
-		Trainer trainer = new Trainer();
-		trainer.setName(dto.getName());
-		trainer.setEmail(dto.getEmail());
-		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
-		trainer.setContact(dto.getContact());
-		trainer.setExperience(dto.getExperience());
-		trainer.setSkills(dto.getSkills());
-		trainer.setProfilePic(dto.getProfilePic());
-		trainer.setBio(dto.getBio());
-		trainer.setRole("TRAINER");
-
-		Trainer saved = trainerDao.save(trainer);
-
-		// send email (you already had this util)
-		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
-				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
-						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
-						+ "Regards,\nTeam");
-
-		return saved;
-	}
-
-	public InternshipBatch createBatch(BatchDto dto) {
-		InternshipBatch batch = new InternshipBatch();
-
-		batch.setBatchName(dto.getBatchName());
-		batch.setCourseName(dto.getCourseName());
-		batch.setTrainerId(dto.getTrainerId());
-		batch.setStartDate(dto.getStartDate());
-		batch.setEndDate(dto.getEndDate());
-		batch.setTotalSeats(dto.getTotalSeats());
-		batch.setAvailableSeats(dto.getAvailableSeats());
-
-		return batchDao.save(batch);
-	}
-
-	public Stipend giveStipend(StipendDto dto) {
-
-		User user = userDao.findById(dto.getUserId());
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
-		}
-
-		Stipend stipend = new Stipend();
-		stipend.setUserId(dto.getUserId());
-		stipend.setUserName(dto.getUserName());
-		stipend.setPaymentMode(dto.getPaymentMode());
-		stipend.setAmount(dto.getAmount());
-
-		return stipendDao.save(stipend);
-	}
-
-	public List<User> getAllUsers() {
-		return userDao.findAll();
-	}
-
-	public List<Trainer> getAllTrainers() {
-		return trainerDao.findAll();
-	}
-
-	public List<InternshipBatch> getAllBatches() {
-		return batchDao.findAll();
-	}
-
-	public void deleteTrainer(Long id) {
-		if (trainerDao.findById(id) == null) {
-			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
-		}
-		trainerDao.deleteById(id);
-	}
-
-	public void deleteUser(Long id) {
-		if (userDao.findById(id) == null) {
-			throw new ResourceNotFoundException("User not found with ID: " + id);
-		}
-		userDao.deleteById(id);
-	}
-
-	// --------- NEW: delete by email/name helpers ----------
-
-	// DELETE USER BY EMAIL
-	public void deleteUserByEmail(String email) {
-		User user = userDao.findByEmail(email);
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found with email: " + email);
-		}
-		userDao.deleteById(user.getUserId());
-	}
-
-	// DELETE TRAINER BY EMAIL
-	public void deleteTrainerByEmail(String email) {
-		Trainer trainer = trainerDao.findByEmail(email);
-		if (trainer == null) {
-			throw new ResourceNotFoundException("Trainer not found with email: " + email);
-		}
-		trainerDao.deleteByEmail(email);
-	}
-
-	// DELETE BATCH BY NAME
-	public void deleteBatchByName(String batchName) {
-		InternshipBatch batch = batchDao.findByName(batchName);
-		if (batch == null) {
-			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
-		}
-		batchDao.delete(batch.getBatchCode());
-	}
-}
-
+MarkAttendance.jsx:94  Each child in a list should have a unique "key" prop.
+
+Check the render method of `MarkAttendance`. See https://react.dev/link/warning-keys for more information.
+MarkAttendance.jsx:94  Each child in a list should have a unique "key" prop.
+
+Check the render method of `MarkAttendance`. See https://react.dev/link/warning-keys for more information.
+(anonymous) @ react-dom-client.development.js:26084
+runWithFiberInDEV @ react-dom-client.development.js:870
+warnForMissingKey @ react-dom-client.development.js:26083
+warnOnInvalidKey @ react-dom-client.development.js:6591
+reconcileChildrenArray @ react-dom-client.development.js:6669
+reconcileChildFibersImpl @ react-dom-client.development.js:6990
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<tr>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ MarkAttendance.jsx:94
+MarkAttendance @ MarkAttendance.jsx:94
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<MarkAttendance>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:67
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:10
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+trainerApi.js:15   POST http://localhost:9090/api/trainer/attendance 400 (Bad Request)
+dispatchXhrRequest @ xhr.js:198
+xhr @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+httpMethod @ Axios.js:224
+wrap @ bind.js:12
+markAttendance @ trainerApi.js:15
+handleSubmit @ MarkAttendance.jsx:49
+executeDispatch @ react-dom-client.development.js:19116
+runWithFiberInDEV @ react-dom-client.development.js:870
+processDispatchQueue @ react-dom-client.development.js:19165
+(anonymous) @ react-dom-client.development.js:19767
+batchedUpdates$1 @ react-dom-client.development.js:3255
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
+dispatchEvent @ react-dom-client.development.js:23584
+dispatchDiscreteEvent @ react-dom-client.development.js:23552
+<button>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+MarkAttendance @ MarkAttendance.jsx:114
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopConcurrentByScheduler @ react-dom-client.development.js:17634
+renderRootConcurrent @ react-dom-client.development.js:17615
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<MarkAttendance>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:67
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:10
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {userId}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
+    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
+    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
+    at react-dom-client.development.js:7098:1
+    at reconcileChildren (react-dom-client.development.js:9699:1)
+    at beginWork (react-dom-client.development.js:11988:1)
+    at runWithFiberInDEV (react-dom-client.development.js:870:1)
+    at performUnitOfWork (react-dom-client.development.js:17639:1)
+    at workLoopSync (react-dom-client.development.js:17469:1)
+    at renderRootSync (react-dom-client.development.js:17450:1)
+throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
+throwOnInvalidObjectType @ react-dom-client.development.js:6109
+reconcileChildFibersImpl @ react-dom-client.development.js:7058
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<div>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+MarkAttendance @ MarkAttendance.jsx:76
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<MarkAttendance>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:67
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:10
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+MarkAttendance.jsx:76  An error occurred in the <div> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
