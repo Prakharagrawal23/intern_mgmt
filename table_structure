@@ -1,58 +1,197 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-MarkAttendance.jsx:16 📌 Raw response: [{…}]0: {userName: 'Prakhar', email: 'demo@gmail.com', contactNo: '9876543210', batchCode: '1', batchName: 'Java Batch Feb-2025', …}length: 1[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()Symbol(Symbol.iterator): ƒ values()Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}[[Prototype]]: Object
-MarkAttendance.jsx:28 📌 Formatted users: [{…}]0: {userId: null, userName: 'Prakhar', batchCode: '1', present: true}length: 1[[Prototype]]: Array(0)
-trainerApi.js:15   POST http://localhost:9090/api/trainer/attendance 500 (Internal Server Error)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-markAttendance @ trainerApi.js:15
-handleSubmit @ MarkAttendance.jsx:54
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-<button>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-MarkAttendance @ MarkAttendance.jsx:122
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<MarkAttendance>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:67
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-MarkAttendance.jsx:66  Submit Error: {error: 'PreparedStatementCallback; SQL [    INSERT INTO at…N KEY (`user_id`) REFERENCES `users` (`user_id`))'}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
+    public List<Task> getTasksByTrainerId(Long trainerId) {
+        List<Task> tasks = taskDao.findByTrainerId(trainerId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
+        List<Performance> list = performanceDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+
+}
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import java.util.List;
+
+public interface TrainerDao {
+
+    Trainer save(Trainer trainer);
+
+    Trainer findByEmail(String email);
+
+    Trainer findById(Long id);
+
+    List<Trainer> findAll();
+
+    void update(Trainer trainer);
+
+    void deleteById(Long id);
+
+    void deleteByEmail(String email);
+}
+
+package com.finalproject.internMgmtSystem.dto;
+
+public class UserBatchDto {
+    private String userName;
+    private String email;
+    private String contactNo;
+    private String batchCode;
+    private String batchName;
+    private String courseName;
+    private int trainerId;
+
+    // Getters and Setters
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getContactNo() { return contactNo; }
+    public void setContactNo(String contactNo) { this.contactNo = contactNo; }
+
+    public String getBatchCode() { return batchCode; }
+    public void setBatchCode(String batchCode) { this.batchCode = batchCode; }
+
+    public String getBatchName() { return batchName; }
+    public void setBatchName(String batchName) { this.batchName = batchName; }
+
+    public String getCourseName() { return courseName; }
+    public void setCourseName(String courseName) { this.courseName = courseName; }
+
+    public int getTrainerId() { return trainerId; }
+    public void setTrainerId(int trainerId) { this.trainerId = trainerId; }
+}
+
