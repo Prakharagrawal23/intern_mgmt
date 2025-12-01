@@ -1,308 +1,698 @@
 import api from "./axiosConfig";
 
+// TRAINER
 export const createTrainer = (data) => api.post("/api/admin/trainers", data);
-
-export const createBatch = (data) => api.post("/api/admin/batches", data);
-
-export const giveStipend = (data) => api.post("/api/admin/stipend", data);
-
-export const getUsers = () => api.get("/api/admin/users");
-
 export const getTrainers = () => api.get("/api/admin/trainers");
-
-export const getBatches = () => api.get("/api/admin/batches");
-
-export const deleteUserByEmail = (email) =>
-  api.delete(`/api/admin/user/email/${email}`);
-
 export const deleteTrainerByEmail = (email) =>
   api.delete(`/api/admin/trainer/email/${email}`);
 
-export const deleteBatchByName = (name) =>
-  api.delete(`/api/admin/batch/name/${name}`);
+// BATCH
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+export const getBatches = () => api.get("/api/admin/batches");
+export const deleteBatchByName = (batchName) =>
+  api.delete(`/api/admin/batch/name/${batchName}`);
 
-export const getAllStipends = () => api.get("/api/admin/stipends");
+// USERS
+export const getUsers = () => api.get("/api/admin/users");
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
 
-export const getAllFeedback = () => api.get("/api/admin/feedback");
-
-export const getAdminSummary = () => api.get("/api/admin/summary");
-
-
-import api from "./axiosConfig";
-
-export const loginApi = (data) => api.post("/api/auth/login", data);
-export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
-
-
-import axios from "axios";
-const api = axios.create({
-  baseURL: "http://localhost:9090",
-});
-
-api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
-  return config;
-});
-
-export default api;
+// STIPEND
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
 
 
-import api from "./axiosConfig";
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-export const getTrainerBatches = (trainerId) =>
-  api.get(`/api/trainer/batches/${trainerId}`);
-
-export const createTask = (data) =>
-  api.post("/api/trainer/tasks", data);
-
-export const updateTask = (taskId, data) =>
-  api.put(`/api/trainer/tasks/${taskId}`, data);
-
-export const deleteTask = (taskId) =>
-  api.delete(`/api/trainer/tasks/${taskId}`);
-
-export const markAttendance = (data) =>
-  api.post("/api/trainer/attendance", data);
-
-export const givePerformance = (data) =>
-  api.post("/api/trainer/performance", data);
-
-export const getFeedback = (name) =>
-  api.get(`/api/trainer/feedback/${name}`);
-
-export const getUsersByTrainer = (trainerId) =>
-  api.get(`/api/trainer/UserBatch/${trainerId}`);
-
-export const getTrainerSummary = (trainerId) =>
-  api.get(`/api/trainer/dashboard/${trainerId}`);
-
-import api from "./axiosConfig";
-
-export const registerUser = (data) =>
-  api.post("/api/user/register", data);
-
-export const getUserSummary = (userId) =>
-  api.get(`/api/user/dashboard/${userId}`);
-
-export const getUserTasks = (userId) =>
-  api.get(`/api/user/${userId}/tasks`);
-
-export const getUserPerformance = (userId) =>
-  api.get(`/api/user/${userId}/performance`);
-
-export const getUserStipends = (userId) =>
-  api.get(`/api/user/${userId}/stipends`);
-
-export const getBatchDetails = (code) =>
-  api.get(`/api/user/batch/${code}`);
-
-export const submitFeedback = (data) =>
-  api.post("/api/user/feedback", data);
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-
-export default function Navbar() {
-  const { logout, role, email } = useContext(AuthContext);
-  const nav = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    nav("/");
-  };
-
+export default function AdminDashboard() {
+  const items = [
+    { to: "/admin/create-trainer", label: "Create Trainer" },
+    { to: "/admin/view-trainers", label: "View Trainers" },
+    { to: "/admin/create-batch", label: "Create Batch" },
+    { to: "/admin/view-batches", label: "View Batches" },
+    { to: "/admin/give-stipend", label: "Give Stipend" },
+    { to: "/admin/view-users", label: "View Users" },
+  ];
   return (
-    <div className="nav">
-      <div className="nav-left">InternshipMgmt</div>
-      <div className="nav-right">
-        <span style={{ marginRight: 12 }}>{email}</span>
-        <button onClick={handleLogout} className="btn small">Logout</button>
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Admin Dashboard</h2>
+        <p>Use sidebar to navigate admin features.</p>
       </div>
     </div>
   );
 }
 
 
-import { Navigate, Outlet } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState } from "react";
+import { createBatch } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-export default function ProtectedRoute({ role }) {
-  const { token, role: userRole } = useContext(AuthContext);
+export default function CreateBatch() {
+  const [form, setForm] = useState({ batchName: "", courseName: "", trainerId: "", startDate: "", endDate: "", totalSeats: 0, availableSeats: 0 });
+  const [msg, setMsg] = useState("");
 
-  if (!token) return <Navigate to="/" replace />;
-  if (role !== userRole) return <Navigate to="/" replace />;
-
-  return <Outlet />;
-}
-
-import React from "react";
-import { Link } from "react-router-dom";
-
-export default function Sidebar({ items = [] }) {
-  return (
-    <div className="sidebar">
-      {items.map((it) => (
-        <Link key={it.to} to={it.to} className="sidebar-link">
-          {it.label}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-
-import React, { useState, useEffect } from "react";
-import "../styles/theme.css";
-
-export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
-  }, [darkMode]);
-
-  return (
-    <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
-      {darkMode ? "🌞" : "🌙"}
-    </div>
-  );
-}
-
-import React, { createContext, useState, useEffect } from "react";
-export const AuthContext = createContext();
-
-export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
-
-  useEffect(() => {
-    // Sync on mount (in case token stored before)
-    const t = localStorage.getItem("token");
-    if (t && !token) setToken(t);
-    const r = localStorage.getItem("role");
-    if (r && !role) setRole(r);
-    const e = localStorage.getItem("email");
-    if (e && !email) setEmail(e);
-  }, []);
-
-  const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
-    localStorage.setItem("email", newEmail || "");
-    setToken(newToken);
-    setRole(newRole);
-    setEmail(newEmail || "");
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    setToken(null);
-    setRole(null);
-    setEmail(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ token, role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-
-import React, { useState, useContext } from "react";
-import { loginApi } from "../../api/authApi";
-import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import "../../styles/login.css";
-
-
-export default function Login() {
-  const { login } = useContext(AuthContext);
-  const nav = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [err, setErr] = useState("");
-
-  const parseRoleFromJwt = (token) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return { role: payload.role, email: payload.sub || payload?.email || "" };
-    } catch (e) {
-      return { role: null, email: null };
-    }
+      await createBatch({ 
+        ...form,
+        trainerId: Number(form.trainerId),
+        totalSeats: Number(form.totalSeats),
+        availableSeats: Number(form.availableSeats)
+      });
+      setMsg("Batch created");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Create Batch</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="Batch Name" value={form.batchName} onChange={e=>setForm({...form,batchName:e.target.value})}/>
+          <input placeholder="Course Name" value={form.courseName} onChange={e=>setForm({...form,courseName:e.target.value})}/>
+          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
+          <input placeholder="Start Date" type="date" value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})}/>
+          <input placeholder="End Date" type="date" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})}/>
+          <input placeholder="Total Seats" value={form.totalSeats} onChange={e=>setForm({...form,totalSeats:e.target.value})}/>
+          <input placeholder="Available Seats" value={form.availableSeats} onChange={e=>setForm({...form,availableSeats:e.target.value})}/>
+          <button className="btn" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+import React, { useState } from "react";
+import { createTrainer } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+
+export default function CreateTrainer() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    contact: "",
+    experience: "",
+    skills: "",
+    profilePic: "",
+    bio: "",
+  });
+
+  const [msg, setMsg] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
     try {
-      const res = await loginApi(form);
-      const token = res.data;
-      const { role, email } = parseRoleFromJwt(token);
-      if (!role) throw new Error("Invalid token role");
-      login(token, role, email);
-      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
-      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
-      else nav("/user/dashboard");
-    } catch (error) {
-      console.error(error);
-      setErr(error?.response?.data || error.message || "Login failed");
+      await createTrainer(form);
+      setMsg("Trainer created successfully!");
+    } catch (e) {
+      setMsg(formatError(e));
     }
   };
 
   return (
-    <div className="center">
-      <form className="form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        {err && <div className="error">{err}</div>}
-        <input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input placeholder="Password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-        <button className="btn" type="submit">Login</button>
-        <div style={{ marginTop: 8 }}>
-          <a href="/user/register">Register as User</a>
-        </div>
+    <div className="container">
+      <h2>Create Trainer</h2>
+      {msg && <p style={{ color: "red" }}>{msg}</p>}
+
+      <form onSubmit={handleSubmit} className="form">
+        <input name="name" placeholder="Name" onChange={handleChange} />
+        <input name="email" placeholder="Email" onChange={handleChange} />
+        <input name="password" placeholder="Password" onChange={handleChange} />
+        <input name="contact" placeholder="Contact" onChange={handleChange} />
+        <input name="experience" type="number" placeholder="Experience (years)" onChange={handleChange} />
+        <input name="skills" placeholder="Skills" onChange={handleChange} />
+        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
+        <textarea name="bio" placeholder="Bio" onChange={handleChange} />
+
+        <button className="btn">Create</button>
       </form>
     </div>
   );
 }
 
-export default function formatError(err) {
-  if (!err) return "Unknown error";
 
-  // If backend returned response
-  if (err.response) {
-    const data = err.response.data;
 
-    // Backend returned plain string
-    if (typeof data === "string") return data;
+import React, { useState } from "react";
+import { giveStipend } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-    // Backend returned { message: "" }
-    if (data?.message) return data.message;
+export default function GiveStipend() {
+  const [form, setForm] = useState({ userId: "", userName: "", paymentMode: "", amount: 0 });
+  const [msg, setMsg] = useState("");
 
-    // Backend returned { error: "" }
-    if (data?.error) {
-      return typeof data.error === "string"
-        ? data.error
-        : JSON.stringify(data.error);
-    }
-
-    // Fallback parse
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      return JSON.stringify(data);
-    } catch {
-      return "Server error";
-    }
-  }
+      await giveStipend({ ...form, userId: Number(form.userId), amount: Number(form.amount) });
+      setMsg("Stipend recorded");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
 
-  // If request never reached server
-  return err.message || "Network error";
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Give Stipend</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
+          <input placeholder="User Name" value={form.userName} onChange={e=>setForm({...form,userName:e.target.value})}/>
+          <input placeholder="Payment Mode" value={form.paymentMode} onChange={e=>setForm({...form,paymentMode:e.target.value})}/>
+          <input placeholder="Amount" value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/>
+          <button className="btn" type="submit">Give</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+import React, { useEffect, useState } from "react";
+import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+
+export default function ViewTrainers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await getTrainers();
+      setList(res.data);
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteTrainerByEmail(email);
+      setMsg("Trainer deleted: " + email);
+      fetchData();
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="container">
+      <h2>All Trainers</h2>
+      {msg && <p style={{ color: "red" }}>{msg}</p>}
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Experience</th>
+            <th>Skills</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {list.map((t) => (
+            <tr key={t.trainerId}>
+              <td>{t.name}</td>
+              <td>{t.email}</td>
+              <td>{t.experience}</td>
+              <td>{t.skills}</td>
+              <td>
+                <button onClick={() => handleDelete(t.email)} className="btn">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function ViewTrainers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetch = async () => {
+    try {
+      const res = await getTrainers();
+      setList(res.data);
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => { fetch(); }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteTrainerByEmail(email);
+      setMsg("Deleted " + email);
+      fetch();
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Trainers</h3>
+        {msg && <div className="info">{msg}</div>}
+        <table className="table">
+          <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Action</th></tr></thead>
+          <tbody>
+            {list.map(t => (
+              <tr key={t.id || t.email}>
+                <td>{t.name}</td>
+                <td>{t.email}</td>
+                <td>{t.contact}</td>
+                <td><button className="btn small" onClick={()=>handleDelete(t.email)}>Delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getUsers, deleteUserByEmail } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+
+export default function ViewUsers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await getUsers();
+      setList(res.data);
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteUserByEmail(email);
+      setMsg("User deleted: " + email);
+      fetchData();
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="container">
+      <h2>All Users</h2>
+      {msg && <p style={{ color: "red" }}>{msg}</p>}
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>UserName</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>BatchCode</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {list.map((u) => (
+            <tr key={u.userId}>
+              <td>{u.userName}</td>
+              <td>{u.email}</td>
+              <td>{u.contactNo}</td>
+              <td>{u.batchCode}</td>
+              <td>
+                <button onClick={() => handleDelete(u.email)} className="btn">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
+import ProtectedRoute from "./components/protectedRoute";
+import ThemeToggle from "./components/ThemeToggle";   // ✅ Dark/Light mode toggle
+
+// Pages
+import Home from "./pages/Home/Home";   // ✅ New Home Page
+import Login from "./pages/Auth/Login";
+import RegisterUser from "./pages/User/RegisterUser";
+
+// Admin
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import CreateTrainer from "./pages/Admin/CreateTrainer";
+import ViewTrainers from "./pages/Admin/ViewTrainers";
+import CreateBatch from "./pages/Admin/CreateBatch";
+import ViewBatches from "./pages/Admin/ViewBatches";
+import GiveStipend from "./pages/Admin/GiveStipend";
+import ViewUsers from "./pages/Admin/ViewUsers";
+
+// Trainer
+import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
+import TrainerBatches from "./pages/Trainer/TrainerBatches";
+import CreateTask from "./pages/Trainer/CreateTask";
+import UpdateTask from "./pages/Trainer/UpdateTask";
+import MarkAttendance from "./pages/Trainer/MarkAttendance";
+import GivePerformance from "./pages/Trainer/GivePerformance";
+import UsersInBatch from "./pages/Trainer/UsersInBatch";
+
+// User
+import UserDashboard from "./pages/User/UserDashboard";
+import UserTasks from "./pages/User/UserTasks";
+import UserPerformance from "./pages/User/UserPerformance";
+import BatchDetails from "./pages/User/BatchDetails";
+import FeedbackForm from "./pages/User/FeedbackForm";
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        {/* ✅ Dark/Light Mode Toggle visible everywhere */}
+        <ThemeToggle />
+
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Home />} />   {/* ✅ Home Page */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/user/register" element={<RegisterUser />} />
+
+          {/* Admin */}
+          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
+            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
+            <Route path="/admin/create-batch" element={<CreateBatch />} />
+            <Route path="/admin/view-batches" element={<ViewBatches />} />
+            <Route path="/admin/give-stipend" element={<GiveStipend />} />
+            <Route path="/admin/view-users" element={<ViewUsers />} />
+          </Route>
+
+          {/* Trainer */}
+          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
+            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
+            <Route path="/trainer/batches" element={<TrainerBatches />} />
+            <Route path="/trainer/create-task" element={<CreateTask />} />
+            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
+            <Route path="/trainer/attendance" element={<MarkAttendance />} />
+            <Route path="/trainer/performance" element={<GivePerformance />} />
+            <Route path="/trainer/users" element={<UsersInBatch />} />
+          </Route>
+
+          {/* User */}
+          <Route element={<ProtectedRoute role="ROLE_USER" />}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/user/tasks" element={<UserTasks />} />
+            <Route path="/user/performance" element={<UserPerformance />} />
+            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
+            <Route path="/user/feedback" element={<FeedbackForm />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+
+backend 
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.service.AdminService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin
+public class AdminController {
+
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/trainers")
+    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
+        return adminService.registerTrainer(dto);
+    }
+
+    @PostMapping("/batches")
+    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
+        return adminService.createBatch(dto);
+    }
+
+    @PostMapping("/stipend")
+    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
+        return adminService.giveStipend(dto);
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
+    @GetMapping("/trainers")
+    public List<Trainer> getAllTrainers() {
+        return adminService.getAllTrainers();
+    }
+
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatches() {
+        return adminService.getAllBatches();
+    }
+
+    // DELETE USER BY EMAIL
+    @DeleteMapping("/user/email/{email}")
+    public String deleteUserByEmail(@PathVariable String email) {
+        adminService.deleteUserByEmail(email);
+        return "User deleted successfully with email: " + email;
+    }
+
+    // DELETE TRAINER BY EMAIL
+    @DeleteMapping("/trainer/email/{email}")
+    public String deleteTrainerByEmail(@PathVariable String email) {
+        adminService.deleteTrainerByEmail(email);
+        return "Trainer deleted successfully with email: " + email;
+    }
+
+    // DELETE BATCH BY BATCH NAME
+    @DeleteMapping("/batch/name/{batchName}")
+    public String deleteBatchByName(@PathVariable String batchName) {
+        adminService.deleteBatchByName(batchName);
+        return "Batch deleted successfully with name: " + batchName;
+    }
+}
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AdminService {
+
+	@Autowired
+	private TrainerDao trainerDao;
+
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private BatchDao batchDao;
+
+	@Autowired
+	private StipendDao stipendDao;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private EmailUtil emailUtil;
+
+	public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+		Trainer exists = trainerDao.findByEmail(dto.getEmail());
+		if (exists != null) {
+			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+		}
+
+		Trainer trainer = new Trainer();
+		trainer.setName(dto.getName());
+		trainer.setEmail(dto.getEmail());
+		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+		trainer.setContact(dto.getContact());
+		trainer.setExperience(dto.getExperience());
+		trainer.setSkills(dto.getSkills());
+		trainer.setProfilePic(dto.getProfilePic());
+		trainer.setBio(dto.getBio());
+		trainer.setRole("TRAINER");
+
+		Trainer saved = trainerDao.save(trainer);
+
+		// send email (you already had this util)
+		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
+				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
+						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
+						+ "Regards,\nTeam");
+
+		return saved;
+	}
+
+	public InternshipBatch createBatch(BatchDto dto) {
+		InternshipBatch batch = new InternshipBatch();
+
+		batch.setBatchName(dto.getBatchName());
+		batch.setCourseName(dto.getCourseName());
+		batch.setTrainerId(dto.getTrainerId());
+		batch.setStartDate(dto.getStartDate());
+		batch.setEndDate(dto.getEndDate());
+		batch.setTotalSeats(dto.getTotalSeats());
+		batch.setAvailableSeats(dto.getAvailableSeats());
+
+		return batchDao.save(batch);
+	}
+
+	public Stipend giveStipend(StipendDto dto) {
+
+		User user = userDao.findById(dto.getUserId());
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+		}
+
+		Stipend stipend = new Stipend();
+		stipend.setUserId(dto.getUserId());
+		stipend.setUserName(dto.getUserName());
+		stipend.setPaymentMode(dto.getPaymentMode());
+		stipend.setAmount(dto.getAmount());
+
+		return stipendDao.save(stipend);
+	}
+
+	public List<User> getAllUsers() {
+		return userDao.findAll();
+	}
+
+	public List<Trainer> getAllTrainers() {
+		return trainerDao.findAll();
+	}
+
+	public List<InternshipBatch> getAllBatches() {
+		return batchDao.findAll();
+	}
+
+	public void deleteTrainer(Long id) {
+		if (trainerDao.findById(id) == null) {
+			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+		}
+		trainerDao.deleteById(id);
+	}
+
+	public void deleteUser(Long id) {
+		if (userDao.findById(id) == null) {
+			throw new ResourceNotFoundException("User not found with ID: " + id);
+		}
+		userDao.deleteById(id);
+	}
+
+	// --------- NEW: delete by email/name helpers ----------
+
+	// DELETE USER BY EMAIL
+	public void deleteUserByEmail(String email) {
+		User user = userDao.findByEmail(email);
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found with email: " + email);
+		}
+		userDao.deleteById(user.getUserId());
+	}
+
+	// DELETE TRAINER BY EMAIL
+	public void deleteTrainerByEmail(String email) {
+		Trainer trainer = trainerDao.findByEmail(email);
+		if (trainer == null) {
+			throw new ResourceNotFoundException("Trainer not found with email: " + email);
+		}
+		trainerDao.deleteByEmail(email);
+	}
+
+	// DELETE BATCH BY NAME
+	public void deleteBatchByName(String batchName) {
+		InternshipBatch batch = batchDao.findByName(batchName);
+		if (batch == null) {
+			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
+		}
+		batchDao.delete(batch.getBatchCode());
+	}
 }
 
