@@ -1,118 +1,308 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-userApi.js:3   POST http://localhost:9090/api/user/register 400 (Bad Request)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-registerUser @ userApi.js:3
-handleSubmit @ RegisterUser.jsx:26
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-<form>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-RegisterUser @ RegisterUser.jsx:35
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<RegisterUser>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:42
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {resume, collegeName, address, major, endDate, dob, grade, team, startDate, graduatingYear, contactNo}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
-throwOnInvalidObjectType @ react-dom-client.development.js:6109
-reconcileChildFibersImpl @ react-dom-client.development.js:7058
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-RegisterUser @ RegisterUser.jsx:37
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<RegisterUser>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:42
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-RegisterUser.jsx:37  An error occurred in the <div> component.
+import api from "./axiosConfig";
 
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+export const createTrainer = (data) => api.post("/api/admin/trainers", data);
+
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
+
+export const getUsers = () => api.get("/api/admin/users");
+
+export const getTrainers = () => api.get("/api/admin/trainers");
+
+export const getBatches = () => api.get("/api/admin/batches");
+
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
+
+export const deleteTrainerByEmail = (email) =>
+  api.delete(`/api/admin/trainer/email/${email}`);
+
+export const deleteBatchByName = (name) =>
+  api.delete(`/api/admin/batch/name/${name}`);
+
+export const getAllStipends = () => api.get("/api/admin/stipends");
+
+export const getAllFeedback = () => api.get("/api/admin/feedback");
+
+export const getAdminSummary = () => api.get("/api/admin/summary");
+
+
+import api from "./axiosConfig";
+
+export const loginApi = (data) => api.post("/api/auth/login", data);
+export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
+
+
+import axios from "axios";
+const api = axios.create({
+  baseURL: "http://localhost:9090",
+});
+
+api.interceptors.request.use((config) => {
+  const t = localStorage.getItem("token");
+  if (t) config.headers.Authorization = `Bearer ${t}`;
+  return config;
+});
+
+export default api;
+
+
+import api from "./axiosConfig";
+
+export const getTrainerBatches = (trainerId) =>
+  api.get(`/api/trainer/batches/${trainerId}`);
+
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
+
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
+
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
+
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
+
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
+
+export const getFeedback = (name) =>
+  api.get(`/api/trainer/feedback/${name}`);
+
+export const getUsersByTrainer = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
+
+export const getTrainerSummary = (trainerId) =>
+  api.get(`/api/trainer/dashboard/${trainerId}`);
+
+import api from "./axiosConfig";
+
+export const registerUser = (data) =>
+  api.post("/api/user/register", data);
+
+export const getUserSummary = (userId) =>
+  api.get(`/api/user/dashboard/${userId}`);
+
+export const getUserTasks = (userId) =>
+  api.get(`/api/user/${userId}/tasks`);
+
+export const getUserPerformance = (userId) =>
+  api.get(`/api/user/${userId}/performance`);
+
+export const getUserStipends = (userId) =>
+  api.get(`/api/user/${userId}/stipends`);
+
+export const getBatchDetails = (code) =>
+  api.get(`/api/user/batch/${code}`);
+
+export const submitFeedback = (data) =>
+  api.post("/api/user/feedback", data);
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+export default function Navbar() {
+  const { logout, role, email } = useContext(AuthContext);
+  const nav = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    nav("/");
+  };
+
+  return (
+    <div className="nav">
+      <div className="nav-left">InternshipMgmt</div>
+      <div className="nav-right">
+        <span style={{ marginRight: 12 }}>{email}</span>
+        <button onClick={handleLogout} className="btn small">Logout</button>
+      </div>
+    </div>
+  );
+}
+
+
+import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+export default function ProtectedRoute({ role }) {
+  const { token, role: userRole } = useContext(AuthContext);
+
+  if (!token) return <Navigate to="/" replace />;
+  if (role !== userRole) return <Navigate to="/" replace />;
+
+  return <Outlet />;
+}
+
+import React from "react";
+import { Link } from "react-router-dom";
+
+export default function Sidebar({ items = [] }) {
+  return (
+    <div className="sidebar">
+      {items.map((it) => (
+        <Link key={it.to} to={it.to} className="sidebar-link">
+          {it.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import "../styles/theme.css";
+
+export default function ThemeToggle() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
+
+  return (
+    <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+      {darkMode ? "🌞" : "🌙"}
+    </div>
+  );
+}
+
+import React, { createContext, useState, useEffect } from "react";
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseRoleFromJwt = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return { role: payload.role, email: payload.sub || payload?.email || "" };
+    } catch (e) {
+      return { role: null, email: null };
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+      const { role, email } = parseRoleFromJwt(token);
+      if (!role) throw new Error("Invalid token role");
+      login(token, role, email);
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        {err && <div className="error">{err}</div>}
+        <input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <input placeholder="Password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <button className="btn" type="submit">Login</button>
+        <div style={{ marginTop: 8 }}>
+          <a href="/user/register">Register as User</a>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+export default function formatError(err) {
+  if (!err) return "Unknown error";
+
+  // If backend returned response
+  if (err.response) {
+    const data = err.response.data;
+
+    // Backend returned plain string
+    if (typeof data === "string") return data;
+
+    // Backend returned { message: "" }
+    if (data?.message) return data.message;
+
+    // Backend returned { error: "" }
+    if (data?.error) {
+      return typeof data.error === "string"
+        ? data.error
+        : JSON.stringify(data.error);
+    }
+
+    // Fallback parse
+    try {
+      return JSON.stringify(data);
+    } catch {
+      return "Server error";
+    }
+  }
+
+  // If request never reached server
+  return err.message || "Network error";
+}
+
