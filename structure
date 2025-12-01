@@ -28,28 +28,11 @@ export const deleteTrainerByEmail = (email) =>
 export const deleteBatchByName = (batchName) =>
   api.delete(`/admin/batch/name/${batchName}`);
 
+export const getAllStipends = () => api.get("/admin/stipends");
 
-export const getAdminSummary = () => api.get("/admin/summary");
+export const getAllFeedback = () => api.get("/admin/feedback");
 
-
-import api from "./axiosConfig";
-
-export const loginApi = (data) => api.post("/api/auth/login", data);
-export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
-
-
-import axios from "axios";
-const api = axios.create({
-  baseURL: "http://localhost:9090",
-});
-
-api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
-  return config;
-});
-
-export default api;
+export const getAdminSummary = () => api.get("/api/admin/summary");
 
 
 import api from "./axiosConfig";
@@ -85,9 +68,9 @@ export const getUsersByTrainer = (trainerId) =>
   api.get(`/trainer/UserBatch/${trainerId}`);
 
 
+// TRAINER DASHBOARD SUMMARY
 export const getTrainerSummary = (trainerId) =>
   api.get(`/trainer/summary/${trainerId}`);
-
 
 import api from "./axiosConfig";
 
@@ -112,214 +95,7 @@ export const getBatchDetails = (batchCode) =>
 // SUBMIT FEEDBACK
 export const submitFeedback = (data) => api.post("/user/feedback", data);
 
+// USER DASHBOARD SUMMARY
 export const getUserSummary = (userId) =>
   api.get(`/user/summary/${userId}`);
-
-
-
-import React, { createContext, useState, useEffect } from "react";
-export const AuthContext = createContext();
-
-export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
-
-  useEffect(() => {
-    // Sync on mount (in case token stored before)
-    const t = localStorage.getItem("token");
-    if (t && !token) setToken(t);
-    const r = localStorage.getItem("role");
-    if (r && !role) setRole(r);
-    const e = localStorage.getItem("email");
-    if (e && !email) setEmail(e);
-  }, []);
-
-  const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
-    localStorage.setItem("email", newEmail || "");
-    setToken(newToken);
-    setRole(newRole);
-    setEmail(newEmail || "");
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    setToken(null);
-    setRole(null);
-    setEmail(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ token, role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-import React, { createContext, useState, useEffect } from "react";
-export const AuthContext = createContext();
-
-export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
-
-  useEffect(() => {
-    // Sync on mount (in case token stored before)
-    const t = localStorage.getItem("token");
-    if (t && !token) setToken(t);
-    const r = localStorage.getItem("role");
-    if (r && !role) setRole(r);
-    const e = localStorage.getItem("email");
-    if (e && !email) setEmail(e);
-  }, []);
-
-  const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
-    localStorage.setItem("email", newEmail || "");
-    setToken(newToken);
-    setRole(newRole);
-    setEmail(newEmail || "");
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    setToken(null);
-    setRole(null);
-    setEmail(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ token, role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-
-export default function formatError(err) {
-  if (!err) return "Unknown error";
-
-  // If backend returned response
-  if (err.response) {
-    const data = err.response.data;
-
-    // Backend returned plain string
-    if (typeof data === "string") return data;
-
-    // Backend returned { message: "" }
-    if (data?.message) return data.message;
-
-    // Backend returned { error: "" }
-    if (data?.error) {
-      return typeof data.error === "string"
-        ? data.error
-        : JSON.stringify(data.error);
-    }
-
-    // Fallback parse
-    try {
-      return JSON.stringify(data);
-    } catch {
-      return "Server error";
-    }
-  }
-
-  // If request never reached server
-  return err.message || "Network error";
-}
-
-
-
-
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";   // ✅ Dark/Light mode toggle
-
-// Pages
-import Home from "./pages/Home/Home";   // ✅ New Home Page
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
-
-// Admin
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-
-// User
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        {/* ✅ Dark/Light Mode Toggle visible everywhere */}
-        <ThemeToggle />
-
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />   {/* ✅ Home Page */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-          </Route>
-
-          {/* User */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
 
