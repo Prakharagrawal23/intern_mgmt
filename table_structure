@@ -1,6 +1,303 @@
-Give Performance
-User ID
-Trainer ID
-Remarks
-0
-Save
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    // User registration
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody RegisterUserDto dto) {
+        return userService.registerUser(dto);
+    }
+
+    // Get Tasks
+    @GetMapping("/{userId}/tasks")
+    public List<Task> getTasks(@PathVariable Long userId) {
+        return userService.getTasks(userId);
+    }
+
+    // Get Performance
+    @GetMapping("/{userId}/performance")
+    public List<Performance> getPerformance(@PathVariable Long userId) {
+        return userService.getPerformance(userId);
+    }
+
+    // Get Stipend History
+    @GetMapping("/{userId}/stipends")
+    public List<Stipend> getStipends(@PathVariable Long userId) {
+        return userService.getStipendHistory(userId);
+    }
+
+    // Get Batch Details
+    @GetMapping("/batch/{batchCode}")
+    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+        return userService.getBatchDetails(batchCode);
+    }
+
+    // Submit Feedback
+    @PostMapping("/feedback")
+    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+        return userService.submitFeedback(dto);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        // Check if email already exists
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        // Validate batch and decrement seat
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        // Create user
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+
+    public List<Task> getTasks(Long userId) {
+        List<Task> tasks = taskDao.findByUserId(userId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for user ID: " + userId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        List<Performance> list = performanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        List<Stipend> list = stipendDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No stipend records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+
+        // You may also validate if batch or trainer exists
+
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+
+        return feedbackDao.save(f);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.User;
+import java.util.List;
+
+public interface UserDao {
+
+    User save(User user);
+
+    User findByEmail(String email);
+
+    User findById(Long id);
+
+    List<User> findAll();
+
+    void update(User user);
+
+    void deleteById(Long id);
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.Types;
+import java.util.List;
+
+@Repository
+public class UserDaoImpl implements UserDao {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private RowMapper<User> mapper = (rs, rowNum) -> {
+		User u = new User();
+		u.setUserId(rs.getLong("user_id"));
+		u.setUserName(rs.getString("user_name"));
+		u.setEmail(rs.getString("email"));
+		u.setPassword(rs.getString("password"));
+		u.setDob(rs.getDate("dob"));
+		u.setContactNo(rs.getString("contact_no"));
+		u.setAddress(rs.getString("address"));
+		u.setCollegeName(rs.getString("college_name"));
+		u.setGrade(rs.getString("grade"));
+		u.setMajor(rs.getString("major"));
+		u.setTeam(rs.getString("team"));
+		u.setBatchCode(rs.getLong("batch_code"));
+		u.setStartDate(rs.getDate("start_date"));
+		u.setEndDate(rs.getDate("end_date"));
+		u.setGraduatingYear(rs.getInt("graduating_year"));
+		u.setResume(rs.getString("resume"));
+		u.setProfilePic(rs.getString("profile_pic"));
+		u.setRole(rs.getString("role"));
+		u.setCreatedAt(rs.getTimestamp("created_at"));
+		return u;
+	};
+
+	@Override
+	public User save(User user) {
+		String sql = """
+				INSERT INTO users
+				(user_name, email, password, dob, contact_no, address, college_name, grade, major,
+				team, batch_code, start_date, end_date, graduating_year, resume, profile_pic, role)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getEmail(), user.getPassword(), user.getDob(),
+				user.getContactNo(), user.getAddress(), user.getCollegeName(), user.getGrade(), user.getMajor(),
+				user.getTeam(), user.getBatchCode(), user.getStartDate(), user.getEndDate(), user.getGraduatingYear(),
+				user.getResume(), user.getProfilePic(), user.getRole());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		user.setUserId(id);
+		return user;
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", mapper, email);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public User findById(Long id) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", mapper, id);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<User> findAll() {
+		return jdbcTemplate.query("SELECT * FROM users", mapper);
+	}
+
+	@Override
+	public void update(User user) {
+		String sql = """
+				    UPDATE users SET user_name=?, contact_no=?, address=?, college_name=?, grade=?, major=?,
+				    team=?, start_date=?, end_date=?, graduating_year=?, resume=?, profile_pic=? WHERE user_id=?
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getContactNo(), user.getAddress(), user.getCollegeName(),
+				user.getGrade(), user.getMajor(), user.getTeam(), user.getBatchCode(), user.getStartDate(),
+				user.getEndDate(), user.getGraduatingYear(), user.getResume(), user.getProfilePic(), user.getUserId());
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
+	}
+}
