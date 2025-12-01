@@ -894,3 +894,5 @@ for users
     public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
         return userService.getBatchDetails(batchCode);
     }
+implement the above endpoint in frontend 
+implement all the pages for the above endpoints points 
