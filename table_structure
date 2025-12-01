@@ -1,29 +1,23 @@
-MarkAttendance.jsx:94  Each child in a list should have a unique "key" prop.
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
 
-Check the render method of `MarkAttendance`. See https://react.dev/link/warning-keys for more information.
-MarkAttendance.jsx:94  Each child in a list should have a unique "key" prop.
-
-Check the render method of `MarkAttendance`. See https://react.dev/link/warning-keys for more information.
-(anonymous) @ react-dom-client.development.js:26084
+defaultOnUncaughtError @ react-dom-client.development.js:9362
+logUncaughtError @ react-dom-client.development.js:9431
 runWithFiberInDEV @ react-dom-client.development.js:870
-warnForMissingKey @ react-dom-client.development.js:26083
-warnOnInvalidKey @ react-dom-client.development.js:6591
-reconcileChildrenArray @ react-dom-client.development.js:6669
-reconcileChildFibersImpl @ react-dom-client.development.js:6990
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
+lane.callback @ react-dom-client.development.js:9461
+callCallback @ react-dom-client.development.js:7423
+commitCallbacks @ react-dom-client.development.js:7437
 runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
+commitLayoutEffectOnFiber @ react-dom-client.development.js:14047
+flushLayoutEffects @ react-dom-client.development.js:18135
+commitRoot @ react-dom-client.development.js:17954
+commitRootWhenReady @ react-dom-client.development.js:16824
+performWorkOnRoot @ react-dom-client.development.js:16722
 performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
 performWorkUntilDeadline @ scheduler.development.js:45
-<tr>
+<div>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
-(anonymous) @ MarkAttendance.jsx:94
-MarkAttendance @ MarkAttendance.jsx:94
+MarkAttendance @ main.063f0f62297f2375bd3b.hot-update.js:118
 react_stack_bottom_frame @ react-dom-client.development.js:25904
 renderWithHooks @ react-dom-client.development.js:7662
 updateFunctionComponent @ react-dom-client.development.js:10166
@@ -32,7 +26,7 @@ runWithFiberInDEV @ react-dom-client.development.js:870
 performUnitOfWork @ react-dom-client.development.js:17639
 workLoopSync @ react-dom-client.development.js:17469
 renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRoot @ react-dom-client.development.js:16583
 performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
 performWorkUntilDeadline @ scheduler.development.js:45
 <MarkAttendance>
@@ -56,6 +50,7 @@ performWorkUntilDeadline @ scheduler.development.js:45
 __webpack_require__ @ bootstrap:22
 (anonymous) @ startup:7
 (anonymous) @ startup:7
+MarkAttendance.jsx:16 Raw response:  [{…}]
 trainerApi.js:15   POST http://localhost:9090/api/trainer/attendance 400 (Bad Request)
 dispatchXhrRequest @ xhr.js:198
 xhr @ xhr.js:15
@@ -66,7 +61,7 @@ request @ Axios.js:40
 httpMethod @ Axios.js:224
 wrap @ bind.js:12
 markAttendance @ trainerApi.js:15
-handleSubmit @ MarkAttendance.jsx:49
+handleSubmit @ MarkAttendance.jsx:50
 executeDispatch @ react-dom-client.development.js:19116
 runWithFiberInDEV @ react-dom-client.development.js:870
 processDispatchQueue @ react-dom-client.development.js:19165
@@ -77,18 +72,23 @@ dispatchEvent @ react-dom-client.development.js:23584
 dispatchDiscreteEvent @ react-dom-client.development.js:23552
 <button>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
-MarkAttendance @ MarkAttendance.jsx:114
+MarkAttendance @ MarkAttendance.jsx:113
 react_stack_bottom_frame @ react-dom-client.development.js:25904
 renderWithHooks @ react-dom-client.development.js:7662
 updateFunctionComponent @ react-dom-client.development.js:10166
 beginWork @ react-dom-client.development.js:11778
 runWithFiberInDEV @ react-dom-client.development.js:870
 performUnitOfWork @ react-dom-client.development.js:17639
-workLoopConcurrentByScheduler @ react-dom-client.development.js:17634
-renderRootConcurrent @ react-dom-client.development.js:17615
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
 performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
+performSyncWorkOnRoot @ react-dom-client.development.js:18972
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:18803
+flushSyncWork$1 @ react-dom-client.development.js:16897
+scheduleRoot @ react-dom-client.development.js:99
+(anonymous) @ react-refresh-runtime.development.js:284
+performReactRefresh @ react-refresh-runtime.development.js:263
+(anonymous) @ RefreshUtils.js:100
 <MarkAttendance>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
 App @ App.js:67
@@ -101,8 +101,13 @@ performUnitOfWork @ react-dom-client.development.js:17639
 workLoopSync @ react-dom-client.development.js:17469
 renderRootSync @ react-dom-client.development.js:17450
 performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
+performSyncWorkOnRoot @ react-dom-client.development.js:18972
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:18803
+flushSyncWork$1 @ react-dom-client.development.js:16897
+scheduleRoot @ react-dom-client.development.js:99
+(anonymous) @ react-refresh-runtime.development.js:284
+performReactRefresh @ react-refresh-runtime.development.js:263
+(anonymous) @ RefreshUtils.js:100
 <App>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
 ./src/index.js @ index.js:10
@@ -136,7 +141,7 @@ performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
 performWorkUntilDeadline @ scheduler.development.js:45
 <div>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
-MarkAttendance @ MarkAttendance.jsx:76
+MarkAttendance @ MarkAttendance.jsx:75
 react_stack_bottom_frame @ react-dom-client.development.js:25904
 renderWithHooks @ react-dom-client.development.js:7662
 updateFunctionComponent @ react-dom-client.development.js:10166
@@ -160,8 +165,13 @@ performUnitOfWork @ react-dom-client.development.js:17639
 workLoopSync @ react-dom-client.development.js:17469
 renderRootSync @ react-dom-client.development.js:17450
 performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
+performSyncWorkOnRoot @ react-dom-client.development.js:18972
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:18803
+flushSyncWork$1 @ react-dom-client.development.js:16897
+scheduleRoot @ react-dom-client.development.js:99
+(anonymous) @ react-refresh-runtime.development.js:284
+performReactRefresh @ react-refresh-runtime.development.js:263
+(anonymous) @ RefreshUtils.js:100
 <App>
 (anonymous) @ react-jsx-dev-runtime.development.js:327
 ./src/index.js @ index.js:10
@@ -169,7 +179,7 @@ performWorkUntilDeadline @ scheduler.development.js:45
 __webpack_require__ @ bootstrap:22
 (anonymous) @ startup:7
 (anonymous) @ startup:7
-MarkAttendance.jsx:76  An error occurred in the <div> component.
+MarkAttendance.jsx:75  An error occurred in the <div> component.
 
 Consider adding an error boundary to your tree to customize error handling behavior.
 Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
