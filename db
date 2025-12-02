@@ -2,73 +2,86 @@ Tasks
 ID	Description	Status	Deadline
 -	do this	PENDING	17 Dec 2025, 05:30 am
 
-i am not getting the id why 
+in user portal 
+id is showing like this figure it out 
 
-import React, { useEffect, useState } from "react";
-import { getUserTasks } from "../../api/userApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import formatDate from "../../utils/formatDate";
-// import "../../styles/tasks.css";
+import api from "./axiosConfig";
 
-export default function UserTasks() {
-  const userId = localStorage.getItem("userId");
-  const [tasks, setTasks] = useState([]);
+export const getTrainerBatches = (id) =>
+  api.get(`/api/trainer/batches/${id}`);
+
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
+
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
+
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
+
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
+
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
+
+// IMPORTANT: FIXED FUNCTION
+export const getUsersByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
+import api from "./axiosConfig";
+
+export const registerUser = (data) => api.post("/api/user/register", data);
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
 
   useEffect(() => {
-    if (!userId) return;
-    getUserTasks(userId)
-      .then((res) => setTasks(res.data || []))
-      .catch(console.error);
-  }, [userId]);
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "COMPLETED": return "status-green";
-      case "ONGOING": return "status-orange";
-      default: return "status-gray";
-    }
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
   };
 
   return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Tasks</h3>
-
-        {tasks.length === 0 ? (
-          <p>No tasks found.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Deadline</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {tasks.map((t, idx) => (
-                <tr key={t.taskId || `fallback-${idx}`}>
-                  <td>{t.taskId || "-"}</td>
-                  <td>{t.description}</td>
-                  <td>
-                    <span className={`task-status ${getStatusClass(t.status)}`}>
-                      {t.status}
-                    </span>
-                  </td>
-                  <td>{t.deadline ? formatDate(t.deadline) : "N/A"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
@@ -167,20 +180,116 @@ export default function Login() {
 }
 
 
-import api from "./axiosConfig";
 
-export const registerUser = (data) => api.post("/api/user/register", data);
-export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
-export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
-export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
-export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+import React, { useState } from "react";
+import { updateTask } from "../../api/trainerApi";
+import { useParams } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
-export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+export default function UpdateTask() {
+  const { taskId } = useParams();
+  const [form, setForm] = useState({ description: "", status: "PENDING", deadline: "" });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateTask(taskId, form);
+      setMsg("Task updated");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Update Task {taskId}</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <textarea placeholder="Description" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}></textarea>
+          <input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} />
+          <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
+            <option>PENDING</option><option>ONGOING</option><option>COMPLETED</option>
+          </select>
+          <button className="btn" type="submit">Update</button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 
 
-and this is the backend 
+import React, { useEffect, useState } from "react";
+import { getUserTasks } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+// import "../../styles/tasks.css";
+
+export default function UserTasks() {
+  const userId = localStorage.getItem("userId");
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserTasks(userId)
+      .then((res) => setTasks(res.data || []))
+      .catch(console.error);
+  }, [userId]);
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "COMPLETED": return "status-green";
+      case "ONGOING": return "status-orange";
+      default: return "status-gray";
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Tasks</h3>
+
+        {tasks.length === 0 ? (
+          <p>No tasks found.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Deadline</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {tasks.map((t, idx) => (
+                <tr key={t.taskId || `fallback-${idx}`}>
+                  <td>{t.taskId || "-"}</td>
+                  <td>{t.description}</td>
+                  <td>
+                    <span className={`task-status ${getStatusClass(t.status)}`}>
+                      {t.status}
+                    </span>
+                  </td>
+                  <td>{t.deadline ? formatDate(t.deadline) : "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 
 package com.finalproject.internMgmtSystem.controller;
 
@@ -245,6 +354,239 @@ public class UserController {
 	}
 
 }
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.TrainerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/trainer")
+@CrossOrigin
+public class TrainerController {
+
+    @Autowired
+    private TrainerService trainerService;
+
+    // View all batches assigned to trainer
+    @GetMapping("/batches/{trainerId}")
+    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
+        return trainerService.getBatches(trainerId);
+    }
+
+    // Add Task
+    @PostMapping("/tasks")
+    public Task addTask(@Valid @RequestBody TaskDto dto) {
+        return trainerService.addTask(dto);
+    }
+    
+ // View all tasks assigned by the trainer
+    @GetMapping("/tasks/{trainerId}")
+    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
+        return trainerService.getTasksByTrainerId(trainerId);
+    }
+
+
+    // Update Task
+    @PutMapping("/tasks/{taskId}")
+    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
+        trainerService.updateTask(dto, taskId);
+        return "Task updated successfully";
+    }
+
+    // Delete Task
+    @DeleteMapping("/tasks/{taskId}")
+    public String deleteTask(@PathVariable Long taskId) {
+        trainerService.deleteTask(taskId);
+        return "Task deleted successfully";
+    }
+
+    // Mark Attendance
+    @PostMapping("/attendance")
+    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
+        return trainerService.markAttendance(dto);
+    }
+
+    // Update Performance
+    @PostMapping("/performance")
+    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
+        return trainerService.updatePerformance(dto);
+    }
+
+    // View Feedback
+    @GetMapping("/feedback/{trainerName}")
+    public List<Feedback> getFeedback(@PathVariable String trainerName) {
+        return trainerService.viewFeedback(trainerName);
+    }
+    
+	// View all performance records assigned by the trainer
+	@GetMapping("/performance/{trainerId}")
+	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
+		return trainerService.getPerformanceByTrainerId(trainerId);
+	}
+
+  //Fetching the batches and corresponding users
+    @GetMapping("/UserBatch/{trainerId}")
+    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
+        return trainerService.getUsersByTrainerId(trainerId);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setBatchCode(dto.getBatchCode());       // NEW
+        p.setTrainerName(dto.getTrainerName());   // NEW
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
+    public List<Task> getTasksByTrainerId(Long trainerId) {
+        List<Task> tasks = taskDao.findByTrainerId(trainerId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
+        List<Performance> list = performanceDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+
+}
+
+
 package com.finalproject.internMgmtSystem.service;
 
 import com.finalproject.internMgmtSystem.dto.FeedbackDto;
@@ -359,6 +701,7 @@ public class UserService {
         return attendanceDao.findByUserId(userId); // ✨ Allow empty list
     }
 }
+
 package com.finalproject.internMgmtSystem.repository;
 
 import com.finalproject.internMgmtSystem.model.Task;
@@ -378,6 +721,9 @@ public interface TaskDao {
 
     void delete(Long id);
 }
+
+
+
 package com.finalproject.internMgmtSystem.repository;
 
 import com.finalproject.internMgmtSystem.model.Task;
@@ -478,263 +824,44 @@ public class TaskDaoImpl implements TaskDao {
     }
 }
 
-package com.finalproject.internMgmtSystem.security;
 
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+mysql> select * from tasks;
++----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
+| id | user_id | trainer_id | description                 | status  | deadline   | upload_file | created_at          |
++----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
+|  1 |       1 |          1 | Complete Java Basics Module | ONGOING | 2025-03-01 | task1.pdf   | 2025-11-24 22:20:39 |
+|  4 |      19 |         15 | do this                     | PENDING | 2025-12-17 | NULL        | 2025-12-02 20:16:33 |
++----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
+2 rows in set (0.00 sec)
 
-import java.util.List;
+mysql> select * from users;
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
+|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
+|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
+|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
+|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+8 rows in set (0.00 sec)
 
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
+mysql> select * from trainers;
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
+|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
+|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
+|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
+|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
+|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+6 rows in set (0.00 sec)
 
-    @Autowired
-    private UserDao userDao;
+mysql>
 
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
-
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found: " + email);
-    }
-}
-
-package com.finalproject.internMgmtSystem.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN (Trainer Name + Trainer ID added)
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register"
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
+find out the error and solve it 
