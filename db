@@ -1,58 +1,14 @@
-Create Task
-User ID
-Trainer ID
-Description
+not available
+﻿
+react refresh:37 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+UserTasks.jsx:25 
+ Each child in a list should have a unique "key" prop.
 
-mm/dd/yyyy
+Check the render method of `UserTasks`. See https://react.dev/link/warning-keys for more information.
 
-PENDING
-Create
-
-do same for the create task via trainer and the user is seeing the task 
-
-for user we can see the user as intern as drop down and trainerid should automatically show there 
-
-this is the code for create task 
-
-import React, { useState } from "react";
-import { createTask } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function CreateTask() {
-  const [form, setForm] = useState({ userId: "", description: "", trainerId: "", status: "PENDING", deadline: "" });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createTask({ ...form, userId: Number(form.userId), trainerId: Number(form.trainerId) });
-      setMsg("Task created");
-    } catch (e) { setMsg(e?.response?.data || e.message); }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Create Task</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
-          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
-          <textarea placeholder="Description" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}></textarea>
-          <input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} />
-          <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
-            <option>PENDING</option><option>ONGOING</option><option>COMPLETED</option>
-          </select>
-          <button className="btn" type="submit">Create</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
+Tasks
+ID	Description	Status	Deadline
+do this	PENDING	17 Dec 2025, 05:30 am
 
 import React, { useEffect, useState } from "react";
 import { getUserTasks } from "../../api/userApi";
