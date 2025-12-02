@@ -1,277 +1,97 @@
-Uncaught runtime errors:
-×
-ERROR
-Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11227:11)
-    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11231:106)
-    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:11554:9)
-    at http://localhost:3000/static/js/bundle.js:11566:31
-    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13125:47)
-    at beginWork (http://localhost:3000/static/js/bundle.js:13941:1565)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:8393:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16302:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:16197:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:16182:7)
+Create Task
+User ID
+Trainer ID
+Description
 
-trainerApi.js:18   POST http://localhost:9090/api/trainer/performance 500 (Internal Server Error)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-givePerformance @ trainerApi.js:18
-handleSubmit @ GivePerformance.jsx:60
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-<form>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-GivePerformance @ GivePerformance.jsx:85
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<GivePerformance>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-App @ App.js:72
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-(anonymous) @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
-throwOnInvalidObjectType @ react-dom-client.development.js:6109
-reconcileChildFibersImpl @ react-dom-client.development.js:7058
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-GivePerformance @ GivePerformance.jsx:84
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<GivePerformance>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-App @ App.js:72
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-(anonymous) @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-GivePerformance.jsx:84  An error occurred in the <div> component.
+mm/dd/yyyy
 
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+PENDING
+Create
 
-  (user_id, trainer_id, batch_code, trainer_name, remarks, task_evaluation_score, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, NOW())
-]
-2025-12-02T16:34:02.505+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [19], value class [java.lang.Long], SQL type unknown
-2025-12-02T16:34:02.505+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 2, parameter value [15], value class [java.lang.Long], SQL type unknown
-2025-12-02T16:34:02.506+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 3, parameter value [7], value class [java.lang.Long], SQL type unknown
-2025-12-02T16:34:02.506+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 4, parameter value [prakhar agrawal 2], value class [java.lang.String], SQL type unknown
-2025-12-02T16:34:02.506+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 5, parameter value [okay need improvement], value class [java.lang.String], SQL type unknown
-2025-12-02T16:34:02.506+05:30 TRACE 29036 --- [nio-9090-exec-4] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 6, parameter value [76], value class [java.lang.Integer], SQL type unknown
-org.springframework.jdbc.UncategorizedSQLException: PreparedStatementCallback; uncategorized SQLException for SQL [    INSERT INTO performance
-    (user_id, trainer_id, batch_code, trainer_name, remarks, task_evaluation_score, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, NOW())
-]; SQL state [HY000]; error code [3819]; Check constraint 'performance_chk_1' is violated.
-	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1581)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:675)
-	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:968)
-	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1023)
-	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1033)
-	at com.finalproject.internMgmtSystem.repository.PerformanceDaoImpl.save(PerformanceDaoImpl.java:39)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
-	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
-	at com.finalproject.internMgmtSystem.repository.PerformanceDaoImpl$$SpringCGLIB$$0.save(<generated>)
-	at com.finalproject.internMgmtSystem.service.TrainerService.updatePerformance(TrainerService.java:111)
-	at com.finalproject.internMgmtSystem.controller.TrainerController.updatePerformance(TrainerController.java:65)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884)
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081)
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974)
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
-	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
-	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
-	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:55)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
-	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
-	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
-	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
-	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
-	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
-	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
-	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
-	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: java.sql.SQLException: Check constraint 'performance_chk_1' is violated.
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1061)
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1009)
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1320)
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:994)
-	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
-	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
-	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:973)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:656)
-	... 116 more
+do same for the create task via trainer and the user is seeing the task 
+
+for user we can see the user as intern as drop down and trainerid should automatically show there 
+
+this is the code for create task 
+
+import React, { useState } from "react";
+import { createTask } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function CreateTask() {
+  const [form, setForm] = useState({ userId: "", description: "", trainerId: "", status: "PENDING", deadline: "" });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createTask({ ...form, userId: Number(form.userId), trainerId: Number(form.trainerId) });
+      setMsg("Task created");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Create Task</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
+          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
+          <textarea placeholder="Description" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}></textarea>
+          <input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} />
+          <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
+            <option>PENDING</option><option>ONGOING</option><option>COMPLETED</option>
+          </select>
+          <button className="btn" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useEffect, useState } from "react";
+import { getUserTasks } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+
+export default function UserTasks() {
+  const userId = localStorage.getItem("userId");
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserTasks(userId).then(res => setTasks(res.data)).catch(console.error);
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Tasks</h3>
+        {tasks.length === 0 ? "No tasks found." :
+          <table className="table">
+            <thead><tr><th>ID</th><th>Description</th><th>Status</th><th>Deadline</th></tr></thead>
+            <tbody>
+              {tasks.map(t => (
+                <tr key={t.taskId}>
+                  <td>{t.taskId}</td>
+                  <td>{t.description}</td>
+                  <td>{t.status}</td>
+                  <td>{formatDate(t.deadline)}</td>
+                </tr>
+
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  );
+}
