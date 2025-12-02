@@ -1,8 +1,14 @@
+webpack compiled with 2 errors and 1 warning
 Compiling...
 Failed to compile.
 
-Module not found: Error: Can't resolve './pages/Trainer/TrainerViewTasks' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src'
-ERROR in ./src/App.js 32:0-64
-Module not found: Error: Can't resolve './pages/Trainer/TrainerViewTasks' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src'
+Attempted import error: 'getTasksByTrainerId' is not exported from '../../api/trainerApi' (imported as 'getTasksByTrainerId').
+WARNING in [eslint] 
+src\pages\Trainer\TrainerViewTasks.jsx
+  Line 14:6:  React Hook useEffect has a missing dependency: 'fetchTasks'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
-webpack compiled with 1 error
+ERROR in ./src/pages/Trainer/TrainerViewTasks.jsx 20:4-23
+export 'getTasksByTrainerId' (imported as 'getTasksByTrainerId') was not found in '../../api/trainerApi' (possible exports: createTask, deleteTask, getTrainerBatches, getUsersByTrainerId, givePerformance, markAttendance, updateTask)
+
+webpack compiled with 1 error and 1 warning
+
