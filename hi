@@ -578,3 +578,13 @@ export default function Login() {
   );
 }
 
+
+Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+UserStipends.jsx:25  Each child in a list should have a unique "key" prop.
+
+Check the render method of `UserStipends`. See https://react.dev/link/warning-keys for more information
+
+
+My Stipends
+Amount	Mode	Date
+1400000	UPI	N/A
