@@ -425,3 +425,14 @@ public class StipendDto {
 
 	// getters & setters
 }
+
+mysql> select * from stipend;
++----+---------+----------------+---------------------+---------------+------------+
+| id | user_id | user_name      | payment_date        | payment_mode  | amount     |
++----+---------+----------------+---------------------+---------------+------------+
+|  1 |       1 | Prakhar        | 2025-11-20 21:27:09 | Bank Transfer |    5000.00 |
+|  2 |       2 | Rohan          | 2025-11-20 21:27:09 | UPI           |    6000.00 |
+|  3 |      13 | Rohit Sharma2  | 2025-11-25 00:14:34 | UPI           |       5.00 |
+|  4 |      14 | mayank agrawal | 2025-11-28 17:14:35 | UPI           | 1400000.00 |
+
+
