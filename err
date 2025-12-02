@@ -1,20 +1,8 @@
-import React from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+Compiling...
+Failed to compile.
 
-export default function TrainerDashboard() {
-  const items = [
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/users", label: "Users in Batch" }
-  ];
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-      <div className="main"><h2>Trainer Dashboard</h2></div>
-    </div>
-  );
-}
+Module not found: Error: Can't resolve './pages/Trainer/TrainerViewTasks' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src'
+ERROR in ./src/App.js 32:0-64
+Module not found: Error: Can't resolve './pages/Trainer/TrainerViewTasks' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src'
+
+webpack compiled with 1 error
