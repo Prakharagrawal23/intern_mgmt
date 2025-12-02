@@ -53,4 +53,82 @@ mysql> select * from internship_batches;
 +------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
 6 rows in set (0.00 sec)
 
+mysql> describe traines;
+ERROR 1146 (42S02): Table 'internmgmtsystem.traines' doesn't exist
+mysql> describe trainers;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
+| name        | varchar(255) | NO   |     | NULL              |                   |
+| email       | varchar(255) | NO   | UNI | NULL              |                   |
+| password    | varchar(255) | NO   |     | NULL              |                   |
+| contact     | varchar(20)  | YES  |     | NULL              |                   |
+| experience  | int          | YES  |     | NULL              |                   |
+| skills      | text         | YES  |     | NULL              |                   |
+| profile_pic | varchar(255) | YES  |     | NULL              |                   |
+| bio         | text         | YES  |     | NULL              |                   |
+| role        | varchar(50)  | NO   |     | TRAINER           |                   |
+| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+11 rows in set (0.01 sec)
+
+mysql> describe internship_batches;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
+| batch_name      | varchar(255) | NO   |     | NULL    |                |
+| course_name     | varchar(255) | NO   |     | NULL    |                |
+| trainer_id      | bigint       | NO   | MUL | NULL    |                |
+| start_date      | date         | NO   |     | NULL    |                |
+| end_date        | date         | NO   |     | NULL    |                |
+| total_seats     | int          | NO   |     | NULL    |                |
+| available_seats | int          | NO   |     | NULL    |                |
++-----------------+--------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> describe user;
+ERROR 1146 (42S02): Table 'internmgmtsystem.user' doesn't exist
+mysql> describe users;
++-----------------+--------------+------+-----+-------------------+-------------------+
+| Field           | Type         | Null | Key | Default           | Extra             |
++-----------------+--------------+------+-----+-------------------+-------------------+
+| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_name       | varchar(255) | NO   |     | NULL              |                   |
+| email           | varchar(255) | NO   | UNI | NULL              |                   |
+| password        | varchar(255) | NO   |     | NULL              |                   |
+| dob             | date         | YES  |     | NULL              |                   |
+| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
+| address         | varchar(255) | YES  |     | NULL              |                   |
+| college_name    | varchar(255) | YES  |     | NULL              |                   |
+| grade           | varchar(50)  | YES  |     | NULL              |                   |
+| major           | varchar(255) | YES  |     | NULL              |                   |
+| team            | varchar(255) | YES  |     | NULL              |                   |
+| start_date      | date         | YES  |     | NULL              |                   |
+| end_date        | date         | YES  |     | NULL              |                   |
+| graduating_year | int          | YES  |     | NULL              |                   |
+| resume          | varchar(255) | YES  |     | NULL              |                   |
+| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
+| role            | varchar(50)  | NO   |     | USER              |                   |
+| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code      | bigint       | YES  | MUL | NULL              |                   |
++-----------------+--------------+------+-----+-------------------+-------------------+
+19 rows in set (0.01 sec)
+
+mysql> describe performance;
++-----------------------+--------------+------+-----+-------------------+-------------------+
+| Field                 | Type         | Null | Key | Default           | Extra             |
++-----------------------+--------------+------+-----+-------------------+-------------------+
+| id                    | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_id               | bigint       | NO   | MUL | NULL              |                   |
+| trainer_id            | bigint       | NO   | MUL | NULL              |                   |
+| remarks               | text         | YES  |     | NULL              |                   |
+| task_evaluation_score | int          | YES  |     | NULL              |                   |
+| created_at            | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code            | bigint       | YES  |     | NULL              |                   |
+| trainer_name          | varchar(255) | YES  |     | NULL              |                   |
++-----------------------+--------------+------+-----+-------------------+-------------------+
+8 rows in set (0.00 sec)
+
 mysql>
