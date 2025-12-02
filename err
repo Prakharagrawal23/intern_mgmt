@@ -1,112 +1,548 @@
-📊 My Performance
-Trainer	Batch	Score	Remarks	Date
-N/A	N/A	5	good work	02 Dec 2025, 07:34 pm
+Give Performance
+Performance saved
+18
+15
+okay work 
+4
+Save
 
 
-import React, { useEffect, useState } from "react";
-import { getUserPerformance, getBatchDetails } from "../../api/userApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import formatDate from "../../utils/formatDate";
-import "../../styles/performance.css"; // 🔥 Add styling
+mysql> select * from performance;
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
+|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
+|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
+|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
+|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
+|  7 |      18 |         15 | okay work                                                            |                     4 | 2025-12-02 14:44:54 |       NULL | NULL              |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+6 rows in set (0.00 sec)
 
-export default function UserPerformance() {
-  const userId = localStorage.getItem("userId");
-  const [perf, setPerf] = useState([]);
-  const [batchDetails, setBatchDetails] = useState(null);
+those thing is not updateing check that why 
 
-  const fetchBatchDetails = async (batchCode) => {
-    try {
-      const res = await getBatchDetails(batchCode);
-      setBatchDetails(res.data);
-    } catch (err) {
-      console.error("Batch details fetch failed:", err);
-      setBatchDetails(null);
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.TrainerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/trainer")
+@CrossOrigin
+public class TrainerController {
+
+    @Autowired
+    private TrainerService trainerService;
+
+    // View all batches assigned to trainer
+    @GetMapping("/batches/{trainerId}")
+    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
+        return trainerService.getBatches(trainerId);
     }
-  };
+
+    // Add Task
+    @PostMapping("/tasks")
+    public Task addTask(@Valid @RequestBody TaskDto dto) {
+        return trainerService.addTask(dto);
+    }
+    
+ // View all tasks assigned by the trainer
+    @GetMapping("/tasks/{trainerId}")
+    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
+        return trainerService.getTasksByTrainerId(trainerId);
+    }
+
+
+    // Update Task
+    @PutMapping("/tasks/{taskId}")
+    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
+        trainerService.updateTask(dto, taskId);
+        return "Task updated successfully";
+    }
+
+    // Delete Task
+    @DeleteMapping("/tasks/{taskId}")
+    public String deleteTask(@PathVariable Long taskId) {
+        trainerService.deleteTask(taskId);
+        return "Task deleted successfully";
+    }
+
+    // Mark Attendance
+    @PostMapping("/attendance")
+    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
+        return trainerService.markAttendance(dto);
+    }
+
+    // Update Performance
+    @PostMapping("/performance")
+    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
+        return trainerService.updatePerformance(dto);
+    }
+
+    // View Feedback
+    @GetMapping("/feedback/{trainerName}")
+    public List<Feedback> getFeedback(@PathVariable String trainerName) {
+        return trainerService.viewFeedback(trainerName);
+    }
+    
+	// View all performance records assigned by the trainer
+	@GetMapping("/performance/{trainerId}")
+	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
+		return trainerService.getPerformanceByTrainerId(trainerId);
+	}
+
+  //Fetching the batches and corresponding users
+    @GetMapping("/UserBatch/{trainerId}")
+    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
+        return trainerService.getUsersByTrainerId(trainerId);
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setBatchCode(dto.getBatchCode());       // NEW
+        p.setTrainerName(dto.getTrainerName());   // NEW
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
+    public List<Task> getTasksByTrainerId(Long trainerId) {
+        List<Task> tasks = taskDao.findByTrainerId(trainerId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
+        List<Performance> list = performanceDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import java.util.List;
+
+public interface TrainerDao {
+
+    Trainer save(Trainer trainer);
+
+    Trainer findByEmail(String email);
+
+    Trainer findById(Long id);
+
+    List<Trainer> findAll();
+
+    void update(Trainer trainer);
+
+    void deleteById(Long id);
+
+    void deleteByEmail(String email);
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class TrainerDaoImpl implements TrainerDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Trainer> mapper = (rs, rowNum) -> {
+        Trainer t = new Trainer();
+        t.setTrainerId(rs.getLong("trainer_id"));
+        t.setName(rs.getString("name"));
+        t.setEmail(rs.getString("email"));
+        t.setPassword(rs.getString("password"));
+        t.setContact(rs.getString("contact"));
+        t.setExperience(rs.getString("experience"));
+        t.setSkills(rs.getString("skills"));
+        t.setProfilePic(rs.getString("profile_pic"));
+        t.setBio(rs.getString("bio"));
+        t.setRole(rs.getString("role"));
+        t.setCreatedAt(rs.getTimestamp("created_at"));
+        return t;
+    };
+
+    @Override
+    public Trainer save(Trainer trainer) {
+        String sql = "INSERT INTO trainers (name, email, password, contact, experience, skills, profile_pic, bio, role) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getEmail(),
+                trainer.getPassword(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getRole()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        trainer.setTrainerId(id);
+        return trainer;
+    }
+
+    @Override
+    public Trainer findByEmail(String email) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE email = ?",
+                mapper,
+                email
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public Trainer findById(Long id) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE trainer_id = ?",
+                mapper,
+                id
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<Trainer> findAll() {
+        return jdbcTemplate.query(
+                "SELECT * FROM trainers",
+                mapper
+        );
+    }
+
+    @Override
+    public void update(Trainer trainer) {
+        String sql = "UPDATE trainers SET name=?, contact=?, experience=?, skills=?, profile_pic=?, bio=? "
+                   + "WHERE trainer_id=?";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getTrainerId()
+        );
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update(
+                "DELETE FROM trainers WHERE trainer_id = ?",
+                id
+        );
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        jdbcTemplate.update("DELETE FROM trainers WHERE email = ?", email);
+    }
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Performance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+@Repository
+public class PerformanceDaoImpl implements PerformanceDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Performance> mapper = (rs, rowNum) -> {
+        Performance p = new Performance();
+        p.setId(rs.getLong("id"));
+        p.setUserId(rs.getLong("user_id"));
+        p.setTrainerId(rs.getLong("trainer_id"));
+        p.setBatchCode(rs.getLong("batch_code"));        // NEW
+        p.setTrainerName(rs.getString("trainer_name"));  // NEW
+        p.setRemarks(rs.getString("remarks"));
+        p.setTaskEvaluationScore(rs.getInt("task_evaluation_score"));
+        p.setCreatedAt(rs.getTimestamp("created_at"));
+        return p;
+    };
+
+    @Override
+    public Performance save(Performance p) {
+        String sql = """
+            INSERT INTO performance 
+            (user_id, trainer_id, batch_code, trainer_name, remarks, task_evaluation_score, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())
+        """;
+
+        jdbcTemplate.update(sql,
+                p.getUserId(),
+                p.getTrainerId(),
+                p.getBatchCode(),
+                p.getTrainerName(),
+                p.getRemarks(),
+                p.getTaskEvaluationScore()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        p.setId(id);
+        p.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        return p;
+    }
+
+    @Override
+    public List<Performance> findByUserId(Long userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM performance WHERE user_id = ? ORDER BY created_at DESC",
+                mapper, userId
+        );
+    }
+
+    @Override
+    public List<Performance> findByTrainerId(Long trainerId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM performance WHERE trainer_id = ? ORDER BY created_at DESC",
+                mapper, trainerId
+        );
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update("DELETE FROM performance WHERE id = ?", id);
+    }
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Performance;
+import java.util.List;
+
+public interface PerformanceDao {
+
+    Performance save(Performance performance);
+
+    List<Performance> findByUserId(Long userId);
+
+    List<Performance> findByTrainerId(Long trainerId);
+
+    void deleteById(Long id);
+    
+    
+}
+import api from "./axiosConfig";
+
+export const getTrainerBatches = (id) =>
+  api.get(`/api/trainer/batches/${id}`);
+
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
+
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
+
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
+
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
+
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
+
+// IMPORTANT: FIXED FUNCTION
+export const getUsersByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
 
   useEffect(() => {
-    if (!userId) return;
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    getUserPerformance(userId)
-      .then((res) => setPerf(res.data))
-      .catch((err) => {
-        console.error("Performance Fetch Error:", err);
-      });
-  }, [userId]);
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
 
   return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h2 className="title">📊 My Performance</h2>
-
-        {perf.length === 0 ? (
-          <p className="no-data">No performance records yet.</p>
-        ) : (
-          <table className="table performance-table">
-            <thead>
-              <tr>
-                <th>Trainer</th>
-                <th>Batch</th>
-                <th>Score</th>
-                <th>Remarks</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {perf.map((p) => (
-                <tr
-                  key={p.id}
-                  onClick={() => fetchBatchDetails(p.batchCode)}
-                  className="click-row"
-                >
-                  <td>{p.trainerName || "N/A"}</td>
-                  <td>{p.batchCode || "N/A"}</td>
-                  <td>
-                    <span
-                      className={`score-badge ${
-                        p.taskEvaluationScore >= 80
-                          ? "score-high"
-                          : p.taskEvaluationScore >= 50
-                          ? "score-medium"
-                          : "score-low"
-                      }`}
-                    >
-                      {p.taskEvaluationScore}
-                    </span>
-                  </td>
-                  <td>{p.remarks}</td>
-                  <td>{formatDate(p.createdAt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {batchDetails && (
-          <div className="batch-card">
-            <h3>Batch Details</h3>
-            <p><strong>Batch Name:</strong> {batchDetails.batchName}</p>
-            <p><strong>Course:</strong> {batchDetails.courseName}</p>
-            <p><strong>Trainer ID:</strong> {batchDetails.trainerId}</p>
-            <p><strong>Start:</strong> {formatDate(batchDetails.startDate)}</p>
-            <p><strong>End:</strong> {formatDate(batchDetails.endDate)}</p>
-
-            <button className="btn-close" onClick={() => setBatchDetails(null)}>
-              Close
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
-
-
-
 import React, { useState } from "react";
 import { givePerformance } from "../../api/trainerApi";
 import Navbar from "../../components/Navbar";
@@ -142,50 +578,120 @@ export default function GivePerformance() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { getUserPerformance, getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+import "../../styles/performance.css";
 
+export default function UserPerformance() {
+  const userId = localStorage.getItem("userId");
+  const [perf, setPerf] = useState([]);
+  const [batchDetails, setBatchDetails] = useState(null);
 
-the backend is 
+  const fetchBatchDetails = async (batchCode) => {
+    if (!batchCode) return;
+    try {
+      const res = await getBatchDetails(batchCode);
+      setBatchDetails(res.data);
+    } catch (err) {
+      console.error("Batch details fetch failed:", err);
+      setBatchDetails(null);
+    }
+  };
 
+  useEffect(() => {
+    if (!userId) return;
 
-mysql> select * from performance;
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
-|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
-|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
-|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
-|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-5 rows in set (0.00 sec)
+    getUserPerformance(userId)
+      .then((res) => setPerf(res.data))
+      .catch((err) => {
+        console.error("Performance Fetch Error:", err);
+      });
+  }, [userId]);
 
-mysql> UPDATE performance p
-    -> JOIN users u ON p.user_id = u.user_id
-    -> SET p.batch_code = u.batch_code
-    -> WHERE p.batch_code IS NULL;
-Query OK, 0 rows affected (0.00 sec)
-Rows matched: 0  Changed: 0  Warnings: 0
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
 
-mysql> UPDATE performance p
-    -> JOIN trainers t ON p.trainer_id = t.trainer_id
-    -> SET p.trainer_name = t.name
-    -> WHERE p.trainer_name IS NULL;
-Query OK, 0 rows affected (0.00 sec)
-Rows matched: 0  Changed: 0  Warnings: 0
+      <div className="main">
+        <h2 className="title">📊 My Performance</h2>
 
-mysql> SELECT id, trainer_name, batch_code FROM performance;
-+----+-------------------+------------+
-| id | trainer_name      | batch_code |
-+----+-------------------+------------+
-|  1 | Ram Kumar         |          1 |
-|  2 | Amit Verma        |          2 |
-|  3 | prakhar           |          4 |
-|  4 | prakhar           |          4 |
-|  6 | prakhar agrawal 2 |          5 |
-+----+-------------------+------------+
-5 rows in set (0.00 sec)
+        {perf.length === 0 ? (
+          <p className="no-data">No performance records available.</p>
+        ) : (
+          <table className="table performance-table">
+            <thead>
+              <tr>
+                <th>Trainer</th>
+                <th>Batch</th>
+                <th>Score</th>
+                <th>Remarks</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {perf.map((p) => (
+                <tr
+                  key={p.id}
+                  className="click-row"
+                  onClick={() => fetchBatchDetails(p.batch_code)}
+                >
+                  <td>{p.trainer_name || "N/A"}</td>
+                  <td>{p.batch_code || "N/A"}</td>
 
-mysql>
+                  <td>
+                    <span
+                      className={`score-badge ${
+                        p.task_evaluation_score >= 80
+                          ? "score-high"
+                          : p.task_evaluation_score >= 50
+                          ? "score-medium"
+                          : "score-low"
+                      }`}
+                    >
+                      {p.task_evaluation_score}
+                    </span>
+                  </td>
 
+                  <td>{p.remarks}</td>
+                  <td>{formatDate(p.created_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-so where is the problem 
+        {batchDetails && (
+          <div className="batch-card">
+            <h3>Batch Details</h3>
+            <p>
+              <strong>Batch Name:</strong> {batchDetails.batchName}
+            </p>
+            <p>
+              <strong>Course:</strong> {batchDetails.courseName}
+            </p>
+            <p>
+              <strong>Trainer ID:</strong> {batchDetails.trainerId}
+            </p>
+            <p>
+              <strong>Start:</strong> {formatDate(batchDetails.startDate)}
+            </p>
+            <p>
+              <strong>End:</strong> {formatDate(batchDetails.endDate)}
+            </p>
+
+            <button
+              className="btn-close"
+              onClick={() => setBatchDetails(null)}
+            >
+              Close
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
