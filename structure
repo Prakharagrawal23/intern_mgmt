@@ -1,300 +1,3 @@
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/user")
-@CrossOrigin
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    // User registration
-    @PostMapping("/register")
-    public User register(@Valid @RequestBody RegisterUserDto dto) {
-        return userService.registerUser(dto);
-    }
-
-    // Get Tasks
-    @GetMapping("/{userId}/tasks")
-    public List<Task> getTasks(@PathVariable Long userId) {
-        return userService.getTasks(userId);
-    }
-
-    // Get Performance
-    @GetMapping("/{userId}/performance")
-    public List<Performance> getPerformance(@PathVariable Long userId) {
-        return userService.getPerformance(userId);
-    }
-
-    // Get Stipend History
-    @GetMapping("/{userId}/stipends")
-    public List<Stipend> getStipends(@PathVariable Long userId) {
-        return userService.getStipendHistory(userId);
-    }
-
-    // Get Batch Details
-    @GetMapping("/batch/{batchCode}")
-    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
-        return userService.getBatchDetails(batchCode);
-    }
-
-    // Submit Feedback
-    @PostMapping("/feedback")
-    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
-        return userService.submitFeedback(dto);
-    }
-}
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.service.TrainerService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/trainer")
-@CrossOrigin
-public class TrainerController {
-
-    @Autowired
-    private TrainerService trainerService;
-
-    // View all batches assigned to trainer
-    @GetMapping("/batches/{trainerId}")
-    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
-        return trainerService.getBatches(trainerId);
-    }
-
-    // Add Task
-    @PostMapping("/tasks")
-    public Task addTask(@Valid @RequestBody TaskDto dto) {
-        return trainerService.addTask(dto);
-    }
-    
- // View all tasks assigned by the trainer
-    @GetMapping("/tasks/{trainerId}")
-    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
-        return trainerService.getTasksByTrainerId(trainerId);
-    }
-
-
-    // Update Task
-    @PutMapping("/tasks/{taskId}")
-    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
-        trainerService.updateTask(dto, taskId);
-        return "Task updated successfully";
-    }
-
-    // Delete Task
-    @DeleteMapping("/tasks/{taskId}")
-    public String deleteTask(@PathVariable Long taskId) {
-        trainerService.deleteTask(taskId);
-        return "Task deleted successfully";
-    }
-
-    // Mark Attendance
-    @PostMapping("/attendance")
-    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
-        return trainerService.markAttendance(dto);
-    }
-
-    // Update Performance
-    @PostMapping("/performance")
-    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
-        return trainerService.updatePerformance(dto);
-    }
-
-    // View Feedback
-    @GetMapping("/feedback/{trainerName}")
-    public List<Feedback> getFeedback(@PathVariable String trainerName) {
-        return trainerService.viewFeedback(trainerName);
-    }
-    
-	// View all performance records assigned by the trainer
-	@GetMapping("/performance/{trainerId}")
-	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
-		return trainerService.getPerformanceByTrainerId(trainerId);
-	}
-
-  //Fetching the batches and corresponding users
-    @GetMapping("/UserBatch/{trainerId}")
-    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
-        return trainerService.getUsersByTrainerId(trainerId);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.service.AdminService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/admin")
-@CrossOrigin
-public class AdminController {
-
-    @Autowired
-    private AdminService adminService;
-
-    @PostMapping("/trainers")
-    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
-        return adminService.registerTrainer(dto);
-    }
-
-    @PostMapping("/batches")
-    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
-        return adminService.createBatch(dto);
-    }
-
-    @PostMapping("/stipend")
-    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
-        return adminService.giveStipend(dto);
-    }
-
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
-
-    @GetMapping("/trainers")
-    public List<Trainer> getAllTrainers() {
-        return adminService.getAllTrainers();
-    }
-
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatches() {
-        return adminService.getAllBatches();
-    }
-
-    // DELETE USER BY EMAIL
-    @DeleteMapping("/user/email/{email}")
-    public String deleteUserByEmail(@PathVariable String email) {
-        adminService.deleteUserByEmail(email);
-        return "User deleted successfully with email: " + email;
-    }
-
-    // DELETE TRAINER BY EMAIL
-    @DeleteMapping("/trainer/email/{email}")
-    public String deleteTrainerByEmail(@PathVariable String email) {
-        adminService.deleteTrainerByEmail(email);
-        return "Trainer deleted successfully with email: " + email;
-    }
-
-    // DELETE BATCH BY BATCH NAME
-    @DeleteMapping("/batch/name/{batchName}")
-    public String deleteBatchByName(@PathVariable String batchName) {
-        adminService.deleteBatchByName(batchName);
-        return "Batch deleted successfully with name: " + batchName;
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserDao userDao;              // instance DAO
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // injected password encoder
-
-    // LOGIN (existing)
-    @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
-    }
-
-    /**
-     * Temporary endpoint to create the one-time ADMIN via Postman.
-     * - Ensures only ONE admin exists in the system.
-     * - After successful admin creation you should REMOVE this endpoint
-     *   (or at least lock it) from SecurityConfig.
-     */
-    
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
-
-        // 1) Check if an admin already exists
-        List<User> allUsers = userDao.findAll();
-        boolean adminExists = allUsers.stream()
-                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
-
-        if (adminExists) {
-            throw new UserAlreadyExistsException("Admin already exists!");
-        }
-
-        // 2) Check if email already used
-        User existing = userDao.findByEmail(dto.getEmail());
-        if (existing != null) {
-            throw new UserAlreadyExistsException("Email already registered!");
-        }
-
-        // 3) Create admin
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ADMIN");
-
-        userDao.save(user);
-
-        return "Admin created successfully!";
-    }
-
-}
-
-
 import api from "./axiosConfig";
 
 // TRAINER
@@ -363,7 +66,6 @@ export const getUsersByTrainerId = (trainerId) =>
   api.get(`/api/trainer/UserBatch/${trainerId}`);
 
 
-
 import api from "./axiosConfig";
 
 export const registerUser = (data) => api.post("/api/user/register", data);
@@ -371,6 +73,9 @@ export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
 export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
 export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
 export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
 
 
 import React, { useContext } from "react";
@@ -398,7 +103,6 @@ export default function Navbar() {
 }
 
 
-
 import { Navigate, Outlet } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -411,7 +115,6 @@ export default function ProtectedRoute({ role }) {
 
   return <Outlet />;
 }
-
 
 
 import React from "react";
@@ -428,7 +131,6 @@ export default function Sidebar({ items = [] }) {
     </div>
   );
 }
-
 
 
 import React, { useState, useEffect } from "react";
@@ -451,7 +153,6 @@ export default function ThemeToggle() {
     </div>
   );
 }
-
 
 
 import React, { createContext, useState, useEffect } from "react";
@@ -569,6 +270,7 @@ export default function CreateBatch() {
     </div>
   );
 }
+
 
 import React, { useState } from "react";
 import { createTrainer } from "../../api/adminApi";
@@ -784,6 +486,8 @@ export default function ViewTrainers() {
 import React, { useEffect, useState } from "react";
 import { getUsers, deleteUserByEmail } from "../../api/adminApi";
 import formatError from "../../utils/formatError";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
 export default function ViewUsers() {
   const [list, setList] = useState([]);
@@ -813,37 +517,47 @@ export default function ViewUsers() {
   };
 
   return (
-    <div className="container">
-      <h2>All Users</h2>
-      {msg && <p style={{ color: "red" }}>{msg}</p>}
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>All Users</h3>
+        {msg && <div className="info">{msg}</div>}
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>UserName</th>
-            <th>Email</th>
-            <th>Contact</th>
-            <th>BatchCode</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {list.map((u) => (
-            <tr key={u.userId}>
-              <td>{u.userName}</td>
-              <td>{u.email}</td>
-              <td>{u.contactNo}</td>
-              <td>{u.batchCode}</td>
-              <td>
-                <button onClick={() => handleDelete(u.email)} className="btn">
-                  Delete
-                </button>
-              </td>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>User ID</th> {/* 👈 Added */}
+              <th>UserName</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th>BatchCode</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {list.map((u) => (
+              <tr key={u.userId}>
+                <td>{u.userId}</td>  {/* 👈 Added */}
+                <td>{u.userName}</td>
+                <td>{u.email}</td>
+                <td>{u.contactNo}</td>
+                <td>{u.batchCode}</td>
+                <td>
+                  <button
+                    onClick={() => handleDelete(u.email)}
+                    className="btn small"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+      </div>
     </div>
   );
 }
@@ -904,8 +618,6 @@ export default function Login() {
     </div>
   );
 }
-
-
 
 
 import React from "react";
@@ -988,7 +700,6 @@ export default function CreateTask() {
 }
 
 
-
 import React, { useState } from "react";
 import { givePerformance } from "../../api/trainerApi";
 import Navbar from "../../components/Navbar";
@@ -1026,46 +737,138 @@ export default function GivePerformance() {
 }
 
 
-
-import React, { useState } from "react";
-import { markAttendance } from "../../api/trainerApi";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
+import { getUsersByTrainerId, markAttendance } from "../../api/trainerApi";
 
 export default function MarkAttendance() {
-  const [form, setForm] = useState({ userId: "", batchCode: "", date: "", present: true });
+  const trainerId = localStorage.getItem("trainerId") || 1;
+
+  const [users, setUsers] = useState([]);
+  const [attendanceList, setAttendanceList] = useState([]);
+  const [date, setDate] = useState("");
   const [msg, setMsg] = useState("");
 
+  // Load all users in trainer's batches
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await getUsersByTrainerId(trainerId);
+        setUsers(res.data || []);
+
+        // initialize attendance list with default present=true
+        const initial = (res.data || []).map((u) => ({
+          userId: u.userId,
+          batchCode: u.batchCode,
+          present: true, // default Present
+        }));
+        setAttendanceList(initial);
+      } catch (e) {
+        console.error(e);
+        setMsg("Failed to load users");
+      }
+    };
+
+    fetchUsers();
+  }, [trainerId]);
+
+  // Change status Present/Absent for a specific user
+  const handleStatusChange = (index, value) => {
+    const updated = [...attendanceList];
+    updated[index].present = value === "true"; // convert string to boolean
+    setAttendanceList(updated);
+  };
+
+  // Submit attendance for all users
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMsg("");
+
+    if (!date) {
+      setMsg("Please select date first");
+      return;
+    }
+
     try {
-      await markAttendance({ ...form, userId: Number(form.userId), batchCode: Number(form.batchCode) });
-      setMsg("Attendance marked");
-    } catch (e) { setMsg(e?.response?.data || e.message); }
+      for (const a of attendanceList) {
+        await markAttendance({
+          userId: a.userId,
+          batchCode: a.batchCode,
+          date,
+          present: a.present,
+        });
+      }
+      setMsg("Attendance saved/updated for all users.");
+    } catch (e) {
+      console.error(e);
+      setMsg(e?.response?.data || e.message || "Error saving attendance");
+    }
   };
 
   return (
     <div className="layout">
       <Navbar />
       <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+
       <div className="main">
         <h3>Mark Attendance</h3>
-        {msg && <div className="info">{msg}</div>}
+
+        {msg && <div className="info" style={{ marginBottom: 10 }}>{msg}</div>}
+
         <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
-          <input placeholder="Batch Code" value={form.batchCode} onChange={e=>setForm({...form,batchCode:e.target.value})}/>
-          <input type="date" value={form.date} onChange={e=>setForm({...form,date:e.target.value})} />
-          <select value={form.present} onChange={e=>setForm({...form,present: e.target.value === "true"})}>
-            <option value="true">Present</option>
-            <option value="false">Absent</option>
-          </select>
-          <button className="btn" type="submit">Mark</button>
+          <label style={{ marginRight: 8 }}>Date:</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+
+          {users.length === 0 ? (
+            <div style={{ marginTop: 20 }}>No users found in your batches.</div>
+          ) : (
+            <table className="table" style={{ marginTop: 20 }}>
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>User Name</th>
+                  <th>Batch Code</th>
+                  <th>Status (Present / Absent)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u, index) => (
+                  <tr key={u.userId || u.email || index}>
+                    <td>{u.userId}</td>
+                    <td>{u.userName}</td>
+                    <td>{u.batchCode}</td>
+                    <td>
+                      <select
+                        value={attendanceList[index]?.present ? "true" : "false"}
+                        onChange={(e) =>
+                          handleStatusChange(index, e.target.value)
+                        }
+                      >
+                        <option value="true">Present</option>
+                        <option value="false">Absent</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {users.length > 0 && (
+            <button className="btn" type="submit" style={{ marginTop: 10 }}>
+              Mark Attendance
+            </button>
+          )}
         </form>
       </div>
     </div>
   );
 }
-
 
 
 import React, { useState, useEffect } from "react";
@@ -1122,7 +925,6 @@ export default function TrainerDashboard() {
     </div>
   );
 }
-
 
 
 import React, { useState } from "react";
@@ -1263,13 +1065,17 @@ import Sidebar from "../../components/Sidebar";
 export default function UsersInBatch() {
   const trainerId = localStorage.getItem("trainerId") || 1;
   const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const res = await getUsersByTrainerId(trainerId);
         setList(res.data);
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error(e);
+        setMsg("Failed to fetch users");
+      }
     };
     fetch();
   }, [trainerId]);
@@ -1279,11 +1085,34 @@ export default function UsersInBatch() {
       <Navbar />
       <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
       <div className="main">
-        <h3>Users in my batches</h3>
-        {list.length === 0 ? <div>No users found.</div> : (
+        <h3>Users in My Batches</h3>
+
+        {msg && <div className="info">{msg}</div>}
+
+        {list.length === 0 ? (
+          <div>No users found.</div>
+        ) : (
           <table className="table">
-            <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Batch</th></tr></thead>
-            <tbody>{list.map(u => (<tr key={u.email}><td>{u.userName}</td><td>{u.email}</td><td>{u.contactNo}</td><td>{u.batchCode}</td></tr>))}</tbody>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Batch Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((u) => (
+                <tr key={u.email}>
+                  <td>{u.userId}</td>
+                  <td>{u.userName}</td>
+                  <td>{u.email}</td>
+                  <td>{u.contactNo}</td>
+                  <td>{u.batchCode}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         )}
       </div>
@@ -1451,16 +1280,58 @@ export default function RegisterUser() {
   );
 }
 
+
+import React, { useEffect, useState } from "react";
+import { getUserAttendance } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function UserAttendance() {
+  const userId = localStorage.getItem("userId");
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserAttendance(userId).then(res => setData(res.data)).catch(console.error);
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Attendance Record</h3>
+        {data.length === 0 ? "No attendance records" :
+          <table className="table">
+            <thead><tr><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              {data.map(a => (
+                <tr key={a.attendanceId}>
+                  <td>{new Date(a.date).toLocaleDateString()}</td>
+                  <td>{a.present ? "Present" : "Absent"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  );
+}
+
+
 import React from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 
 export default function UserDashboard() {
-  const items = [
-    { to: "/user/tasks", label: "My Tasks" },
-    { to: "/user/performance", label: "My Performance" },
-    { to: "/user/feedback", label: "Give Feedback" },
-  ];
+ const items = [
+  { to: "/user/tasks", label: "My Tasks" },
+  { to: "/user/performance", label: "My Performance" },
+  { to: "/user/stipends", label: "My Stipends" },
+  { to: "/user/attendance", label: "My Attendance" },
+  { to: "/user/feedback", label: "Give Feedback" },
+];
   return (
     <div className="layout">
       <Navbar />
@@ -1472,6 +1343,8 @@ export default function UserDashboard() {
     </div>
   );
 }
+
+
 import React, { useEffect, useState } from "react";
 import { getUserPerformance } from "../../api/userApi";
 import Navbar from "../../components/Navbar";
@@ -1509,6 +1382,48 @@ export default function UserPerformance() {
     </div>
   );
 }
+
+
+import React, { useEffect, useState } from "react";
+import { getUserStipends } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function UserStipends() {
+  const userId = localStorage.getItem("userId");
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserStipends(userId).then(res => setData(res.data)).catch(console.error);
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>My Stipends</h3>
+        {data.length === 0 ? "No stipend records" :
+          <table className="table">
+            <thead><tr><th>Amount</th><th>Mode</th><th>Date</th></tr></thead>
+            <tbody>
+              {data.map(s => (
+                <tr key={s.stipendId}>
+                  <td>{s.amount}</td>
+                  <td>{s.paymentMode}</td>
+                  <td>{new Date(s.date).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  );
+}
+
+
 import React, { useEffect, useState, useContext } from "react";
 import { getUserTasks } from "../../api/userApi";
 import { AuthContext } from "../../context/AuthContext";
@@ -1553,6 +1468,8 @@ export default function UserTasks() {
     </div>
   );
 }
+
+
 export default function formatError(err) {
   if (!err) return "Unknown error";
 
@@ -1585,14 +1502,15 @@ export default function formatError(err) {
   return err.message || "Network error";
 }
 
+
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";   // ✅ Dark/Light mode toggle
+import ThemeToggle from "./components/ThemeToggle";
 
 // Pages
-import Home from "./pages/Home/Home";   // ✅ New Home Page
+import Home from "./pages/Home/Home";
 import Login from "./pages/Auth/Login";
 import RegisterUser from "./pages/User/RegisterUser";
 
@@ -1621,20 +1539,24 @@ import UserPerformance from "./pages/User/UserPerformance";
 import BatchDetails from "./pages/User/BatchDetails";
 import FeedbackForm from "./pages/User/FeedbackForm";
 
+// NEW USER PAGES
+import UserStipends from "./pages/User/UserStipends";
+import UserAttendance from "./pages/User/UserAttendance";
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {/* ✅ Dark/Light Mode Toggle visible everywhere */}
+        {/* Dark/Light mode toggle */}
         <ThemeToggle />
 
         <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />   {/* ✅ Home Page */}
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/user/register" element={<RegisterUser />} />
 
-          {/* Admin */}
+          {/* Admin Panel */}
           <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/create-trainer" element={<CreateTrainer />} />
@@ -1645,7 +1567,7 @@ export default function App() {
             <Route path="/admin/view-users" element={<ViewUsers />} />
           </Route>
 
-          {/* Trainer */}
+          {/* Trainer Panel */}
           <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
             <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
             <Route path="/trainer/batches" element={<TrainerBatches />} />
@@ -1656,13 +1578,17 @@ export default function App() {
             <Route path="/trainer/users" element={<UsersInBatch />} />
           </Route>
 
-          {/* User */}
+          {/* User Panel */}
           <Route element={<ProtectedRoute role="ROLE_USER" />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/tasks" element={<UserTasks />} />
             <Route path="/user/performance" element={<UserPerformance />} />
             <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
             <Route path="/user/feedback" element={<FeedbackForm />} />
+
+            {/* 🔥 Newly added routes */}
+            <Route path="/user/stipends" element={<UserStipends />} />
+            <Route path="/user/attendance" element={<UserAttendance />} />
           </Route>
         </Routes>
       </BrowserRouter>
