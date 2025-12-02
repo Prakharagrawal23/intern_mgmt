@@ -1,74 +1,426 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-userApi.js:5   GET http://localhost:9090/api/user/14/performance 403 (Forbidden)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-(anonymous) @ Axios.js:211
-wrap @ bind.js:12
-getUserPerformance @ userApi.js:5
-(anonymous) @ UserPerformance.jsx:25
-react_stack_bottom_frame @ react-dom-client.development.js:25989
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitHookEffectListMount @ react-dom-client.development.js:13244
-commitHookPassiveMountEffects @ react-dom-client.development.js:13334
-commitPassiveMountOnFiber @ react-dom-client.development.js:15483
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15519
-flushPassiveEffects @ react-dom-client.development.js:18432
-(anonymous) @ react-dom-client.development.js:17923
-performWorkUntilDeadline @ scheduler.development.js:45
-<UserPerformance>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-App @ App.js:80
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-(anonymous) @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-UserPerformance.jsx:25  API Error AxiosError {message: 'Request failed with status code 403', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
+import api from "./axiosConfig";
+
+// TRAINER
+export const createTrainer = (data) => api.post("/api/admin/trainers", data);
+export const getTrainers = () => api.get("/api/admin/trainers");
+export const deleteTrainerByEmail = (email) =>
+  api.delete(`/api/admin/trainer/email/${email}`);
+
+// BATCH
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+export const getBatches = () => api.get("/api/admin/batches");
+export const deleteBatchByName = (batchName) =>
+  api.delete(`/api/admin/batch/name/${batchName}`);
+
+// USERS
+export const getUsers = () => api.get("/api/admin/users");
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
+
+// STIPEND
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
+import api from "./axiosConfig";
+
+export const loginApi = (data) => api.post("/api/auth/login", data);
+export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
+import axios from "axios";
+const api = axios.create({
+  baseURL: "http://localhost:9090",
+});
+
+api.interceptors.request.use((config) => {
+  const t = localStorage.getItem("token");
+  if (t) config.headers.Authorization = `Bearer ${t}`;
+  return config;
+});
+
+export default api;
+import api from "./axiosConfig";
+
+export const getTrainerBatches = (id) =>
+  api.get(`/api/trainer/batches/${id}`);
+
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
+
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
+
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
+
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
+
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
+
+// IMPORTANT: FIXED FUNCTION
+export const getUsersByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
+import api from "./axiosConfig";
+
+export const registerUser = (data) => api.post("/api/user/register", data);
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+import React, { useEffect, useState } from "react";
+import { givePerformance, getUsersByTrainerId } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/performance.css";
+
+export default function GivePerformance() {
+  const [form, setForm] = useState({
+    userId: "",
+    trainerId: "",
+    trainerName: "",
+    batchCode: "",
+    remarks: "",
+    taskEvaluationScore: "",
+  });
+
+  const [users, setUsers] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const trainerId = localStorage.getItem("trainerId");
+    const trainerName = localStorage.getItem("trainerName");
+
+    setForm((prev) => ({
+      ...prev,
+      trainerId,
+      trainerName,
+    }));
+
+    if (trainerId) {
+      getUsersByTrainerId(trainerId)
+        .then((res) => setUsers(res.data))
+        .catch((err) => console.error("Users fetch failed:", err));
+    }
+  }, []);
+
+  const handleUserSelect = (e) => {
+    const userId = Number(e.target.value);
+    const selectedUser = users.find((u) => u.userId === userId);
+
+    setForm((prev) => ({
+      ...prev,
+      userId,
+      batchCode: selectedUser?.batchCode || "",
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+    setError("");
+
+    if (!form.userId || !form.batchCode) {
+      setError("Please select a user with a valid batch");
+      return;
+    }
+
+    try {
+      await givePerformance({
+        userId: Number(form.userId),
+        trainerId: Number(form.trainerId),
+        batchCode: Number(form.batchCode),
+        trainerName: form.trainerName,
+        remarks: form.remarks,
+        taskEvaluationScore: Number(form.taskEvaluationScore),
+      });
+
+      setMsg("Performance Saved Successfully ✔");
+      setForm({ ...form, userId: "", batchCode: "", remarks: "", taskEvaluationScore: "" });
+    } catch (err) {
+      setError(err.response?.data || "Failed to save");
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Give Performance</h3>
+
+        {msg && <div className="info success">{msg}</div>}
+        {error && <div className="info error">{error}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <label>Trainer</label>
+          <input value={form.trainerName} disabled />
+
+          <label>Intern</label>
+          <select value={form.userId} onChange={handleUserSelect}>
+            <option value="">-- Select Intern --</option>
+            {users.map((u) => (
+              <option key={u.userId} value={u.userId}>
+                {u.userName} (Batch {u.batchCode})
+              </option>
+            ))}
+          </select>
+
+          <label>Batch</label>
+          <input value={form.batchCode} disabled />
+
+          <label>Remarks</label>
+          <textarea
+            value={form.remarks}
+            onChange={(e) => setForm({ ...form, remarks: e.target.value })}
+          ></textarea>
+
+          <label>Score (0-100)</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={form.taskEvaluationScore}
+            onChange={(e) => setForm({ ...form, taskEvaluationScore: e.target.value })}
+          />
+
+          <button className="btn" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId || payload.id,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+      };
+    } catch (e) {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token payload");
+
+      login(token, role, email);
+
+      if (userId) localStorage.setItem("userId", userId);
+
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+
+        {err && <div className="error">{err}</div>}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
+
+        <button className="btn" type="submit">
+          Login
+        </button>
+
+        <div className="switch-auth">
+          <a href="/user/register">Register as User</a>
+        </div>
+      </form>
+    </div>
+  );
+}
+import React, { useEffect, useState } from "react";
+import { getUserPerformance, getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+import "../../styles/performance.css";
+
+export default function UserPerformance() {
+  const userId = localStorage.getItem("userId");
+  const [perf, setPerf] = useState([]);
+  const [batchDetails, setBatchDetails] = useState(null);
+
+  const fetchBatchDetails = async (batchCode) => {
+    if (!batchCode) return;
+    try {
+      const res = await getBatchDetails(batchCode);
+      setBatchDetails(res.data);
+    } catch (err) {
+      console.error("Failed fetching batch details", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserPerformance(userId)
+      .then((res) => setPerf(res.data))
+      .catch((err) => console.error("API Error", err));
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h2 className="title">📊 My Performance</h2>
+
+        {perf.length === 0 ? (
+          <p className="no-data">No performance records available.</p>
+        ) : (
+          <table className="table performance-table">
+            <thead>
+              <tr>
+                <th>Trainer</th>
+                <th>Batch</th>
+                <th>Score</th>
+                <th>Remarks</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {perf.map((p) => (
+                <tr key={p.id} onClick={() => fetchBatchDetails(p.batchCode)}>
+                  <td>{p.trainerName || "N/A"}</td>
+                  <td>{p.batchCode || "N/A"}</td>
+                  <td>
+                    <span
+                      className={`score-badge ${
+                        p.taskEvaluationScore >= 80
+                          ? "score-high"
+                          : p.taskEvaluationScore >= 50
+                          ? "score-medium"
+                          : "score-low"
+                      }`}
+                    >
+                      {p.taskEvaluationScore}
+                    </span>
+                  </td>
+                  <td>{p.remarks}</td>
+                  <td>{p.createdAt ? formatDate(p.createdAt) : "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {batchDetails && (
+          <div className="batch-card">
+            <h3>Batch Details</h3>
+
+            <p><strong>Batch Name:</strong> {batchDetails.batchName}</p>
+            <p><strong>Course:</strong> {batchDetails.courseName}</p>
+            <p><strong>Trainer ID:</strong> {batchDetails.trainerId}</p>
+            <p><strong>Start:</strong> {formatDate(batchDetails.startDate)}</p>
+            <p><strong>End:</strong> {formatDate(batchDetails.endDate)}</p>
+
+            <button className="btn-close" onClick={() => setBatchDetails(null)}>
+              Close
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
