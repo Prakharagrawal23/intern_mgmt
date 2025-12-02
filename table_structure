@@ -1,273 +1,527 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-userApi.js:9   GET http://localhost:9090/api/user/15/stipends 404 (Not Found)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-Axios.<computed> @ Axios.js:211
-wrap @ bind.js:12
-getUserStipends @ userApi.js:9
-(anonymous) @ UserStipends.jsx:12
-react_stack_bottom_frame @ react-dom-client.development.js:25989
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitHookEffectListMount @ react-dom-client.development.js:13244
-commitHookPassiveMountEffects @ react-dom-client.development.js:13334
-commitPassiveMountOnFiber @ react-dom-client.development.js:15483
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15519
-flushPassiveEffects @ react-dom-client.development.js:18432
-(anonymous) @ react-dom-client.development.js:17923
-performWorkUntilDeadline @ scheduler.development.js:45
-<UserStipends>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:85
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-AxiosError {message: 'Request failed with status code 404', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
-Promise.catch
-(anonymous) @ UserStipends.jsx:12
-react_stack_bottom_frame @ react-dom-client.development.js:25989
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitHookEffectListMount @ react-dom-client.development.js:13244
-commitHookPassiveMountEffects @ react-dom-client.development.js:13334
-commitPassiveMountOnFiber @ react-dom-client.development.js:15483
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15519
-flushPassiveEffects @ react-dom-client.development.js:18432
-(anonymous) @ react-dom-client.development.js:17923
-performWorkUntilDeadline @ scheduler.development.js:45
-<UserStipends>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:85
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-userApi.js:10   GET http://localhost:9090/api/user/15/attendance 403 (Forbidden)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-Axios.<computed> @ Axios.js:211
-wrap @ bind.js:12
-getUserAttendance @ userApi.js:10
-(anonymous) @ UserAttendance.jsx:12
-react_stack_bottom_frame @ react-dom-client.development.js:25989
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitHookEffectListMount @ react-dom-client.development.js:13244
-commitHookPassiveMountEffects @ react-dom-client.development.js:13334
-commitPassiveMountOnFiber @ react-dom-client.development.js:15483
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15519
-flushPassiveEffects @ react-dom-client.development.js:18432
-(anonymous) @ react-dom-client.development.js:17923
-performWorkUntilDeadline @ scheduler.development.js:45
-<UserAttendance>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:86
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-AxiosError {message: 'Request failed with status code 403', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
-Promise.catch
-(anonymous) @ UserAttendance.jsx:12
-react_stack_bottom_frame @ react-dom-client.development.js:25989
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitHookEffectListMount @ react-dom-client.development.js:13244
-commitHookPassiveMountEffects @ react-dom-client.development.js:13334
-commitPassiveMountOnFiber @ react-dom-client.development.js:15483
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15718
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15476
-recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:15439
-commitPassiveMountOnFiber @ react-dom-client.development.js:15519
-flushPassiveEffects @ react-dom-client.development.js:18432
-(anonymous) @ react-dom-client.development.js:17923
-performWorkUntilDeadline @ scheduler.development.js:45
-<UserAttendance>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:86
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+	@Autowired
+	private UserService userService;
+
+	// User registration
+	@PostMapping("/register")
+	public User register(@Valid @RequestBody RegisterUserDto dto) {
+		return userService.registerUser(dto);
+	}
+
+	// Get Tasks
+	@GetMapping("/{userId}/tasks")
+	public List<Task> getTasks(@PathVariable Long userId) {
+		return userService.getTasks(userId);
+	}
+
+	// Get Performance
+	@GetMapping("/{userId}/performance")
+	public List<Performance> getPerformance(@PathVariable Long userId) {
+		return userService.getPerformance(userId);
+	}
+
+	// Get Stipend History
+	@GetMapping("/{userId}/stipends")
+	public List<Stipend> getStipends(@PathVariable Long userId) {
+		return userService.getStipendHistory(userId);
+	}
+
+	// Get Batch Details
+	@GetMapping("/batch/{batchCode}")
+	public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+		return userService.getBatchDetails(batchCode);
+	}
+
+	// Submit Feedback
+	@PostMapping("/feedback")
+	public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+		return userService.submitFeedback(dto);
+	}
+
+	// Get Attendance
+	@GetMapping("/{userId}/attendance")
+	public List<Attendance> getAttendance(@PathVariable Long userId) {
+		return userService.getAttendance(userId);
+	}
+
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        // Check if email already exists
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        // Validate batch and decrement seat
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        // Create user
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+
+    public List<Task> getTasks(Long userId) {
+        List<Task> tasks = taskDao.findByUserId(userId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for user ID: " + userId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        List<Performance> list = performanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        List<Stipend> list = stipendDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No stipend records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+
+        // You may also validate if batch or trainer exists
+
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+
+        return feedbackDao.save(f);
+    }
+    
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    public List<Attendance> getAttendance(Long userId) {
+        List<Attendance> list = attendanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No attendance record for user: " + userId);
+        }
+        return list;
+    }
+
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Stipend;
+import java.util.List;
+
+public interface StipendDao {
+
+    Stipend save(Stipend stipend);
+
+    List<Stipend> findByUserId(Long userId);
+
+    List<Stipend> findAll();
+}
+
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.repository.StipendDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class StipendDaoImpl implements StipendDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Stipend> mapper = (rs, rowNum) -> {
+        Stipend s = new Stipend();
+        s.setId(rs.getLong("id"));
+        s.setUserId(rs.getLong("user_id"));
+        s.setUserName(rs.getString("user_name"));
+        s.setPaymentDate(rs.getTimestamp("payment_date"));
+        s.setPaymentMode(rs.getString("payment_mode"));
+        s.setAmount(rs.getDouble("amount"));
+        return s;
+    };
+
+    @Override
+    public Stipend save(Stipend stipend) {
+        String sql = """
+            INSERT INTO stipend (user_id, user_name, payment_mode, amount)
+            VALUES (?, ?, ?, ?)
+        """;
+
+        jdbcTemplate.update(sql,
+                stipend.getUserId(),
+                stipend.getUserName(),
+                stipend.getPaymentMode(),
+                stipend.getAmount()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        stipend.setId(id);
+        return stipend;
+    }
+
+    @Override
+    public List<Stipend> findByUserId(Long userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM stipend WHERE user_id = ? ORDER BY payment_date DESC",
+                mapper,
+                userId
+        );
+    }
+
+    @Override
+    public List<Stipend> findAll() {
+        return jdbcTemplate.query("SELECT * FROM stipend ORDER BY payment_date DESC", mapper);
+    }
+}
+
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String email = jwtUtil.extractEmail(token);
+        String role = jwtUtil.extractRole(token);  // ex: ROLE_ADMIN
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    public String generateToken(String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
