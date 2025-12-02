@@ -1,0 +1,198 @@
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String email = jwtUtil.extractEmail(token);
+        String role = jwtUtil.extractRole(token);  // ex: ROLE_ADMIN
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(email, null, List.of(authority));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        // Check if email already exists
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        // Validate batch and decrement seat
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        // Create user
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+
+    public List<Task> getTasks(Long userId) {
+        List<Task> tasks = taskDao.findByUserId(userId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for user ID: " + userId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        List<Performance> list = performanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        List<Stipend> list = stipendDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No stipend records for user ID: " + userId);
+        }
+        return list;
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+
+        // You may also validate if batch or trainer exists
+
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+
+        return feedbackDao.save(f);
+    }
+    
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    public List<Attendance> getAttendance(Long userId) {
+        List<Attendance> list = attendanceDao.findByUserId(userId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No attendance record for user: " + userId);
+        }
+        return list;
+    }
+
+}
+
+
