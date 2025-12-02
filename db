@@ -1,40 +1,535 @@
+📊 My Performance
+Trainer	Batch	Score	Remarks	Date
+N/A	N/A	5	bad	02 Dec 2025, 08:38 pm
+N/A	N/A	5	good	02 Dec 2025, 08:25 pm
+N/A	N/A	5	good work	02 Dec 2025, 07:34 pm
 
-mysql> select * from performance;
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
-|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
-|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
-|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
-|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-5 rows in set (0.00 sec)
+package com.finalproject.internMgmtSystem.controller;
 
-mysql> UPDATE performance p
-    -> JOIN users u ON p.user_id = u.user_id
-    -> SET p.batch_code = u.batch_code
-    -> WHERE p.batch_code IS NULL;
-Query OK, 0 rows affected (0.00 sec)
-Rows matched: 0  Changed: 0  Warnings: 0
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.TrainerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-mysql> UPDATE performance p
-    -> JOIN trainers t ON p.trainer_id = t.trainer_id
-    -> SET p.trainer_name = t.name
-    -> WHERE p.trainer_name IS NULL;
-Query OK, 0 rows affected (0.00 sec)
-Rows matched: 0  Changed: 0  Warnings: 0
+import java.util.List;
 
-mysql> SELECT id, trainer_name, batch_code FROM performance;
-+----+-------------------+------------+
-| id | trainer_name      | batch_code |
-+----+-------------------+------------+
-|  1 | Ram Kumar         |          1 |
-|  2 | Amit Verma        |          2 |
-|  3 | prakhar           |          4 |
-|  4 | prakhar           |          4 |
-|  6 | prakhar agrawal 2 |          5 |
-+----+-------------------+------------+
-5 rows in set (0.00 sec)
+@RestController
+@RequestMapping("/api/trainer")
+@CrossOrigin
+public class TrainerController {
 
-mysql>
+    @Autowired
+    private TrainerService trainerService;
+
+    // View all batches assigned to trainer
+    @GetMapping("/batches/{trainerId}")
+    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
+        return trainerService.getBatches(trainerId);
+    }
+
+    // Add Task
+    @PostMapping("/tasks")
+    public Task addTask(@Valid @RequestBody TaskDto dto) {
+        return trainerService.addTask(dto);
+    }
+    
+ // View all tasks assigned by the trainer
+    @GetMapping("/tasks/{trainerId}")
+    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
+        return trainerService.getTasksByTrainerId(trainerId);
+    }
+
+
+    // Update Task
+    @PutMapping("/tasks/{taskId}")
+    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
+        trainerService.updateTask(dto, taskId);
+        return "Task updated successfully";
+    }
+
+    // Delete Task
+    @DeleteMapping("/tasks/{taskId}")
+    public String deleteTask(@PathVariable Long taskId) {
+        trainerService.deleteTask(taskId);
+        return "Task deleted successfully";
+    }
+
+    // Mark Attendance
+    @PostMapping("/attendance")
+    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
+        return trainerService.markAttendance(dto);
+    }
+
+    // Update Performance
+    @PostMapping("/performance")
+    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
+        return trainerService.updatePerformance(dto);
+    }
+
+    // View Feedback
+    @GetMapping("/feedback/{trainerName}")
+    public List<Feedback> getFeedback(@PathVariable String trainerName) {
+        return trainerService.viewFeedback(trainerName);
+    }
+    
+	// View all performance records assigned by the trainer
+	@GetMapping("/performance/{trainerId}")
+	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
+		return trainerService.getPerformanceByTrainerId(trainerId);
+	}
+
+  //Fetching the batches and corresponding users
+    @GetMapping("/UserBatch/{trainerId}")
+    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
+        return trainerService.getUsersByTrainerId(trainerId);
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class TrainerService {
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
+
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
+
+        return list;
+    }
+
+    public Task addTask(TaskDto dto) {
+
+        // Optional: validate if user exists / trainer exists
+
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        return taskDao.save(t);
+    }
+
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
+
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
+
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setBatchCode(dto.getBatchCode());       // NEW
+        p.setTrainerName(dto.getTrainerName());   // NEW
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
+    public List<Task> getTasksByTrainerId(Long trainerId) {
+        List<Task> tasks = taskDao.findByTrainerId(trainerId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
+        List<Performance> list = performanceDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+
+}
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId) // NEW
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class); // NEW
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(authority)
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+            return jwtUtil.generateToken(
+                    user.getUserId(),    
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateToken(
+                trainer.getTrainerId(),  
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole()
+        );
+    }
+}
