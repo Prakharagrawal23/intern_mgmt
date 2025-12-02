@@ -1,20 +1,15 @@
-not available
-﻿
-react refresh:37 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-UserTasks.jsx:25 
- Each child in a list should have a unique "key" prop.
-
-Check the render method of `UserTasks`. See https://react.dev/link/warning-keys for more information.
-
 Tasks
 ID	Description	Status	Deadline
-do this	PENDING	17 Dec 2025, 05:30 am
+-	do this	PENDING	17 Dec 2025, 05:30 am
+
+i am not getting the id why 
 
 import React, { useEffect, useState } from "react";
 import { getUserTasks } from "../../api/userApi";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import formatDate from "../../utils/formatDate";
+// import "../../styles/tasks.css";
 
 export default function UserTasks() {
   const userId = localStorage.getItem("userId");
@@ -22,32 +17,724 @@ export default function UserTasks() {
 
   useEffect(() => {
     if (!userId) return;
-    getUserTasks(userId).then(res => setTasks(res.data)).catch(console.error);
+    getUserTasks(userId)
+      .then((res) => setTasks(res.data || []))
+      .catch(console.error);
   }, [userId]);
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "COMPLETED": return "status-green";
+      case "ONGOING": return "status-orange";
+      default: return "status-gray";
+    }
+  };
 
   return (
     <div className="layout">
       <Navbar />
       <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
       <div className="main">
         <h3>Tasks</h3>
-        {tasks.length === 0 ? "No tasks found." :
-          <table className="table">
-            <thead><tr><th>ID</th><th>Description</th><th>Status</th><th>Deadline</th></tr></thead>
-            <tbody>
-              {tasks.map(t => (
-                <tr key={t.taskId}>
-                  <td>{t.taskId}</td>
-                  <td>{t.description}</td>
-                  <td>{t.status}</td>
-                  <td>{formatDate(t.deadline)}</td>
-                </tr>
 
+        {tasks.length === 0 ? (
+          <p>No tasks found.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Deadline</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {tasks.map((t, idx) => (
+                <tr key={t.taskId || `fallback-${idx}`}>
+                  <td>{t.taskId || "-"}</td>
+                  <td>{t.description}</td>
+                  <td>
+                    <span className={`task-status ${getStatusClass(t.status)}`}>
+                      {t.status}
+                    </span>
+                  </td>
+                  <td>{t.deadline ? formatDate(t.deadline) : "N/A"}</td>
+                </tr>
               ))}
             </tbody>
           </table>
-        }
+        )}
       </div>
     </div>
   );
+}
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId || payload.id,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+      };
+    } catch (e) {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token payload");
+
+      login(token, role, email);
+
+      if (userId) localStorage.setItem("userId", userId);
+
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+
+        {err && <div className="error">{err}</div>}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
+
+        <button className="btn" type="submit">
+          Login
+        </button>
+
+        <div className="switch-auth">
+          <a href="/user/register">Register as User</a>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+
+import api from "./axiosConfig";
+
+export const registerUser = (data) => api.post("/api/user/register", data);
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
+
+and this is the backend 
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+	@Autowired
+	private UserService userService;
+
+	// User registration
+	@PostMapping("/register")
+	public User register(@Valid @RequestBody RegisterUserDto dto) {
+		return userService.registerUser(dto);
+	}
+
+	// Get Tasks
+	@GetMapping("/{userId}/tasks")
+	public List<Task> getTasks(@PathVariable Long userId) {
+		return userService.getTasks(userId);
+	}
+
+	// Get Performance
+	@GetMapping("/{userId}/performance")
+	public List<Performance> getPerformance(@PathVariable Long userId) {
+		return userService.getPerformance(userId);
+	}
+
+	// Get Stipend History
+	@GetMapping("/{userId}/stipends")
+	public List<Stipend> getStipends(@PathVariable Long userId) {
+		return userService.getStipendHistory(userId);
+	}
+
+	// Get Batch Details
+	@GetMapping("/batch/{batchCode}")
+	public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+		return userService.getBatchDetails(batchCode);
+	}
+
+	// Submit Feedback
+	@PostMapping("/feedback")
+	public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+		return userService.submitFeedback(dto);
+	}
+
+	// Get Attendance
+	@GetMapping("/{userId}/attendance")
+	public List<Attendance> getAttendance(@PathVariable Long userId) {
+		return userService.getAttendance(userId);
+	}
+
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Task;
+import java.util.List;
+
+public interface TaskDao {
+
+    Task save(Task task);
+
+    Task findById(Long id);
+
+    List<Task> findByUserId(Long userId);
+
+    List<Task> findByTrainerId(Long trainerId);
+
+    void update(Task task);
+
+    void delete(Long id);
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.Task;
+import com.finalproject.internMgmtSystem.repository.TaskDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class TaskDaoImpl implements TaskDao {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Task> mapper = (rs, rowNum) -> {
+        Task t = new Task();
+        t.setId(rs.getLong("id"));
+        t.setUserId(rs.getLong("user_id"));
+        t.setDescription(rs.getString("description"));
+        t.setTrainerId(rs.getLong("trainer_id"));
+        t.setStatus(rs.getString("status"));
+        t.setDeadline(rs.getDate("deadline"));
+        t.setUploadFile(rs.getString("upload_file"));
+        t.setCreatedAt(rs.getTimestamp("created_at"));
+        return t;
+    };
+
+    @Override
+    public Task save(Task task) {
+        String sql = """
+            INSERT INTO tasks (user_id, description, trainer_id, status, deadline, upload_file)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
+
+        jdbcTemplate.update(sql,
+                task.getUserId(),
+                task.getDescription(),
+                task.getTrainerId(),
+                task.getStatus(),
+                task.getDeadline(),
+                task.getUploadFile()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        task.setId(id);
+        return task;
+    }
+
+    @Override
+    public Task findById(Long id) {
+        List<Task> list = jdbcTemplate.query(
+                "SELECT * FROM tasks WHERE id = ?",
+                mapper,
+                id
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<Task> findByUserId(Long userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM tasks WHERE user_id = ? ORDER BY created_at DESC",
+                mapper,
+                userId
+        );
+    }
+
+    @Override
+    public List<Task> findByTrainerId(Long trainerId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM tasks WHERE trainer_id = ? ORDER BY created_at DESC",
+                mapper,
+                trainerId
+        );
+    }
+
+    @Override
+    public void update(Task task) {
+        String sql = """
+            UPDATE tasks SET description=?, status=?, deadline=?, upload_file=? WHERE id=?
+        """;
+
+        jdbcTemplate.update(sql,
+                task.getDescription(),
+                task.getStatus(),
+                task.getDeadline(),
+                task.getUploadFile(),
+                task.getId()
+        );
+    }
+
+    @Override
+    public void delete(Long id) {
+        jdbcTemplate.update("DELETE FROM tasks WHERE id = ?", id);
+    }
+}
+
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(authority)
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    // USER TOKEN
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // TRAINER TOKEN (Trainer Name + Trainer ID added)
+    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
+                .claim("trainerId", trainerId)
+                .claim("trainerName", trainerName)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }
