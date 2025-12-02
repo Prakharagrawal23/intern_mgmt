@@ -435,4 +435,146 @@ mysql> select * from stipend;
 |  3 |      13 | Rohit Sharma2  | 2025-11-25 00:14:34 | UPI           |       5.00 |
 |  4 |      14 | mayank agrawal | 2025-11-28 17:14:35 | UPI           | 1400000.00 |
 
+import React, { useEffect, useState } from "react";
+import { getUserStipends } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+
+export default function UserStipends() {
+  const userId = localStorage.getItem("userId");
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getUserStipends(userId).then(res => setData(res.data)).catch(console.error);
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>My Stipends</h3>
+        {data.length === 0 ? "No stipend records" :
+          <table className="table">
+            <thead><tr><th>Amount</th><th>Mode</th><th>Date</th></tr></thead>
+            <tbody>
+              {data.map(s => (
+                <tr key={s.stipendId}>
+                  <td>{s.amount}</td>
+                  <td>{s.paymentMode}</td>
+                  <td>{formatDate(s.date)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  );
+}
+export default function formatDate(raw) {
+  if (!raw) return "N/A";
+
+  try {
+    // If valid ISO date → format directly
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-IN");
+    }
+
+    // If backend sends dd-MM-yyyy format → manually convert
+    const parts = raw.split("-");
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      const fixed = new Date(`${year}-${month}-${day}`);
+      return fixed.toLocaleDateString("en-IN");
+    }
+  } catch {
+    return "Invalid Date";
+  }
+
+  return "Invalid Date";
+}
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId, // 🔥 IMPORTANT LINE
+      };
+    } catch (e) {
+      return { role: null, email: null, userId: null };
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId } = parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token payload");
+
+      login(token, role, email);
+
+      // 🔥 Store userId for all user requests
+      if (userId) localStorage.setItem("userId", userId);
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+
+        {err && <div className="error">{err}</div>}
+
+        <input
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        />
+        <input
+          placeholder="Password"
+          type="password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+        />
+
+        <button className="btn" type="submit">Login</button>
+
+        <div style={{ marginTop: 8 }}>
+          <a href="/user/register">Register as User</a>
+        </div>
+      </form>
+    </div>
+  );
+}
 
