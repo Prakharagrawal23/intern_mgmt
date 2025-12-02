@@ -1,134 +1,40 @@
 
 mysql> select * from performance;
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+--------------+
-| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+--------------+
-|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |       NULL | NULL         |
-|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |       NULL | NULL         |
-|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |       NULL | NULL         |
-|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |       NULL | NULL         |
-|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |       NULL | NULL         |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+--------------+
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
+|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
+|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
+|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
+|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
 5 rows in set (0.00 sec)
 
-mysql> select * from users;
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
-|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
-|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
-|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
-|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
-|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
-|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-7 rows in set (0.00 sec)
+mysql> UPDATE performance p
+    -> JOIN users u ON p.user_id = u.user_id
+    -> SET p.batch_code = u.batch_code
+    -> WHERE p.batch_code IS NULL;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
 
-mysql> select * from trainers;
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
-|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
-|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
-|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
-|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
-|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-6 rows in set (0.00 sec)
+mysql> UPDATE performance p
+    -> JOIN trainers t ON p.trainer_id = t.trainer_id
+    -> SET p.trainer_name = t.name
+    -> WHERE p.trainer_name IS NULL;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
 
-mysql> select * from intership_batches;
-ERROR 1146 (42S02): Table 'internmgmtsystem.intership_batches' doesn't exist
-mysql> select * from internship_batches;
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-| batch_code | batch_name               | course_name                | trainer_id | start_date | end_date   | total_seats | available_seats |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-|          1 | Java Batch Feb-2025      | Java Full Stack            |          1 | 2025-02-01 | 2025-04-01 |          30 |              26 |
-|          2 | Python ML Batch Feb-2025 | Python + Machine Learning  |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
-|          3 | Batch 1                  | Java Full Stack            |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
-|          4 | Batch 9                  | python Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
-|          5 | Batch 10                 | golang Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          10 |               4 |
-|          6 | Batch 11                 | Kubernetes Cloud Computing |          5 | 2025-11-28 | 2026-01-31 |          43 |              29 |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-6 rows in set (0.00 sec)
-
-mysql> describe traines;
-ERROR 1146 (42S02): Table 'internmgmtsystem.traines' doesn't exist
-mysql> describe trainers;
-+-------------+--------------+------+-----+-------------------+-------------------+
-| Field       | Type         | Null | Key | Default           | Extra             |
-+-------------+--------------+------+-----+-------------------+-------------------+
-| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
-| name        | varchar(255) | NO   |     | NULL              |                   |
-| email       | varchar(255) | NO   | UNI | NULL              |                   |
-| password    | varchar(255) | NO   |     | NULL              |                   |
-| contact     | varchar(20)  | YES  |     | NULL              |                   |
-| experience  | int          | YES  |     | NULL              |                   |
-| skills      | text         | YES  |     | NULL              |                   |
-| profile_pic | varchar(255) | YES  |     | NULL              |                   |
-| bio         | text         | YES  |     | NULL              |                   |
-| role        | varchar(50)  | NO   |     | TRAINER           |                   |
-| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-+-------------+--------------+------+-----+-------------------+-------------------+
-11 rows in set (0.01 sec)
-
-mysql> describe internship_batches;
-+-----------------+--------------+------+-----+---------+----------------+
-| Field           | Type         | Null | Key | Default | Extra          |
-+-----------------+--------------+------+-----+---------+----------------+
-| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
-| batch_name      | varchar(255) | NO   |     | NULL    |                |
-| course_name     | varchar(255) | NO   |     | NULL    |                |
-| trainer_id      | bigint       | NO   | MUL | NULL    |                |
-| start_date      | date         | NO   |     | NULL    |                |
-| end_date        | date         | NO   |     | NULL    |                |
-| total_seats     | int          | NO   |     | NULL    |                |
-| available_seats | int          | NO   |     | NULL    |                |
-+-----------------+--------------+------+-----+---------+----------------+
-8 rows in set (0.00 sec)
-
-mysql> describe user;
-ERROR 1146 (42S02): Table 'internmgmtsystem.user' doesn't exist
-mysql> describe users;
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| Field           | Type         | Null | Key | Default           | Extra             |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_name       | varchar(255) | NO   |     | NULL              |                   |
-| email           | varchar(255) | NO   | UNI | NULL              |                   |
-| password        | varchar(255) | NO   |     | NULL              |                   |
-| dob             | date         | YES  |     | NULL              |                   |
-| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
-| address         | varchar(255) | YES  |     | NULL              |                   |
-| college_name    | varchar(255) | YES  |     | NULL              |                   |
-| grade           | varchar(50)  | YES  |     | NULL              |                   |
-| major           | varchar(255) | YES  |     | NULL              |                   |
-| team            | varchar(255) | YES  |     | NULL              |                   |
-| start_date      | date         | YES  |     | NULL              |                   |
-| end_date        | date         | YES  |     | NULL              |                   |
-| graduating_year | int          | YES  |     | NULL              |                   |
-| resume          | varchar(255) | YES  |     | NULL              |                   |
-| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
-| role            | varchar(50)  | NO   |     | USER              |                   |
-| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-| batch_code      | bigint       | YES  | MUL | NULL              |                   |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-19 rows in set (0.01 sec)
-
-mysql> describe performance;
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-| Field                 | Type         | Null | Key | Default           | Extra             |
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-| id                    | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_id               | bigint       | NO   | MUL | NULL              |                   |
-| trainer_id            | bigint       | NO   | MUL | NULL              |                   |
-| remarks               | text         | YES  |     | NULL              |                   |
-| task_evaluation_score | int          | YES  |     | NULL              |                   |
-| created_at            | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-| batch_code            | bigint       | YES  |     | NULL              |                   |
-| trainer_name          | varchar(255) | YES  |     | NULL              |                   |
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-8 rows in set (0.00 sec)
+mysql> SELECT id, trainer_name, batch_code FROM performance;
++----+-------------------+------------+
+| id | trainer_name      | batch_code |
++----+-------------------+------------+
+|  1 | Ram Kumar         |          1 |
+|  2 | Amit Verma        |          2 |
+|  3 | prakhar           |          4 |
+|  4 | prakhar           |          4 |
+|  6 | prakhar agrawal 2 |          5 |
++----+-------------------+------------+
+5 rows in set (0.00 sec)
 
 mysql>
