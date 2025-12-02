@@ -1,14 +1,24 @@
-webpack compiled with 2 errors and 1 warning
-Compiling...
-Failed to compile.
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-Attempted import error: 'getTasksByTrainerId' is not exported from '../../api/trainerApi' (imported as 'getTasksByTrainerId').
-WARNING in [eslint] 
-src\pages\Trainer\TrainerViewTasks.jsx
-  Line 14:6:  React Hook useEffect has a missing dependency: 'fetchTasks'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+export default function TrainerDashboard() {
+  const items = [
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" }, // NEW
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/users", label: "Users in Batch" }
+  ];
 
-ERROR in ./src/pages/Trainer/TrainerViewTasks.jsx 20:4-23
-export 'getTasksByTrainerId' (imported as 'getTasksByTrainerId') was not found in '../../api/trainerApi' (possible exports: createTask, deleteTask, getTrainerBatches, getUsersByTrainerId, givePerformance, markAttendance, updateTask)
-
-webpack compiled with 1 error and 1 warning
-
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Trainer Dashboard</h2>
+      </div>
+    </div>
+  );
+}
