@@ -1,14 +1,191 @@
-not available
-﻿
-react-dom-client.development.js:28003 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-:9090/api/user/batch/undefined:1 
- 
- Failed to load resource: the server responded with a status of 500 ()
-UserPerformance.jsx:18 
- Batch details fetch failed: 
-AxiosError
-
-
 📊 My Performance
 Trainer	Batch	Score	Remarks	Date
 N/A	N/A	5	good work	02 Dec 2025, 07:34 pm
+
+
+import React, { useEffect, useState } from "react";
+import { getUserPerformance, getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import formatDate from "../../utils/formatDate";
+import "../../styles/performance.css"; // 🔥 Add styling
+
+export default function UserPerformance() {
+  const userId = localStorage.getItem("userId");
+  const [perf, setPerf] = useState([]);
+  const [batchDetails, setBatchDetails] = useState(null);
+
+  const fetchBatchDetails = async (batchCode) => {
+    try {
+      const res = await getBatchDetails(batchCode);
+      setBatchDetails(res.data);
+    } catch (err) {
+      console.error("Batch details fetch failed:", err);
+      setBatchDetails(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId) return;
+
+    getUserPerformance(userId)
+      .then((res) => setPerf(res.data))
+      .catch((err) => {
+        console.error("Performance Fetch Error:", err);
+      });
+  }, [userId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h2 className="title">📊 My Performance</h2>
+
+        {perf.length === 0 ? (
+          <p className="no-data">No performance records yet.</p>
+        ) : (
+          <table className="table performance-table">
+            <thead>
+              <tr>
+                <th>Trainer</th>
+                <th>Batch</th>
+                <th>Score</th>
+                <th>Remarks</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {perf.map((p) => (
+                <tr
+                  key={p.id}
+                  onClick={() => fetchBatchDetails(p.batchCode)}
+                  className="click-row"
+                >
+                  <td>{p.trainerName || "N/A"}</td>
+                  <td>{p.batchCode || "N/A"}</td>
+                  <td>
+                    <span
+                      className={`score-badge ${
+                        p.taskEvaluationScore >= 80
+                          ? "score-high"
+                          : p.taskEvaluationScore >= 50
+                          ? "score-medium"
+                          : "score-low"
+                      }`}
+                    >
+                      {p.taskEvaluationScore}
+                    </span>
+                  </td>
+                  <td>{p.remarks}</td>
+                  <td>{formatDate(p.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {batchDetails && (
+          <div className="batch-card">
+            <h3>Batch Details</h3>
+            <p><strong>Batch Name:</strong> {batchDetails.batchName}</p>
+            <p><strong>Course:</strong> {batchDetails.courseName}</p>
+            <p><strong>Trainer ID:</strong> {batchDetails.trainerId}</p>
+            <p><strong>Start:</strong> {formatDate(batchDetails.startDate)}</p>
+            <p><strong>End:</strong> {formatDate(batchDetails.endDate)}</p>
+
+            <button className="btn-close" onClick={() => setBatchDetails(null)}>
+              Close
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
+import React, { useState } from "react";
+import { givePerformance } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function GivePerformance() {
+  const [form, setForm] = useState({ userId: "", trainerId: "", remarks: "", taskEvaluationScore: 0 });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await givePerformance({ ...form, userId: Number(form.userId), trainerId: Number(form.trainerId), taskEvaluationScore: Number(form.taskEvaluationScore) });
+      setMsg("Performance saved");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Give Performance</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
+          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
+          <textarea placeholder="Remarks" value={form.remarks} onChange={e=>setForm({...form,remarks:e.target.value})}></textarea>
+          <input placeholder="Score" value={form.taskEvaluationScore} onChange={e=>setForm({...form,taskEvaluationScore:e.target.value})} />
+          <button className="btn" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+the backend is 
+
+
+mysql> select * from performance;
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
+|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
+|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
+|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
+|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> UPDATE performance p
+    -> JOIN users u ON p.user_id = u.user_id
+    -> SET p.batch_code = u.batch_code
+    -> WHERE p.batch_code IS NULL;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> UPDATE performance p
+    -> JOIN trainers t ON p.trainer_id = t.trainer_id
+    -> SET p.trainer_name = t.name
+    -> WHERE p.trainer_name IS NULL;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+mysql> SELECT id, trainer_name, batch_code FROM performance;
++----+-------------------+------------+
+| id | trainer_name      | batch_code |
++----+-------------------+------------+
+|  1 | Ram Kumar         |          1 |
+|  2 | Amit Verma        |          2 |
+|  3 | prakhar           |          4 |
+|  4 | prakhar           |          4 |
+|  6 | prakhar agrawal 2 |          5 |
++----+-------------------+------------+
+5 rows in set (0.00 sec)
+
+mysql>
+
+
+so where is the problem 
