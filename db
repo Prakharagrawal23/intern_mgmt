@@ -1,138 +1,138 @@
-import React, { useState, useEffect } from "react";
-import { registerUser, getAllBatchesPublic } from "../../api/userApi";
-import formatError from "../../utils/formatError";
-import "../../styles/registerUser.css"; // make sure this exists
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
-export default function RegisterUser() {
-  const [msg, setMsg] = useState("");
-  const [batches, setBatches] = useState([]);
-
-  const [form, setForm] = useState({
-    userName: "",
-    email: "",
-    password: "",
-    dob: "",
-    contactNo: "",
-    address: "",
-    collegeName: "",
-    grade: "",
-    major: "",
-    team: "",
-    batchCode: "",
-    startDate: "",
-    endDate: "",
-    graduatingYear: "",
-    resume: "",
-    profilePic: "",
-  });
-
-  useEffect(() => {
-    loadBatches();
-  }, []);
-
-  const loadBatches = async () => {
-    try {
-      const res = await getAllBatchesPublic();
-      setBatches(res.data);
-    } catch (err) {
-      console.error("Failed to load batches:", err);
-    }
-  };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleBatchSelect = (e) => {
-    const val = Number(e.target.value);
-    const selected = batches.find((b) => b.batchCode === val);
-
-    if (!selected) return;
-
-    setForm({
-      ...form,
-      batchCode: selected.batchCode,
-      startDate: selected.startDate?.slice(0, 10),
-      endDate: selected.endDate?.slice(0, 10),
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await registerUser(form);
-      setMsg("🎉 User Registered Successfully!");
-      setTimeout(() => setMsg(""), 2500);
-    } catch (err) {
-      setMsg(formatError(err));
-    }
-  };
-
+export default function AdminDashboard() {
+  const items = [
+    { to: "/admin/create-trainer", label: "Create Trainer" },
+    { to: "/admin/view-trainers", label: "View Trainers" },
+    { to: "/admin/create-batch", label: "Create Batch" },
+    { to: "/admin/view-batches", label: "View Batches" },
+    { to: "/admin/give-stipend", label: "Give Stipend" },
+    { to: "/admin/view-users", label: "View Users" },
+  ];
   return (
-    <div className="container register-container">
-      <h2>User Registration</h2>
-      {msg && <p className="alert-msg">{msg}</p>}
-
-      <form onSubmit={handleSubmit} className="register-form">
-
-        <input required name="userName" placeholder="Full Name" onChange={handleChange} />
-
-        <input required name="email" placeholder="Email" onChange={handleChange} />
-
-        <input required name="password" type="password" placeholder="Password" onChange={handleChange} />
-
-        <input required name="dob" type="date" onChange={handleChange} />
-
-        <input required name="contactNo" placeholder="Contact No" onChange={handleChange} />
-
-        <input required name="address" placeholder="Address" onChange={handleChange} />
-
-        <input required name="collegeName" placeholder="College Name" onChange={handleChange} />
-
-        <input name="grade" placeholder="Grade" onChange={handleChange} />
-
-        <input name="major" placeholder="Major" onChange={handleChange} />
-
-        <input name="team" placeholder="Team" onChange={handleChange} />
-
-        {/* Batch Dropdown */}
-        <select
-          name="batchCode"
-          value={form.batchCode || ""}
-          onChange={handleBatchSelect}
-          required
-        >
-          <option value="">Select Batch</option>
-          {batches.map((b) => (
-            <option
-              key={b.batchCode}
-              value={b.batchCode}
-              disabled={b.availableSeats <= 0}
-            >
-              {b.batchName} — {b.courseName} | Trainer: {b.trainerName || "N/A"} | Seats: {b.availableSeats}
-            </option>
-          ))}
-        </select>
-
-        {/* Auto-filled Dates */}
-        <input name="startDate" type="date" value={form.startDate || ""} readOnly />
-        <input name="endDate" type="date" value={form.endDate || ""} readOnly />
-
-        <input name="graduatingYear" placeholder="Graduation Year" onChange={handleChange} />
-        <input name="resume" placeholder="Resume URL" onChange={handleChange} />
-        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
-
-        <button className="btn register-btn">Register</button>
-      </form>
-
-      {form.batchCode && (
-        <div className="batch-preview">
-          <h4>Batch Details</h4>
-          <p><strong>Batch:</strong> {form.batchCode}</p>
-          <p><strong>Start:</strong> {form.startDate}</p>
-          <p><strong>End:</strong> {form.endDate}</p>
-        </div>
-      )}
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Admin Dashboard</h2>
+        <p>Use sidebar to navigate admin features.</p>
+      </div>
     </div>
   );
 }
+
+
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function TrainerDashboard() {
+  const items = [
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" }, // 🔥 ADDED
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Trainer Dashboard</h2>
+      </div>
+    </div>
+  );
+}
+
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function UserDashboard() {
+ const items = [
+  { to: "/user/tasks", label: "My Tasks" },
+  { to: "/user/performance", label: "My Performance" },
+  { to: "/user/stipends", label: "My Stipends" },
+  { to: "/user/attendance", label: "My Attendance" },
+  { to: "/user/feedback", label: "Give Feedback" },
+];
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Welcome, User</h2>
+        <p>Use the sidebar to navigate.</p>
+      </div>
+    </div>
+  );
+}
+
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background: rgba(5, 10, 20, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    z-index: 100;
+}
+
+.nav-left {
+    font-weight: 700;
+    color: white;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar {
+    width: 220px;
+    padding-top: 70px;
+    background: rgba(2, 6, 23, 0.6);
+    min-height: 100vh;
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-link {
+    display: block;
+    padding: 12px 16px;
+    color: #bcd6ff;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-left-color: var(--accent2);
+    color: #fff;
+}
+
+.main {
+    margin-left: 220px;
+    padding: 80px 28px;
+    width: 100%;
+}
+
+
+
+v
