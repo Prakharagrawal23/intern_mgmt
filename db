@@ -1,382 +1,453 @@
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-
-export default function Navbar() {
-  const { logout, role, email } = useContext(AuthContext);
-  const nav = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    nav("/");
-  };
-
-  return (
-    <div className="nav">
-      <div className="nav-left">InternshipMgmt</div>
-      <div className="nav-right">
-        <span style={{ marginRight: 12 }}>{email}</span>
-        <button onClick={handleLogout} className="btn small">Logout</button>
-      </div>
-    </div>
-  );
-}
-
-import { Navigate, Outlet } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-
-export default function ProtectedRoute({ role }) {
-  const { token, role: userRole } = useContext(AuthContext);
-
-  if (!token) return <Navigate to="/" replace />;
-  if (role !== userRole) return <Navigate to="/" replace />;
-
-  return <Outlet />;
-}
-
-import React from "react";
-import { Link } from "react-router-dom";
-
-export default function Sidebar({ items = [] }) {
-  return (
-    <div className="sidebar">
-      {items.map((it) => (
-        <Link key={it.to} to={it.to} className="sidebar-link">
-          {it.label}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-
 import React, { useState, useEffect } from "react";
 import "../styles/theme.css";
 
 export default function ThemeToggle() {
   const [darkMode, setDarkMode] = useState(false);
 
+  // Initialize from localStorage or system preference
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark-mode");
+    const saved = localStorage.getItem("dark-mode");
+    if (saved !== null) {
+      setDarkMode(saved === "true");
     } else {
-      document.body.classList.remove("dark-mode");
+      const prefersDark = window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setDarkMode(prefersDark);
     }
+  }, []);
+
+  // Apply class to body and persist
+  useEffect(() => {
+    const body = document.body;
+    if (darkMode) {
+      body.classList.add("dark-mode");
+    } else {
+      body.classList.remove("dark-mode");
+    }
+    localStorage.setItem("dark-mode", String(darkMode));
   }, [darkMode]);
 
   return (
-    <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+    <button
+      className="theme-toggle"
+      aria-label="Toggle theme"
+      onClick={() => setDarkMode(!darkMode)}
+      title={darkMode ? "Switch to light" : "Switch to dark"}
+    >
       {darkMode ? "🌞" : "🌙"}
-    </div>
+    </button>
   );
+}
+
+
+/* Global theme variables and toggle button styles */
+
+/* Light (Cream) Theme — default on :root */
+:root {
+  --cream-100: #f7efe5;
+  --cream-200: #faf3ea;
+  --cream-300: #efe3d6;
+
+  --ink-900: #263238;
+  --ink-700: #455a64;
+  --ink-500: #6b7f85;
+
+  --teal-600: #035c67;
+  --teal-700: #02474f;
+  --teal-500: #0f7680;
+
+  --white: #ffffff;
+  --border-cream: #e9e2d9;
+  --card-border: #efe5da;
+
+  --shadow-lg: 0 16px 38px rgba(0,0,0,0.16);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.12);
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.12);
+
+  --bg-page: radial-gradient(1000px 500px at 10% 0%, #fff 0%, var(--cream-100) 40%, var(--cream-300) 100%);
+  --bg-navbar: linear-gradient(180deg, var(--white) 0%, #fffdf8 100%);
+  --bg-hero-overlay: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.6) 100%);
+  --bg-hero-base: radial-gradient(900px 500px at 100% 0%, #fff 0%, var(--cream-200) 50%, var(--cream-300) 100%);
+  --bg-card: linear-gradient(180deg, #fff 0%, #fffaf2 100%);
+  --bg-footer: linear-gradient(180deg, #fffaf2 0%, #f6ede3 100%);
+
+  --btn-register-bg: linear-gradient(135deg, #ffdfb3 0%, #ffe9cf 50%, #fff4e3 100%);
+  --btn-register-border: #efd9c3;
+  --btn-register-text: var(--teal-700);
+
+  --btn-primary-bg: linear-gradient(135deg, #ffd7a8 0%, #ffe9c9 35%, #fff4df 100%);
+  --btn-primary-border: #f0dcc6;
+  --btn-primary-text: var(--ink-900);
+
+  --course-card-title: var(--teal-700);
+}
+
+/* Dark Mode — overrides via body.dark-mode */
+body.dark-mode {
+  --cream-100: #14181b;
+  --cream-200: #171c20;
+  --cream-300: #1b2126;
+
+  --ink-900: #e6eef2;
+  --ink-700: #cbd6dc;
+  --ink-500: #a9b7bf;
+
+  --teal-600: #5dd2df;
+  --teal-700: #3fbfcc;
+  --teal-500: #79deea;
+
+  --white: #0f1316;
+  --border-cream: #26313a;
+  --card-border: #2a3440;
+
+  --shadow-lg: 0 16px 38px rgba(0,0,0,0.4);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.35);
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+
+  --bg-page: radial-gradient(1000px 500px at 10% 0%, #0f1316 0%, var(--cream-100) 40%, var(--cream-300) 100%);
+  --bg-navbar: linear-gradient(180deg, #12171b 0%, #101417 100%);
+  --bg-hero-overlay: linear-gradient(180deg, rgba(16,20,23,0.85) 0%, rgba(16,20,23,0.8) 100%);
+  --bg-hero-base: radial-gradient(900px 500px at 100% 0%, #11161a 0%, var(--cream-200) 50%, var(--cream-300) 100%);
+  --bg-card: linear-gradient(180deg, #12171b 0%, #0f1316 100%);
+  --bg-footer: linear-gradient(180deg, #12171b 0%, #0f1316 100%);
+
+  --btn-register-bg: linear-gradient(135deg, #244a51 0%, #1e3e44 50%, #183238 100%);
+  --btn-register-border: #1d2c31;
+  --btn-register-text: #cde7ea;
+
+  --btn-primary-bg: linear-gradient(135deg, #284e55 0%, #1f3f45 35%, #19343a 100%);
+  --btn-primary-border: #20343a;
+  --btn-primary-text: #e6eef2;
+
+  --course-card-title: #d7f2f6;
+}
+
+/* Toggle button styling */
+.theme-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 110;
+  border: 1px solid var(--border-cream);
+  background: var(--bg-card);
+  color: var(--ink-900);
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  filter: saturate(1.08);
 }
 
 
 import React from "react";
 import { Link } from "react-router-dom";
 import "../../styles/home.css";
-import image1 from "../../image/image1.jpg"; 
+import logo from "../../image/logo.png";
+
+// Course Images (ensure they exist in src/image/)
+import devops from "../../image/devops.png";
+import ml from "../../image/ml.png";
+import javaimg from "../../image/java.avif";
+import ds from "../../image/datascience.png";
+import ai from "../../image/ai.png";
+import frontend from "../../image/frontend.png";
+import cloud from "../../image/cloud.jpeg";
+import testing from "../../image/testing.jpeg";
+import cybersecurity from "../../image/cybersecurity.jpg";
+import blockchain from "../../image/blockchain.jpg";
 
 export default function Home() {
+  const programs = [
+    { img: devops, title: "DevOps Engineering" },
+    { img: ml, title: "Machine Learning" },
+    { img: javaimg, title: "Java Backend Development" },
+    { img: ds, title: "Data Science" },
+    { img: ai, title: "Artificial Intelligence" },
+    { img: frontend, title: "Frontend Development" },
+    { img: cloud, title: "Cloud Computing" },
+    { img: testing, title: "Software Testing" },
+    { img: cybersecurity, title: "Cyber Security" },
+    { img: blockchain, title: "Blockchain Development" },
+  ];
+
+  // Duplicate the list for seamless infinite scrolling
+  const extendedPrograms = [...programs, ...programs];
+
   return (
-    <div className="home">
+    <div className="home-container">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">Intern Management System</div>
+      <nav className="navbar-new" aria-label="Primary">
+        <div className="nav-logo">
+          <img src={logo} alt="Intern Connect logo" />
+          <span>Intern Connect</span>
+        </div>
         <div className="nav-links">
-          <Link to="/login">Login</Link>
-          <Link to="/user/register">Register</Link>
+          <Link to="/login" className="sign-in" aria-label="Sign in">
+            Sign In
+          </Link>
+          <Link to="/user/register" className="register-btn" aria-label="Register">
+            Register
+          </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-text">
-          <h1 className="animate-text">Welcome to Intern Management System</h1>
+      <section className="hero-section">
+        <div className="hero-left">
+          <h1>
+            Manage Internships
+            <br />
+            Seamlessly
+          </h1>
           <p>
-            A centralized platform to manage interns, trainers, and administrators seamlessly.
-            Track tasks, performance, batches, and feedback all in one place.
+            A complete platform where trainers, interns, and admins collaborate
+            efficiently. Bring structure, clarity, and professionalism to your
+            internship programs.
           </p>
-          <div className="hero-buttons">
-            <Link to="/login" className="btn">Get Started</Link>
-            <Link to="/user/register" className="btn-outline">Join Now</Link>
-          </div>
+          <Link to="/user/register" className="btn-register" aria-label="Get started">
+            Get Started
+          </Link>
         </div>
-        <div className="hero-image">
-          {/* ✅ Use your imported image */}
-          <img src={image1} alt="Intern Management" />
+
+        <div className="hero-right" aria-hidden="true">
+          <i className="fa-solid fa-gears gear-icon"></i>
         </div>
       </section>
+
+      {/* Popular Programs */}
+      <h2 className="section-title">Popular Training Programs</h2>
+
+      {/* Auto-scrolling horizontal carousel */}
+      <div className="course-scroll">
+        <div className="course-track">
+          {extendedPrograms.map((p, i) => (
+            <div className="course-card" key={`${p.title}-${i}`}>
+              <div className="course-img-wrap">
+                <img src={p.img} alt={p.title} />
+              </div>
+              <h4>{p.title}</h4>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer Section */}
+      <footer className="footer">
+        <div>
+          <h3>About Intern Connect</h3>
+          <p>
+            Simplifying communication, task assignment, and performance tracking.
+            Connecting interns, trainers, and admins effortlessly.
+          </p>
+        </div>
+
+        <div>
+          <h3>Support</h3>
+          <p>Help Center</p>
+          <p>Documentation</p>
+          <p>FAQs</p>
+        </div>
+
+        <div>
+          <h3>Contact Us</h3>
+          <p>Email: support@internconnect.com</p>
+          <p>Phone: +91 98768 43210</p>
+          <p>Hyderabad, Telangana, India</p>
+        </div>
+      </footer>
+
+      <div className="copyright">
+        © 2025 Intern Connect. All rights reserved.
+      </div>
     </div>
   );
 }
 
 
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 
-// Pages
-import Home from "./pages/Home/Home";
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
+/* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-// Admin
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";  // 🔥 NEW
-
-// User
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-import UserStipends from "./pages/User/UserStipends";
-import UserAttendance from "./pages/User/UserAttendance";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <ThemeToggle />
-
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin Panel */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer Panel */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-            <Route path="/trainer/tasks" element={<TrainerViewTasks />} /> {/* 🔥 NEW */}
-          </Route>
-
-          {/* User Panel */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-            <Route path="/user/stipends" element={<UserStipends />} />
-            <Route path="/user/attendance" element={<UserAttendance />} />
-          </Route>
-
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
+html, body, .home-container {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  color: var(--ink-700);
+  background: var(--bg-page);
 }
 
-
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 40px;
-  background: #0078d7;
-  color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.logo {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.nav-links a {
-  margin-left: 20px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: #ffdd57;
-}
-
-/* Hero Section */
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 60px 80px;
-  background: linear-gradient(to right, #f9f9f9, #eef3f8);
-  min-height: calc(100vh - 70px);
-}
-
-.hero-text {
-  max-width: 50%;
-}
-
-.hero-text h1 {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.hero-text p {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 30px;
-  line-height: 1.6;
-}
-
-/* Buttons */
-.btn {
-  background: #0078d7;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.3s ease;
-}
-
-.btn:hover {
-  background: #005fa3;
-}
-
-.btn-outline {
-  margin-left: 15px;
-  border: 2px solid #0078d7;
-  color: #0078d7;
-  padding: 10px 22px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-outline:hover {
-  background: #0078d7;
-  color: #fff;
-}
-
-/* Hero Image */
-.hero-image img {
-  width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  animation: float 4s ease-in-out infinite;
-}
-
-/* Animation */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-text {
-  animation: fadeIn 2s ease-in-out;
-}
-
+/* Subtle page fade-in */
+.home-container { animation: fadeIn 600ms ease-out both; }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .hero-text {
-    max-width: 100%;
-  }
-  .hero-image {
-    margin-top: 30px;
-  }
-}
-
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Navbar */
+.navbar-new {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 16px 40px;
+  background: var(--bg-navbar);
+  border-bottom: 1px solid var(--border-cream);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: saturate(1.2) blur(6px);
 }
 
-.App-link {
-  color: #61dafb;
+.nav-logo { display: flex; align-items: center; gap: 12px; }
+.nav-logo img { width: 40px; height: 40px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+.nav-logo span { font-size: 22px; font-weight: 700; color: var(--teal-600); letter-spacing: 0.3px; }
+
+.nav-links { display: flex; align-items: center; gap: 12px; }
+
+.sign-in {
+  background: transparent;
+  color: var(--teal-600);
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border-cream);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 220ms ease;
+}
+.sign-in:hover { background: #fffaf205; transform: translateY(-1px); }
+
+/* Elevated Register button (no glow span) */
+.register-btn {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  border: 1px solid var(--btn-primary-border);
+}
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  filter: saturate(1.06);
+}
+.register-btn:active { transform: translateY(0); }
+
+/* Hero Section */
+.hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 80px 60px;
+  color: var(--ink-900);
+  min-height: 380px;
+  background:
+    var(--bg-hero-overlay),
+    var(--bg-hero-base);
+  border-bottom: 1px solid var(--border-cream);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hero-left { max-width: 54%; }
+.hero-left h1 {
+  font-size: 48px; line-height: 1.1; margin-bottom: 18px;
+  letter-spacing: 0.2px; color: var(--ink-900);
+}
+.hero-left p { font-size: 18px; opacity: 0.9; margin-bottom: 28px; color: var(--ink-700); }
+
+/* CTA button in hero */
+.btn-register {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--btn-register-bg);
+  color: var(--btn-register-text);
+  padding: 12px 26px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--btn-register-border);
+  box-shadow: var(--shadow-md);
+  transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+}
+.btn-register::after { content: "→"; font-weight: 700; transition: transform 220ms ease; }
+.btn-register:hover::after { transform: translateX(4px); }
+.btn-register:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); filter: saturate(1.06); }
+
+/* Hero right gear animation */
+.hero-right { display: flex; justify-content: center; align-items: center; min-width: 280px; }
+.gear-icon {
+  font-size: 120px; color: var(--teal-600);
+  filter: drop-shadow(0 6px 14px rgba(3,92,103,0.2));
+  animation: gearSpin 10s linear infinite;
+}
+@keyframes gearSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Section title */
+.section-title { text-align: center; font-size: 28px; margin: 35px 0 20px; color: var(--ink-900); }
+
+/* Course Scroll (infinite auto-scroll) */
+.course-scroll { overflow: hidden; padding: 24px 0; position: relative; }
+.course-track {
+  display: flex; gap: 20px; width: max-content;
+  animation: marquee 28s linear infinite;
+  will-change: transform; padding: 10px 20px;
+}
+/* Pause on hover */
+.course-scroll:hover .course-track { animation-play-state: paused; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); } /* duplicated items enable seamless loop */
+}
+
+.course-card {
+  min-width: 240px; background: var(--bg-card);
+  border-radius: 16px; box-shadow: var(--shadow-md);
+  padding: 16px; text-align: center; cursor: pointer;
+  transition: transform 260ms ease, box-shadow 260ms ease, filter 260ms ease;
+  border: 1px solid var(--card-border);
+}
+.course-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-lg); filter: saturate(1.1); }
+
+.course-img-wrap {
+  width: 100%; height: 140px; border-radius: 12px;
+  overflow: hidden; margin-bottom: 12px; background: #fff0;
+}
+.course-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 300ms ease; }
+.course-card:hover img { transform: scale(1.04); }
+
+.course-card h4 { font-size: 18px; color: var(--course-card-title); }
+
+/* Footer */
+.footer {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; padding: 44px 60px;
+  background: var(--bg-footer);
+  color: var(--ink-900); text-align: left;
+  border-top: 1px solid var(--border-cream);
+}
+.footer h3 { margin-bottom: 12px; font-size: 18px; color: var(--teal-700); }
+.footer p { opacity: 0.88; margin-bottom: 6px; transition: opacity 160ms ease, transform 160ms ease; }
+.footer p:hover { opacity: 1; transform: translateX(2px); }
+
+.copyright { text-align: center; padding: 12px 60px 24px; color: var(--ink-500); font-size: 14px; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .hero-section { padding: 64px 32px; }
+  .hero-left { max-width: 60%; }
+}
+@media (max-width: 768px) {
+  .navbar-new { padding: 14px 20px; }
+  .hero-section { flex-direction: column; text-align: center; padding: 56px 24px; }
+  .hero-left { max-width: 100%; }
+  .hero-right { min-width: 0; }
+  .footer { grid-template-columns: 1fr; padding: 36px 24px; }
 }
