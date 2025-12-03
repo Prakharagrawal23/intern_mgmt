@@ -1,78 +1,382 @@
-import React, { useEffect, useState } from "react";
-import { getUsers, deleteUserByEmail } from "../../api/adminApi";
-import formatError from "../../utils/formatError";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
-export default function ViewUsers() {
-  const [list, setList] = useState([]);
-  const [msg, setMsg] = useState("");
+export default function Navbar() {
+  const { logout, role, email } = useContext(AuthContext);
+  const nav = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const res = await getUsers();
-      setList(res.data);
-    } catch (e) {
-      setMsg(formatError(e));
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleDelete = async (email) => {
-    try {
-      await deleteUserByEmail(email);
-      setMsg("User deleted: " + email);
-      fetchData();
-    } catch (e) {
-      setMsg(formatError(e));
-    }
+  const handleLogout = () => {
+    logout();
+    nav("/");
   };
 
   return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>All Users</h3>
-        {msg && <div className="info">{msg}</div>}
-
-        <table className="table">
-          <thead>
-            <tr>
-              <th>User ID</th> {/* 👈 Added */}
-              <th>UserName</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th>BatchCode</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {list.map((u) => (
-              <tr key={u.userId}>
-                <td>{u.userId}</td>  {/* 👈 Added */}
-                <td>{u.userName}</td>
-                <td>{u.email}</td>
-                <td>{u.contactNo}</td>
-                <td>{u.batchCode}</td>
-                <td>
-                  <button
-                    onClick={() => handleDelete(u.email)}
-                    className="btn small"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
+    <div className="nav">
+      <div className="nav-left">InternshipMgmt</div>
+      <div className="nav-right">
+        <span style={{ marginRight: 12 }}>{email}</span>
+        <button onClick={handleLogout} className="btn small">Logout</button>
       </div>
     </div>
   );
+}
+
+import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+export default function ProtectedRoute({ role }) {
+  const { token, role: userRole } = useContext(AuthContext);
+
+  if (!token) return <Navigate to="/" replace />;
+  if (role !== userRole) return <Navigate to="/" replace />;
+
+  return <Outlet />;
+}
+
+import React from "react";
+import { Link } from "react-router-dom";
+
+export default function Sidebar({ items = [] }) {
+  return (
+    <div className="sidebar">
+      {items.map((it) => (
+        <Link key={it.to} to={it.to} className="sidebar-link">
+          {it.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import "../styles/theme.css";
+
+export default function ThemeToggle() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
+
+  return (
+    <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
+      {darkMode ? "🌞" : "🌙"}
+    </div>
+  );
+}
+
+
+import React from "react";
+import { Link } from "react-router-dom";
+import "../../styles/home.css";
+import image1 from "../../image/image1.jpg"; 
+
+export default function Home() {
+  return (
+    <div className="home">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="logo">Intern Management System</div>
+        <div className="nav-links">
+          <Link to="/login">Login</Link>
+          <Link to="/user/register">Register</Link>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-text">
+          <h1 className="animate-text">Welcome to Intern Management System</h1>
+          <p>
+            A centralized platform to manage interns, trainers, and administrators seamlessly.
+            Track tasks, performance, batches, and feedback all in one place.
+          </p>
+          <div className="hero-buttons">
+            <Link to="/login" className="btn">Get Started</Link>
+            <Link to="/user/register" className="btn-outline">Join Now</Link>
+          </div>
+        </div>
+        <div className="hero-image">
+          {/* ✅ Use your imported image */}
+          <img src={image1} alt="Intern Management" />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
+import ProtectedRoute from "./components/protectedRoute";
+import ThemeToggle from "./components/ThemeToggle";
+
+// Pages
+import Home from "./pages/Home/Home";
+import Login from "./pages/Auth/Login";
+import RegisterUser from "./pages/User/RegisterUser";
+
+// Admin
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import CreateTrainer from "./pages/Admin/CreateTrainer";
+import ViewTrainers from "./pages/Admin/ViewTrainers";
+import CreateBatch from "./pages/Admin/CreateBatch";
+import ViewBatches from "./pages/Admin/ViewBatches";
+import GiveStipend from "./pages/Admin/GiveStipend";
+import ViewUsers from "./pages/Admin/ViewUsers";
+
+// Trainer
+import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
+import TrainerBatches from "./pages/Trainer/TrainerBatches";
+import CreateTask from "./pages/Trainer/CreateTask";
+import UpdateTask from "./pages/Trainer/UpdateTask";
+import MarkAttendance from "./pages/Trainer/MarkAttendance";
+import GivePerformance from "./pages/Trainer/GivePerformance";
+import UsersInBatch from "./pages/Trainer/UsersInBatch";
+import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";  // 🔥 NEW
+
+// User
+import UserDashboard from "./pages/User/UserDashboard";
+import UserTasks from "./pages/User/UserTasks";
+import UserPerformance from "./pages/User/UserPerformance";
+import BatchDetails from "./pages/User/BatchDetails";
+import FeedbackForm from "./pages/User/FeedbackForm";
+import UserStipends from "./pages/User/UserStipends";
+import UserAttendance from "./pages/User/UserAttendance";
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <ThemeToggle />
+
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/user/register" element={<RegisterUser />} />
+
+          {/* Admin Panel */}
+          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
+            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
+            <Route path="/admin/create-batch" element={<CreateBatch />} />
+            <Route path="/admin/view-batches" element={<ViewBatches />} />
+            <Route path="/admin/give-stipend" element={<GiveStipend />} />
+            <Route path="/admin/view-users" element={<ViewUsers />} />
+          </Route>
+
+          {/* Trainer Panel */}
+          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
+            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
+            <Route path="/trainer/batches" element={<TrainerBatches />} />
+            <Route path="/trainer/create-task" element={<CreateTask />} />
+            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
+            <Route path="/trainer/attendance" element={<MarkAttendance />} />
+            <Route path="/trainer/performance" element={<GivePerformance />} />
+            <Route path="/trainer/users" element={<UsersInBatch />} />
+            <Route path="/trainer/tasks" element={<TrainerViewTasks />} /> {/* 🔥 NEW */}
+          </Route>
+
+          {/* User Panel */}
+          <Route element={<ProtectedRoute role="ROLE_USER" />}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/user/tasks" element={<UserTasks />} />
+            <Route path="/user/performance" element={<UserPerformance />} />
+            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
+            <Route path="/user/feedback" element={<FeedbackForm />} />
+            <Route path="/user/stipends" element={<UserStipends />} />
+            <Route path="/user/attendance" element={<UserAttendance />} />
+          </Route>
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: #0078d7;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nav-links a {
+  margin-left: 20px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ffdd57;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 80px;
+  background: linear-gradient(to right, #f9f9f9, #eef3f8);
+  min-height: calc(100vh - 70px);
+}
+
+.hero-text {
+  max-width: 50%;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.hero-text p {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.btn {
+  background: #0078d7;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #005fa3;
+}
+
+.btn-outline {
+  margin-left: 15px;
+  border: 2px solid #0078d7;
+  color: #0078d7;
+  padding: 10px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: #0078d7;
+  color: #fff;
+}
+
+/* Hero Image */
+.hero-image img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-text {
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .hero-text {
+    max-width: 100%;
+  }
+  .hero-image {
+    margin-top: 30px;
+  }
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
