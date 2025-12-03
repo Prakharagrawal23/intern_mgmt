@@ -1,260 +1,138 @@
 import React, { useState, useEffect } from "react";
-import "../styles/theme.css";
+import { registerUser, getAllBatchesPublic } from "../../api/userApi";
+import formatError from "../../utils/formatError";
+import "../../styles/registerUser.css"; // make sure this exists
 
-export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
+export default function RegisterUser() {
+  const [msg, setMsg] = useState("");
+  const [batches, setBatches] = useState([]);
 
-  // Initialize from localStorage or system preference
+  const [form, setForm] = useState({
+    userName: "",
+    email: "",
+    password: "",
+    dob: "",
+    contactNo: "",
+    address: "",
+    collegeName: "",
+    grade: "",
+    major: "",
+    team: "",
+    batchCode: "",
+    startDate: "",
+    endDate: "",
+    graduatingYear: "",
+    resume: "",
+    profilePic: "",
+  });
+
   useEffect(() => {
-    const saved = localStorage.getItem("dark-mode");
-    if (saved !== null) {
-      setDarkMode(saved === "true");
-    } else {
-      const prefersDark = window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setDarkMode(prefersDark);
-    }
+    loadBatches();
   }, []);
 
-  // Apply class to body and persist
-  useEffect(() => {
-    const body = document.body;
-    if (darkMode) {
-      body.classList.add("dark-mode");
-    } else {
-      body.classList.remove("dark-mode");
-    }
-    localStorage.setItem("dark-mode", String(darkMode));
-  }, [darkMode]);
-
-  return (
-    <button
-      className="theme-toggle"
-      aria-label="Toggle theme"
-      onClick={() => setDarkMode(!darkMode)}
-      title={darkMode ? "Switch to light" : "Switch to dark"}
-    >
-      {darkMode ? "🌞" : "🌙"}
-    </button>
-  );
-}
-
-
-import React, { useState, useContext } from "react";
-import { loginApi } from "../../api/authApi";
-import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import "../../styles/login.css";
-
-export default function Login() {
-  const { login } = useContext(AuthContext);
-  const nav = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [err, setErr] = useState("");
-
-  const parseJwtPayload = (token) => {
+  const loadBatches = async () => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return {
-        role: payload.role,
-        email: payload.sub || payload.email || "",
-        userId: payload.userId || payload.id,
-        trainerId: payload.trainerId,
-        trainerName: payload.trainerName,
-      };
-    } catch (e) {
-      return {};
+      const res = await getAllBatchesPublic();
+      setBatches(res.data);
+    } catch (err) {
+      console.error("Failed to load batches:", err);
     }
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleBatchSelect = (e) => {
+    const val = Number(e.target.value);
+    const selected = batches.find((b) => b.batchCode === val);
+
+    if (!selected) return;
+
+    setForm({
+      ...form,
+      batchCode: selected.batchCode,
+      startDate: selected.startDate?.slice(0, 10),
+      endDate: selected.endDate?.slice(0, 10),
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
-
     try {
-      const res = await loginApi(form);
-      const token = res.data;
-
-      const { role, email, userId, trainerId, trainerName } =
-        parseJwtPayload(token);
-
-      if (!role) throw new Error("Invalid token payload");
-
-      login(token, role, email);
-
-      if (userId) localStorage.setItem("userId", userId);
-
-      if (role === "ROLE_TRAINER") {
-        if (trainerId) localStorage.setItem("trainerId", trainerId);
-        if (trainerName) localStorage.setItem("trainerName", trainerName);
-      }
-
-      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
-      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
-      else nav("/user/dashboard");
-    } catch (error) {
-      console.error(error);
-      setErr(error?.response?.data || error.message || "Login failed");
+      await registerUser(form);
+      setMsg("🎉 User Registered Successfully!");
+      setTimeout(() => setMsg(""), 2500);
+    } catch (err) {
+      setMsg(formatError(err));
     }
   };
 
   return (
-    <div className="center">
-      <form className="form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <div className="container register-container">
+      <h2>User Registration</h2>
+      {msg && <p className="alert-msg">{msg}</p>}
 
-        {err && <div className="error">{err}</div>}
+      <form onSubmit={handleSubmit} className="register-form">
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        <input required name="userName" placeholder="Full Name" onChange={handleChange} />
+
+        <input required name="email" placeholder="Email" onChange={handleChange} />
+
+        <input required name="password" type="password" placeholder="Password" onChange={handleChange} />
+
+        <input required name="dob" type="date" onChange={handleChange} />
+
+        <input required name="contactNo" placeholder="Contact No" onChange={handleChange} />
+
+        <input required name="address" placeholder="Address" onChange={handleChange} />
+
+        <input required name="collegeName" placeholder="College Name" onChange={handleChange} />
+
+        <input name="grade" placeholder="Grade" onChange={handleChange} />
+
+        <input name="major" placeholder="Major" onChange={handleChange} />
+
+        <input name="team" placeholder="Team" onChange={handleChange} />
+
+        {/* Batch Dropdown */}
+        <select
+          name="batchCode"
+          value={form.batchCode || ""}
+          onChange={handleBatchSelect}
           required
-        />
+        >
+          <option value="">Select Batch</option>
+          {batches.map((b) => (
+            <option
+              key={b.batchCode}
+              value={b.batchCode}
+              disabled={b.availableSeats <= 0}
+            >
+              {b.batchName} — {b.courseName} | Trainer: {b.trainerName || "N/A"} | Seats: {b.availableSeats}
+            </option>
+          ))}
+        </select>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+        {/* Auto-filled Dates */}
+        <input name="startDate" type="date" value={form.startDate || ""} readOnly />
+        <input name="endDate" type="date" value={form.endDate || ""} readOnly />
 
-        <button className="btn" type="submit">
-          Login
-        </button>
+        <input name="graduatingYear" placeholder="Graduation Year" onChange={handleChange} />
+        <input name="resume" placeholder="Resume URL" onChange={handleChange} />
+        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
 
-        <div className="switch-auth">
-          <a href="/user/register">Register as User</a>
-        </div>
+        <button className="btn register-btn">Register</button>
       </form>
+
+      {form.batchCode && (
+        <div className="batch-preview">
+          <h4>Batch Details</h4>
+          <p><strong>Batch:</strong> {form.batchCode}</p>
+          <p><strong>Start:</strong> {form.startDate}</p>
+          <p><strong>End:</strong> {form.endDate}</p>
+        </div>
+      )}
     </div>
   );
 }
-
-
-/* Global reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-/* Center container with background */
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.6),
-      rgba(0, 0, 0, 0.6)
-    ),
-    url("https://source.unsplash.com/1600x900/?technology,office") no-repeat center center;
-  background-size: cover;
-}
-
-/* Login form styling */
-.form {
-  background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
-}
-
-/* Heading */
-.form h2 {
-  margin-bottom: 20px;
-  font-size: 26px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* Error message */
-.error {
-  background: #ffe0e0;
-  color: #d8000c;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 14px;
-}
-
-/* Input fields */
-.form input {
-  width: 100%;
-  padding: 12px 14px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-.form input:focus {
-  border-color: #0078d7;
-  box-shadow: 0 0 6px rgba(0, 120, 215, 0.4);
-  outline: none;
-}
-
-/* Button */
-.btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  background: #0078d7;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn:hover {
-  background: #005fa3;
-}
-
-/* Register link */
-.form a {
-  color: #0078d7;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
-}
-
-.form a:hover {
-  color: #005fa3;
-  text-decoration: underline;
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .form {
-    padding: 30px 20px;
-  }
-  .form h2 {
-    font-size: 22px;
-  }
-}
-
-
