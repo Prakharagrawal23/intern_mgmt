@@ -1,955 +1,522 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-trainerApi.js:9   PUT http://localhost:9090/api/trainer/tasks/5 400 (Bad Request)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-updateTask @ trainerApi.js:9
-handleSubmit @ UpdateTask.jsx:39
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-<form>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-UpdateTask @ UpdateTask.jsx:52
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopConcurrentByScheduler @ react-dom-client.development.js:17634
-renderRootConcurrent @ react-dom-client.development.js:17615
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<UpdateTask>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:68
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {userId, trainerId}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
-throwOnInvalidObjectType @ react-dom-client.development.js:6109
-reconcileChildFibersImpl @ react-dom-client.development.js:7058
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-UpdateTask @ UpdateTask.jsx:51
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<UpdateTask>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:68
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:10
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-UpdateTask.jsx:51  An error occurred in the <div> component.
-
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
-
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.service.TrainerService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/trainer")
-@CrossOrigin
-public class TrainerController {
-
-    @Autowired
-    private TrainerService trainerService;
-
-    // View all batches assigned to trainer
-    @GetMapping("/batches/{trainerId}")
-    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
-        return trainerService.getBatches(trainerId);
-    }
-
-    // Add Task
-    @PostMapping("/tasks")
-    public Task addTask(@Valid @RequestBody TaskDto dto) {
-        return trainerService.addTask(dto);
-    }
-    
- // View all tasks assigned by the trainer
-    @GetMapping("/tasks/{trainerId}")
-    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
-        return trainerService.getTasksByTrainerId(trainerId);
-    }
-
-
-    // Update Task
-    @PutMapping("/tasks/{taskId}")
-    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
-        trainerService.updateTask(dto, taskId);
-        return "Task updated successfully";
-    }
-
-    // Delete Task
-    @DeleteMapping("/tasks/{taskId}")
-    public String deleteTask(@PathVariable Long taskId) {
-        trainerService.deleteTask(taskId);
-        return "Task deleted successfully";
-    }
-
-    // Mark Attendance
-    @PostMapping("/attendance")
-    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
-        return trainerService.markAttendance(dto);
-    }
-
-    // Update Performance
-    @PostMapping("/performance")
-    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
-        return trainerService.updatePerformance(dto);
-    }
-
-    // View Feedback
-    @GetMapping("/feedback/{trainerName}")
-    public List<Feedback> getFeedback(@PathVariable String trainerName) {
-        return trainerService.viewFeedback(trainerName);
-    }
-    
-	// View all performance records assigned by the trainer
-	@GetMapping("/performance/{trainerId}")
-	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
-		return trainerService.getPerformanceByTrainerId(trainerId);
-	}
-
-  //Fetching the batches and corresponding users
-    @GetMapping("/UserBatch/{trainerId}")
-    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
-        return trainerService.getUsersByTrainerId(trainerId);
-    }
-}
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-
-@Service
-public class TrainerService {
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-    
-    @Autowired
-    private UserBatchDao UserBatchDao;
-
-    public List<InternshipBatch> getBatches(Long trainerId) {
-        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
-        }
-
-        return list;
-    }
-
-    public Task addTask(TaskDto dto) {
-
-        // Optional: validate if user exists / trainer exists
-
-        Task t = new Task();
-        t.setUserId(dto.getUserId());
-        t.setDescription(dto.getDescription());
-        t.setTrainerId(dto.getTrainerId());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        return taskDao.save(t);
-    }
-
-    public void updateTask(TaskDto dto, Long taskId) {
-        Task t = taskDao.findById(taskId);
-        if (t == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
-        }
-
-        t.setDescription(dto.getDescription());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        taskDao.update(t);
-    }
-
-    public void deleteTask(Long id) {
-        Task exists = taskDao.findById(id);
-        if (exists == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + id);
-        }
-
-        taskDao.delete(id);
-    }
-
-    public Attendance markAttendance(AttendanceDto dto) {
-
-        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
-            throw new RuntimeException("Cannot mark attendance for future dates");
-        }
-
-        Attendance a = new Attendance();
-        a.setUserId(dto.getUserId());
-        a.setBatchCode(dto.getBatchCode());
-        a.setDate(dto.getDate());
-        a.setPresent(dto.getPresent());
-
-        return attendanceDao.save(a);
-    }
-
-    public Performance updatePerformance(PerformanceDto dto) {
-
-        Performance p = new Performance();
-
-        p.setUserId(dto.getUserId());
-        p.setTrainerId(dto.getTrainerId());
-        p.setBatchCode(dto.getBatchCode());       // NEW
-        p.setTrainerName(dto.getTrainerName());   // NEW
-        p.setRemarks(dto.getRemarks());
-        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
-
-        return performanceDao.save(p);
-    }
-
-
-    public List<Feedback> viewFeedback(String trainerName) {
-        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
-        }
-
-        return list;
-    }
-    
-    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
-        return UserBatchDao.getUsersByTrainerId(trainerId);
-    }
-    public List<Task> getTasksByTrainerId(Long trainerId) {
-        List<Task> tasks = taskDao.findByTrainerId(trainerId);
-        if (tasks.isEmpty()) {
-            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
-        }
-        return tasks;
-    }
-
-    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
-        List<Performance> list = performanceDao.findByTrainerId(trainerId);
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
-        }
-        return list;
-    }
-
-}
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Task;
-import com.finalproject.internMgmtSystem.repository.TaskDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-public class TaskDaoImpl implements TaskDao {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    private RowMapper<Task> mapper = (rs, rowNum) -> {
-        Task t = new Task();
-        t.setId(rs.getLong("id"));
-        t.setUserId(rs.getLong("user_id"));
-        t.setDescription(rs.getString("description"));
-        t.setTrainerId(rs.getLong("trainer_id"));
-        t.setStatus(rs.getString("status"));
-        t.setDeadline(rs.getDate("deadline"));
-        t.setUploadFile(rs.getString("upload_file"));
-        t.setCreatedAt(rs.getTimestamp("created_at"));
-        return t;
-    };
-
-    @Override
-    public Task save(Task task) {
-        String sql = """
-            INSERT INTO tasks (user_id, description, trainer_id, status, deadline, upload_file)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
-
-        jdbcTemplate.update(sql,
-                task.getUserId(),
-                task.getDescription(),
-                task.getTrainerId(),
-                task.getStatus(),
-                task.getDeadline(),
-                task.getUploadFile()
-        );
-
-        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        task.setId(id);
-        return task;
-    }
-
-    @Override
-    public Task findById(Long id) {
-        List<Task> list = jdbcTemplate.query(
-                "SELECT * FROM tasks WHERE id = ?",
-                mapper,
-                id
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public List<Task> findByUserId(Long userId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM tasks WHERE user_id = ? ORDER BY created_at DESC",
-                mapper,
-                userId
-        );
-    }
-
-    @Override
-    public List<Task> findByTrainerId(Long trainerId) {
-        return jdbcTemplate.query(
-                "SELECT * FROM tasks WHERE trainer_id = ? ORDER BY created_at DESC",
-                mapper,
-                trainerId
-        );
-    }
-
-    @Override
-    public void update(Task task) {
-        String sql = """
-            UPDATE tasks SET description=?, status=?, deadline=?, upload_file=? WHERE id=?
-        """;
-
-        jdbcTemplate.update(sql,
-                task.getDescription(),
-                task.getStatus(),
-                task.getDeadline(),
-                task.getUploadFile(),
-                task.getId()
-        );
-    }
-
-    @Override
-    public void delete(Long id) {
-        jdbcTemplate.update("DELETE FROM tasks WHERE id = ?", id);
-    }
-}
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Task;
-import java.util.List;
-
-public interface TaskDao {
-
-    Task save(Task task);
-
-    Task findById(Long id);
-
-    List<Task> findByUserId(Long userId);
-
-    List<Task> findByTrainerId(Long trainerId);
-
-    void update(Task task);
-
-    void delete(Long id);
-}
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import java.util.List;
-
-public interface TrainerDao {
-
-    Trainer save(Trainer trainer);
-
-    Trainer findByEmail(String email);
-
-    Trainer findById(Long id);
-
-    List<Trainer> findAll();
-
-    void update(Trainer trainer);
-
-    void deleteById(Long id);
-
-    void deleteByEmail(String email);
-}
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-public class TrainerDaoImpl implements TrainerDao {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    private RowMapper<Trainer> mapper = (rs, rowNum) -> {
-        Trainer t = new Trainer();
-        t.setTrainerId(rs.getLong("trainer_id"));
-        t.setName(rs.getString("name"));
-        t.setEmail(rs.getString("email"));
-        t.setPassword(rs.getString("password"));
-        t.setContact(rs.getString("contact"));
-        t.setExperience(rs.getString("experience"));
-        t.setSkills(rs.getString("skills"));
-        t.setProfilePic(rs.getString("profile_pic"));
-        t.setBio(rs.getString("bio"));
-        t.setRole(rs.getString("role"));
-        t.setCreatedAt(rs.getTimestamp("created_at"));
-        return t;
-    };
-
-    @Override
-    public Trainer save(Trainer trainer) {
-        String sql = "INSERT INTO trainers (name, email, password, contact, experience, skills, profile_pic, bio, role) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        jdbcTemplate.update(sql,
-                trainer.getName(),
-                trainer.getEmail(),
-                trainer.getPassword(),
-                trainer.getContact(),
-                trainer.getExperience(),
-                trainer.getSkills(),
-                trainer.getProfilePic(),
-                trainer.getBio(),
-                trainer.getRole()
-        );
-
-        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        trainer.setTrainerId(id);
-        return trainer;
-    }
-
-    @Override
-    public Trainer findByEmail(String email) {
-        List<Trainer> list = jdbcTemplate.query(
-                "SELECT * FROM trainers WHERE email = ?",
-                mapper,
-                email
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public Trainer findById(Long id) {
-        List<Trainer> list = jdbcTemplate.query(
-                "SELECT * FROM trainers WHERE trainer_id = ?",
-                mapper,
-                id
-        );
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public List<Trainer> findAll() {
-        return jdbcTemplate.query(
-                "SELECT * FROM trainers",
-                mapper
-        );
-    }
-
-    @Override
-    public void update(Trainer trainer) {
-        String sql = "UPDATE trainers SET name=?, contact=?, experience=?, skills=?, profile_pic=?, bio=? "
-                   + "WHERE trainer_id=?";
-
-        jdbcTemplate.update(sql,
-                trainer.getName(),
-                trainer.getContact(),
-                trainer.getExperience(),
-                trainer.getSkills(),
-                trainer.getProfilePic(),
-                trainer.getBio(),
-                trainer.getTrainerId()
-        );
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        jdbcTemplate.update(
-                "DELETE FROM trainers WHERE trainer_id = ?",
-                id
-        );
-    }
-
-    @Override
-    public void deleteByEmail(String email) {
-        jdbcTemplate.update("DELETE FROM trainers WHERE email = ?", email);
-    }
-}
-
-package com.finalproject.internMgmtSystem.dto;
-
-import jakarta.validation.constraints.*;
-import java.sql.Date;
-
-public class TaskDto {
-
-	@NotNull(message = "User ID is required")
-	private Long userId;
-
-	@NotBlank(message = "Task description is required")
-	private String description;
-
-	@NotNull(message = "Trainer ID is required")
-	private Long trainerId;
-
-	@NotBlank(message = "Status is required")
-	private String status;
-
-	@NotNull(message = "Deadline is required")
-	private Date deadline;
-
-	private String uploadFile;
-
-	public TaskDto() {
-	}
-
-	public TaskDto(@NotNull(message = "User ID is required") Long userId,
-			@NotBlank(message = "Task description is required") String description,
-			@NotNull(message = "Trainer ID is required") Long trainerId,
-			@NotBlank(message = "Status is required") String status,
-			@NotNull(message = "Deadline is required") Date deadline, String uploadFile) {
-		super();
-		this.userId = userId;
-		this.description = description;
-		this.trainerId = trainerId;
-		this.status = status;
-		this.deadline = deadline;
-		this.uploadFile = uploadFile;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Long getTrainerId() {
-		return trainerId;
-	}
-
-	public void setTrainerId(Long trainerId) {
-		this.trainerId = trainerId;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Date getDeadline() {
-		return deadline;
-	}
-
-	public void setDeadline(Date deadline) {
-		this.deadline = deadline;
-	}
-
-	public String getUploadFile() {
-		return uploadFile;
-	}
-
-	public void setUploadFile(String uploadFile) {
-		this.uploadFile = uploadFile;
-	}
-
-	// getters & setters
+import api from "./axiosConfig";
+
+// TRAINER
+export const createTrainer = (data) => api.post("/api/admin/trainers", data);
+export const getTrainers = () => api.get("/api/admin/trainers");
+export const deleteTrainerByEmail = (email) =>
+  api.delete(`/api/admin/trainer/email/${email}`);
+
+// BATCH
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+export const getBatches = () => api.get("/api/admin/batches");
+export const deleteBatchByName = (batchName) =>
+  api.delete(`/api/admin/batch/name/${batchName}`);
+
+// USERS
+export const getUsers = () => api.get("/api/admin/users");
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
+
+// STIPEND
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 
-package com.finalproject.internMgmtSystem.security;
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
 
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
 
-import java.util.List;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
-
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found: " + email);
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId || payload.id,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+      };
+    } catch (e) {
+      return {};
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token payload");
+
+      login(token, role, email);
+
+      if (userId) localStorage.setItem("userId", userId);
+
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
+
+  return (
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+
+        {err && <div className="error">{err}</div>}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
+
+        <button className="btn" type="submit">
+          Login
+        </button>
+
+        <div className="switch-auth">
+          <a href="/user/register">Register as User</a>
+        </div>
+      </form>
+    </div>
+  );
+}
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function AdminDashboard() {
+  const items = [
+    { to: "/admin/create-trainer", label: "Create Trainer" },
+    { to: "/admin/view-trainers", label: "View Trainers" },
+    { to: "/admin/create-batch", label: "Create Batch" },
+    { to: "/admin/view-batches", label: "View Batches" },
+    { to: "/admin/give-stipend", label: "Give Stipend" },
+    { to: "/admin/view-users", label: "View Users" },
+  ];
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main">
+        <h2>Admin Dashboard</h2>
+        <p>Use sidebar to navigate admin features.</p>
+      </div>
+    </div>
+  );
+}
+import React, { useState } from "react";
+import { createBatch } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function CreateBatch() {
+  const [form, setForm] = useState({ batchName: "", courseName: "", trainerId: "", startDate: "", endDate: "", totalSeats: 0, availableSeats: 0 });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createBatch({ 
+        ...form,
+        trainerId: Number(form.trainerId),
+        totalSeats: Number(form.totalSeats),
+        availableSeats: Number(form.availableSeats)
+      });
+      setMsg("Batch created");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Create Batch</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="Batch Name" value={form.batchName} onChange={e=>setForm({...form,batchName:e.target.value})}/>
+          <input placeholder="Course Name" value={form.courseName} onChange={e=>setForm({...form,courseName:e.target.value})}/>
+          <input placeholder="Trainer ID" value={form.trainerId} onChange={e=>setForm({...form,trainerId:e.target.value})}/>
+          <input placeholder="Start Date" type="date" value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})}/>
+          <input placeholder="End Date" type="date" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})}/>
+          <input placeholder="Total Seats" value={form.totalSeats} onChange={e=>setForm({...form,totalSeats:e.target.value})}/>
+          <input placeholder="Available Seats" value={form.availableSeats} onChange={e=>setForm({...form,availableSeats:e.target.value})}/>
+          <button className="btn" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+import React, { useState } from "react";
+import { createTrainer } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+
+export default function CreateTrainer() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    contact: "",
+    experience: "",
+    skills: "",
+    profilePic: "",
+    bio: "",
+  });
+
+  const [msg, setMsg] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createTrainer(form);
+      setMsg("Trainer created successfully!");
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="container">
+      <h2>Create Trainer</h2>
+      {msg && <p style={{ color: "red" }}>{msg}</p>}
+
+      <form onSubmit={handleSubmit} className="form">
+        <input name="name" placeholder="Name" onChange={handleChange} />
+        <input name="email" placeholder="Email" onChange={handleChange} />
+        <input name="password" placeholder="Password" onChange={handleChange} />
+        <input name="contact" placeholder="Contact" onChange={handleChange} />
+        <input name="experience" type="number" placeholder="Experience (years)" onChange={handleChange} />
+        <input name="skills" placeholder="Skills" onChange={handleChange} />
+        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
+        <textarea name="bio" placeholder="Bio" onChange={handleChange} />
+
+        <button className="btn">Create</button>
+      </form>
+    </div>
+  );
+}
+import React, { useState } from "react";
+import { giveStipend } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function GiveStipend() {
+  const [form, setForm] = useState({ userId: "", userName: "", paymentMode: "", amount: 0 });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await giveStipend({ ...form, userId: Number(form.userId), amount: Number(form.amount) });
+      setMsg("Stipend recorded");
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Give Stipend</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={e=>setForm({...form,userId:e.target.value})}/>
+          <input placeholder="User Name" value={form.userName} onChange={e=>setForm({...form,userName:e.target.value})}/>
+          <input placeholder="Payment Mode" value={form.paymentMode} onChange={e=>setForm({...form,paymentMode:e.target.value})}/>
+          <input placeholder="Amount" value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/>
+          <button className="btn" type="submit">Give</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+import React, { useEffect, useState } from "react";
+import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+
+export default function ViewTrainers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await getTrainers();
+      setList(res.data);
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteTrainerByEmail(email);
+      setMsg("Trainer deleted: " + email);
+      fetchData();
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="container">
+      <h2>All Trainers</h2>
+      {msg && <p style={{ color: "red" }}>{msg}</p>}
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Experience</th>
+            <th>Skills</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {list.map((t) => (
+            <tr key={t.trainerId}>
+              <td>{t.name}</td>
+              <td>{t.email}</td>
+              <td>{t.experience}</td>
+              <td>{t.skills}</td>
+              <td>
+                <button onClick={() => handleDelete(t.email)} className="btn">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+import React, { useEffect, useState } from "react";
+import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function ViewTrainers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetch = async () => {
+    try {
+      const res = await getTrainers();
+      setList(res.data);
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => { fetch(); }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteTrainerByEmail(email);
+      setMsg("Deleted " + email);
+      fetch();
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Trainers</h3>
+        {msg && <div className="info">{msg}</div>}
+        <table className="table">
+          <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Action</th></tr></thead>
+          <tbody>
+            {list.map(t => (
+              <tr key={t.id || t.email}>
+                <td>{t.name}</td>
+                <td>{t.email}</td>
+                <td>{t.contact}</td>
+                <td><button className="btn small" onClick={()=>handleDelete(t.email)}>Delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+import React, { useEffect, useState } from "react";
+import { getUsers, deleteUserByEmail } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function ViewUsers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await getUsers();
+      setList(res.data);
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteUserByEmail(email);
+      setMsg("User deleted: " + email);
+      fetchData();
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>All Users</h3>
+        {msg && <div className="info">{msg}</div>}
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>User ID</th> {/* 👈 Added */}
+              <th>UserName</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th>BatchCode</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {list.map((u) => (
+              <tr key={u.userId}>
+                <td>{u.userId}</td>  {/* 👈 Added */}
+                <td>{u.userName}</td>
+                <td>{u.email}</td>
+                <td>{u.contactNo}</td>
+                <td>{u.batchCode}</td>
+                <td>
+                  <button
+                    onClick={() => handleDelete(u.email)}
+                    className="btn small"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  );
 }
 
+All Trainers
+Name	Email	Experience	Skills	Action
+Ram Kumar	ram.trainer@gmail.com	5	Java, Spring Boot, MySQL	Delete
+Amit Verma	amit.trainer@gmail.com	8	Python, Django, ML	Delete
+prakhar agrawal	prakhar@gmail.com	4	python dev	Delete
+iron man	iron@gmail.com	5	tech	Delete
+prakhar	prakhar.ag9839@gmail.com	5	java core	Delete
+prakhar agrawal 2	prakhar.ag1123@gmail.com	6	python, java	Delete
 
-package com.finalproject.internMgmtSystem.security;
+when in click on view batches then it show the trainer instead of batches 
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN (Trainer Name + Trainer ID added)
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register"
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
+fix this issue
