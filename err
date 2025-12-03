@@ -1,21 +1,131 @@
-Register User
-Full Name
-admin@gmail.com
-•••••••••
+package com.finalproject.internMgmtSystem.repository;
 
-mm/dd/yyyy
-8887876113
-newyork
-gla university
-Grade
-Major
-Team
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import java.util.List;
 
-Select Batch
+public interface BatchDao {
 
-mm/dd/yyyy
+    InternshipBatch save(InternshipBatch batch);
 
-mm/dd/yyyy
-Graduation Year
-Resume URL
-Profile Pic URL
+    InternshipBatch findById(Long batchCode);
+
+    List<InternshipBatch> findAll();
+
+    List<InternshipBatch> findByTrainerId(Long trainerId);
+
+    void update(InternshipBatch batch);
+
+    void delete(Long batchCode);
+
+    InternshipBatch findByName(String batchName);
+    
+    InternshipBatch findByBatchCode(Long batchCode);
+
+    void decrementAvailableSeats(Long batchCode);
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class BatchDaoImpl implements BatchDao {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private RowMapper<InternshipBatch> mapper = (rs, rowNum) -> {
+		InternshipBatch b = new InternshipBatch();
+		b.setBatchCode(rs.getLong("batch_code"));
+		b.setBatchName(rs.getString("batch_name"));
+		b.setCourseName(rs.getString("course_name"));
+		b.setTrainerId(rs.getLong("trainer_id"));
+		b.setStartDate(rs.getDate("start_date"));
+		b.setEndDate(rs.getDate("end_date"));
+		b.setTotalSeats(rs.getInt("total_seats"));
+		b.setAvailableSeats(rs.getInt("available_seats"));
+		return b;
+	};
+
+	@Override
+	public InternshipBatch save(InternshipBatch batch) {
+		String sql = """
+				    INSERT INTO internship_batches
+				    (batch_name, course_name, trainer_id, start_date, end_date, total_seats, available_seats)
+				    VALUES (?, ?, ?, ?, ?, ?, ?)
+				""";
+
+		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		batch.setBatchCode(id);
+		return batch;
+	}
+
+	@Override
+	public InternshipBatch findById(Long batchCode) {
+		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_code = ?", mapper,
+				batchCode);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<InternshipBatch> findAll() {
+		return jdbcTemplate.query("SELECT * FROM internship_batches", mapper);
+	}
+
+	@Override
+	public List<InternshipBatch> findByTrainerId(Long trainerId) {
+		return jdbcTemplate.query("SELECT * FROM internship_batches WHERE trainer_id = ?", mapper, trainerId);
+	}
+
+	@Override
+	public void update(InternshipBatch batch) {
+		String sql = """
+				    UPDATE internship_batches SET batch_name=?, course_name=?, trainer_id=?, start_date=?,
+				    end_date=?, total_seats=?, available_seats=? WHERE batch_code=?
+				""";
+
+		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+
+				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats(),
+				batch.getBatchCode());
+	}
+
+	@Override
+	public void delete(Long batchCode) {
+		jdbcTemplate.update("DELETE FROM internship_batches WHERE batch_code = ?", batchCode);
+	}
+
+	@Override
+	public InternshipBatch findByName(String batchName) {
+		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_name = ?", mapper,
+				batchName);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	@Override
+	public InternshipBatch findByBatchCode(Long batchCode) {
+	    List<InternshipBatch> list = jdbcTemplate.query(
+	        "SELECT * FROM internship_batches WHERE batch_code = ?", mapper, batchCode);
+	    return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public void decrementAvailableSeats(Long batchCode) {
+	    String sql = """
+	        UPDATE internship_batches 
+	        SET available_seats = available_seats - 1 
+	        WHERE batch_code = ? AND available_seats > 0
+	    """;
+	    jdbcTemplate.update(sql, batchCode);
+	}
+
+}
