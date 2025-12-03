@@ -40,414 +40,221 @@ export default function ThemeToggle() {
 }
 
 
-/* Global theme variables and toggle button styles */
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
 
-/* Light (Cream) Theme — default on :root */
-:root {
-  --cream-100: #f7efe5;
-  --cream-200: #faf3ea;
-  --cream-300: #efe3d6;
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
 
-  --ink-900: #263238;
-  --ink-700: #455a64;
-  --ink-500: #6b7f85;
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId || payload.id,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+      };
+    } catch (e) {
+      return {};
+    }
+  };
 
-  --teal-600: #035c67;
-  --teal-700: #02474f;
-  --teal-500: #0f7680;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
 
-  --white: #ffffff;
-  --border-cream: #e9e2d9;
-  --card-border: #efe5da;
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
 
-  --shadow-lg: 0 16px 38px rgba(0,0,0,0.16);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.12);
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.12);
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
 
-  --bg-page: radial-gradient(1000px 500px at 10% 0%, #fff 0%, var(--cream-100) 40%, var(--cream-300) 100%);
-  --bg-navbar: linear-gradient(180deg, var(--white) 0%, #fffdf8 100%);
-  --bg-hero-overlay: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.6) 100%);
-  --bg-hero-base: radial-gradient(900px 500px at 100% 0%, #fff 0%, var(--cream-200) 50%, var(--cream-300) 100%);
-  --bg-card: linear-gradient(180deg, #fff 0%, #fffaf2 100%);
-  --bg-footer: linear-gradient(180deg, #fffaf2 0%, #f6ede3 100%);
+      if (!role) throw new Error("Invalid token payload");
 
-  --btn-register-bg: linear-gradient(135deg, #ffdfb3 0%, #ffe9cf 50%, #fff4e3 100%);
-  --btn-register-border: #efd9c3;
-  --btn-register-text: var(--teal-700);
+      login(token, role, email);
 
-  --btn-primary-bg: linear-gradient(135deg, #ffd7a8 0%, #ffe9c9 35%, #fff4df 100%);
-  --btn-primary-border: #f0dcc6;
-  --btn-primary-text: var(--ink-900);
+      if (userId) localStorage.setItem("userId", userId);
 
-  --course-card-title: var(--teal-700);
-}
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
 
-/* Dark Mode — overrides via body.dark-mode */
-body.dark-mode {
-  --cream-100: #14181b;
-  --cream-200: #171c20;
-  --cream-300: #1b2126;
-
-  --ink-900: #e6eef2;
-  --ink-700: #cbd6dc;
-  --ink-500: #a9b7bf;
-
-  --teal-600: #5dd2df;
-  --teal-700: #3fbfcc;
-  --teal-500: #79deea;
-
-  --white: #0f1316;
-  --border-cream: #26313a;
-  --card-border: #2a3440;
-
-  --shadow-lg: 0 16px 38px rgba(0,0,0,0.4);
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.35);
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
-
-  --bg-page: radial-gradient(1000px 500px at 10% 0%, #0f1316 0%, var(--cream-100) 40%, var(--cream-300) 100%);
-  --bg-navbar: linear-gradient(180deg, #12171b 0%, #101417 100%);
-  --bg-hero-overlay: linear-gradient(180deg, rgba(16,20,23,0.85) 0%, rgba(16,20,23,0.8) 100%);
-  --bg-hero-base: radial-gradient(900px 500px at 100% 0%, #11161a 0%, var(--cream-200) 50%, var(--cream-300) 100%);
-  --bg-card: linear-gradient(180deg, #12171b 0%, #0f1316 100%);
-  --bg-footer: linear-gradient(180deg, #12171b 0%, #0f1316 100%);
-
-  --btn-register-bg: linear-gradient(135deg, #244a51 0%, #1e3e44 50%, #183238 100%);
-  --btn-register-border: #1d2c31;
-  --btn-register-text: #cde7ea;
-
-  --btn-primary-bg: linear-gradient(135deg, #284e55 0%, #1f3f45 35%, #19343a 100%);
-  --btn-primary-border: #20343a;
-  --btn-primary-text: #e6eef2;
-
-  --course-card-title: #d7f2f6;
-}
-
-/* Toggle button styling */
-.theme-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 110;
-  border: 1px solid var(--border-cream);
-  background: var(--bg-card);
-  color: var(--ink-900);
-  padding: 10px 14px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
-}
-
-.theme-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  filter: saturate(1.08);
-}
-
-
-import React from "react";
-import { Link } from "react-router-dom";
-import "../../styles/home.css";
-import logo from "../../image/logo.png";
-
-// Course Images (ensure they exist in src/image/)
-import devops from "../../image/devops.png";
-import ml from "../../image/ml.png";
-import javaimg from "../../image/java.avif";
-import ds from "../../image/datascience.png";
-import ai from "../../image/ai.png";
-import frontend from "../../image/frontend.png";
-import cloud from "../../image/cloud.jpeg";
-import testing from "../../image/testing.jpeg";
-import cybersecurity from "../../image/cybersecurity.jpg";
-import blockchain from "../../image/blockchain.jpg";
-
-export default function Home() {
-  const programs = [
-    { img: devops, title: "DevOps Engineering" },
-    { img: ml, title: "Machine Learning" },
-    { img: javaimg, title: "Java Backend Development" },
-    { img: ds, title: "Data Science" },
-    { img: ai, title: "Artificial Intelligence" },
-    { img: frontend, title: "Frontend Development" },
-    { img: cloud, title: "Cloud Computing" },
-    { img: testing, title: "Software Testing" },
-    { img: cybersecurity, title: "Cyber Security" },
-    { img: blockchain, title: "Blockchain Development" },
-  ];
-
-  // Duplicate the list for seamless infinite scrolling
-  const extendedPrograms = [...programs, ...programs];
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      console.error(error);
+      setErr(error?.response?.data || error.message || "Login failed");
+    }
+  };
 
   return (
-    <div className="home-container">
-      {/* Navbar */}
-      <nav className="navbar-new" aria-label="Primary">
-        <div className="nav-logo">
-          <img src={logo} alt="Intern Connect logo" />
-          <span>Intern Connect</span>
-        </div>
-        <div className="nav-links">
-          <Link to="/login" className="sign-in" aria-label="Sign in">
-            Sign In
-          </Link>
-          <Link to="/user/register" className="register-btn" aria-label="Register">
-            Register
-          </Link>
-        </div>
-      </nav>
+    <div className="center">
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-left">
-          <h1>
-            Manage Internships
-            <br />
-            Seamlessly
-          </h1>
-          <p>
-            A complete platform where trainers, interns, and admins collaborate
-            efficiently. Bring structure, clarity, and professionalism to your
-            internship programs.
-          </p>
-          <Link to="/user/register" className="btn-register" aria-label="Get started">
-            Get Started
-          </Link>
+        {err && <div className="error">{err}</div>}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
+
+        <button className="btn" type="submit">
+          Login
+        </button>
+
+        <div className="switch-auth">
+          <a href="/user/register">Register as User</a>
         </div>
-
-        <div className="hero-right" aria-hidden="true">
-          <i className="fa-solid fa-gears gear-icon"></i>
-        </div>
-      </section>
-
-      {/* Popular Programs */}
-      <h2 className="section-title">Popular Training Programs</h2>
-
-      {/* Auto-scrolling horizontal carousel */}
-      <div className="course-scroll">
-        <div className="course-track">
-          {extendedPrograms.map((p, i) => (
-            <div className="course-card" key={`${p.title}-${i}`}>
-              <div className="course-img-wrap">
-                <img src={p.img} alt={p.title} />
-              </div>
-              <h4>{p.title}</h4>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer Section */}
-      <footer className="footer">
-        <div>
-          <h3>About Intern Connect</h3>
-          <p>
-            Simplifying communication, task assignment, and performance tracking.
-            Connecting interns, trainers, and admins effortlessly.
-          </p>
-        </div>
-
-        <div>
-          <h3>Support</h3>
-          <p>Help Center</p>
-          <p>Documentation</p>
-          <p>FAQs</p>
-        </div>
-
-        <div>
-          <h3>Contact Us</h3>
-          <p>Email: support@internconnect.com</p>
-          <p>Phone: +91 98768 43210</p>
-          <p>Hyderabad, Telangana, India</p>
-        </div>
-      </footer>
-
-      <div className="copyright">
-        © 2025 Intern Connect. All rights reserved.
-      </div>
+      </form>
     </div>
   );
 }
 
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
-
-/* RESET */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html, body, .home-container {
-  height: 100%;
-  font-family: "Poppins", sans-serif;
-  color: var(--ink-700);
-  background: var(--bg-page);
+/* Global reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Subtle page fade-in */
-.home-container { animation: fadeIn 600ms ease-out both; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Navbar */
-.navbar-new {
+/* Center container with background */
+.center {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 16px 40px;
-  background: var(--bg-navbar);
-  border-bottom: 1px solid var(--border-cream);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: saturate(1.2) blur(6px);
+  min-height: 100vh;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.6),
+      rgba(0, 0, 0, 0.6)
+    ),
+    url("https://source.unsplash.com/1600x900/?technology,office") no-repeat center center;
+  background-size: cover;
 }
 
-.nav-logo { display: flex; align-items: center; gap: 12px; }
-.nav-logo img { width: 40px; height: 40px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-.nav-logo span { font-size: 22px; font-weight: 700; color: var(--teal-600); letter-spacing: 0.3px; }
-
-.nav-links { display: flex; align-items: center; gap: 12px; }
-
-.sign-in {
-  background: transparent;
-  color: var(--teal-600);
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: 1px solid var(--border-cream);
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 220ms ease;
-}
-.sign-in:hover { background: #fffaf205; transform: translateY(-1px); }
-
-/* Elevated Register button (no glow span) */
-.register-btn {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: var(--shadow-md);
-  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
-  border: 1px solid var(--btn-primary-border);
-}
-.register-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  filter: saturate(1.06);
-}
-.register-btn:active { transform: translateY(0); }
-
-/* Hero Section */
-.hero-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  padding: 80px 60px;
-  color: var(--ink-900);
-  min-height: 380px;
-  background:
-    var(--bg-hero-overlay),
-    var(--bg-hero-base);
-  border-bottom: 1px solid var(--border-cream);
-}
-
-.hero-left { max-width: 54%; }
-.hero-left h1 {
-  font-size: 48px; line-height: 1.1; margin-bottom: 18px;
-  letter-spacing: 0.2px; color: var(--ink-900);
-}
-.hero-left p { font-size: 18px; opacity: 0.9; margin-bottom: 28px; color: var(--ink-700); }
-
-/* CTA button in hero */
-.btn-register {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--btn-register-bg);
-  color: var(--btn-register-text);
-  padding: 12px 26px;
+/* Login form styling */
+.form {
+  background: #ffffff;
+  padding: 40px 30px;
   border-radius: 12px;
-  font-weight: 700;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Heading */
+.form h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Error message */
+.error {
+  background: #ffe0e0;
+  color: #d8000c;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Input fields */
+.form input {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form input:focus {
+  border-color: #0078d7;
+  box-shadow: 0 0 6px rgba(0, 120, 215, 0.4);
+  outline: none;
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #0078d7;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #005fa3;
+}
+
+/* Register link */
+.form a {
+  color: #0078d7;
   text-decoration: none;
-  border: 1px solid var(--btn-register-border);
-  box-shadow: var(--shadow-md);
-  transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
-}
-.btn-register::after { content: "→"; font-weight: 700; transition: transform 220ms ease; }
-.btn-register:hover::after { transform: translateX(4px); }
-.btn-register:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); filter: saturate(1.06); }
-
-/* Hero right gear animation */
-.hero-right { display: flex; justify-content: center; align-items: center; min-width: 280px; }
-.gear-icon {
-  font-size: 120px; color: var(--teal-600);
-  filter: drop-shadow(0 6px 14px rgba(3,92,103,0.2));
-  animation: gearSpin 10s linear infinite;
-}
-@keyframes gearSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* Section title */
-.section-title { text-align: center; font-size: 28px; margin: 35px 0 20px; color: var(--ink-900); }
-
-/* Course Scroll (infinite auto-scroll) */
-.course-scroll { overflow: hidden; padding: 24px 0; position: relative; }
-.course-track {
-  display: flex; gap: 20px; width: max-content;
-  animation: marquee 28s linear infinite;
-  will-change: transform; padding: 10px 20px;
-}
-/* Pause on hover */
-.course-scroll:hover .course-track { animation-play-state: paused; }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); } /* duplicated items enable seamless loop */
+  font-size: 14px;
+  transition: color 0.3s ease;
 }
 
-.course-card {
-  min-width: 240px; background: var(--bg-card);
-  border-radius: 16px; box-shadow: var(--shadow-md);
-  padding: 16px; text-align: center; cursor: pointer;
-  transition: transform 260ms ease, box-shadow 260ms ease, filter 260ms ease;
-  border: 1px solid var(--card-border);
+.form a:hover {
+  color: #005fa3;
+  text-decoration: underline;
 }
-.course-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-lg); filter: saturate(1.1); }
 
-.course-img-wrap {
-  width: 100%; height: 140px; border-radius: 12px;
-  overflow: hidden; margin-bottom: 12px; background: #fff0;
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.course-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 300ms ease; }
-.course-card:hover img { transform: scale(1.04); }
-
-.course-card h4 { font-size: 18px; color: var(--course-card-title); }
-
-/* Footer */
-.footer {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 24px; padding: 44px 60px;
-  background: var(--bg-footer);
-  color: var(--ink-900); text-align: left;
-  border-top: 1px solid var(--border-cream);
-}
-.footer h3 { margin-bottom: 12px; font-size: 18px; color: var(--teal-700); }
-.footer p { opacity: 0.88; margin-bottom: 6px; transition: opacity 160ms ease, transform 160ms ease; }
-.footer p:hover { opacity: 1; transform: translateX(2px); }
-
-.copyright { text-align: center; padding: 12px 60px 24px; color: var(--ink-500); font-size: 14px; }
 
 /* Responsive */
-@media (max-width: 992px) {
-  .hero-section { padding: 64px 32px; }
-  .hero-left { max-width: 60%; }
+@media (max-width: 480px) {
+  .form {
+    padding: 30px 20px;
+  }
+  .form h2 {
+    font-size: 22px;
+  }
 }
-@media (max-width: 768px) {
-  .navbar-new { padding: 14px 20px; }
-  .hero-section { flex-direction: column; text-align: center; padding: 56px 24px; }
-  .hero-left { max-width: 100%; }
-  .hero-right { min-width: 0; }
-  .footer { grid-template-columns: 1fr; padding: 36px 24px; }
-}
+
+
