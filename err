@@ -1,267 +1,3 @@
-
-mysql> select * from attendance;
-+---------------+---------+------------+------------+---------+
-| attendance_id | user_id | batch_code | date       | present |
-+---------------+---------+------------+------------+---------+
-|             1 |       1 |          1 | 2025-02-10 |       1 |
-|             2 |       1 |          1 | 2025-02-11 |       0 |
-|             3 |       2 |          2 | 2025-02-10 |       1 |
-|             4 |       3 |          2 | 2025-11-24 |       0 |
-|             5 |      13 |          4 | 2025-11-24 |       1 |
-|             6 |      13 |          4 | 2025-11-24 |       0 |
-|             7 |      13 |          4 | 2025-11-24 |       1 |
-|             9 |       1 |          1 | 2025-12-01 |       1 |
-|            10 |       1 |          1 | 2025-12-01 |       0 |
-|            11 |       1 |          1 | 2025-12-01 |       1 |
-|            12 |       1 |          1 | 2025-12-01 |       0 |
-|            13 |      19 |          7 | 2025-12-02 |       1 |
-+---------------+---------+------------+------------+---------+
-12 rows in set (0.00 sec)
-
-mysql> select * from feedback;
-+----+---------+---------------+------------+-----------------+---------------------+-------------------------+--------+
-| id | user_id | user_name     | batch_code | trainer_name    | date                | feedback                | rating |
-+----+---------+---------------+------------+-----------------+---------------------+-------------------------+--------+
-|  1 |       1 | Prakhar       |          1 | Ram Kumar       | 2025-11-20 21:27:09 | Amazing teaching style! |      5 |
-|  2 |       2 | Rohan         |          2 | Amit Verma      | 2025-11-20 21:27:09 | Great ML mentorship!    |      4 |
-|  3 |      13 | Rohit Sharma2 |          4 | prakhar agrawal | 2025-11-25 00:10:34 | okay okay               |      4 |
-+----+---------+---------------+------------+-----------------+---------------------+-------------------------+--------+
-3 rows in set (0.00 sec)
-
-mysql> select * from internship_batches;
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-| batch_code | batch_name               | course_name                | trainer_id | start_date | end_date   | total_seats | available_seats |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-|          1 | Java Batch Feb-2025      | Java Full Stack            |          1 | 2025-02-01 | 2025-04-01 |          30 |              26 |
-|          2 | Python ML Batch Feb-2025 | Python + Machine Learning  |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
-|          3 | Batch 1                  | Java Full Stack            |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
-|          4 | Batch 9                  | python Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
-|          5 | Batch 10                 | golang Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          10 |               4 |
-|          6 | Batch 11                 | Kubernetes Cloud Computing |          5 | 2025-11-28 | 2026-01-31 |          43 |              29 |
-|          7 | batch 12                 | java backend development   |         15 | 2025-12-02 | 2025-12-31 |          15 |               9 |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-7 rows in set (0.00 sec)
-
-mysql> select * from performance;
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
-|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
-|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
-|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
-|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
-|  7 |      18 |         15 | okay work                                                            |                     4 | 2025-12-02 14:44:54 |       NULL | NULL              |
-|  9 |      14 |         15 | good                                                                 |                     5 | 2025-12-02 14:55:53 |       NULL | NULL              |
-| 10 |      14 |         15 | bad                                                                  |                     5 | 2025-12-02 15:08:45 |       NULL | NULL              |
-| 11 |      19 |         15 | good need improvement                                                |                    76 | 2025-12-02 17:17:31 |          7 | prakhar agrawal 2 |
-| 12 |      19 |         15 | now you are doing great - keep it up                                 |                    89 | 2025-12-02 17:19:44 |          7 | prakhar agrawal 2 |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-10 rows in set (0.00 sec)
-
-mysql> select * from stipend;
-+----+---------+----------------+---------------------+---------------+------------+
-| id | user_id | user_name      | payment_date        | payment_mode  | amount     |
-+----+---------+----------------+---------------------+---------------+------------+
-|  1 |       1 | Prakhar        | 2025-11-20 21:27:09 | Bank Transfer |    5000.00 |
-|  2 |       2 | Rohan          | 2025-11-20 21:27:09 | UPI           |    6000.00 |
-|  3 |      13 | Rohit Sharma2  | 2025-11-25 00:14:34 | UPI           |       5.00 |
-|  4 |      14 | mayank agrawal | 2025-11-28 17:14:35 | UPI           | 1400000.00 |
-+----+---------+----------------+---------------------+---------------+------------+
-4 rows in set (0.00 sec)
-
-mysql> select * from tasks;
-+----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
-| id | user_id | trainer_id | description                 | status  | deadline   | upload_file | created_at          |
-+----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
-|  1 |       1 |          1 | Complete Java Basics Module | ONGOING | 2025-03-01 | task1.pdf   | 2025-11-24 22:20:39 |
-|  4 |      19 |         15 | do this                     | PENDING | 2025-12-17 | NULL        | 2025-12-02 20:16:33 |
-|  5 |      19 |         15 | do it the deadline is near  | ONGOING | 2025-12-17 | NULL        | 2025-12-02 22:05:57 |
-+----+---------+------------+-----------------------------+---------+------------+-------------+---------------------+
-3 rows in set (0.00 sec)
-
-mysql> select * from trainers;
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
-|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
-|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
-|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
-|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
-|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-6 rows in set (0.00 sec)
-
-mysql> select * from users;
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
-|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
-|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
-|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
-|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
-|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
-|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
-|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-8 rows in set (0.00 sec)
-
-mysql>
-
-this is the backend endpoints 
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.service.AdminService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/admin")
-@CrossOrigin
-public class AdminController {
-
-    @Autowired
-    private AdminService adminService;
-
-    @PostMapping("/trainers")
-    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
-        return adminService.registerTrainer(dto);
-    }
-
-    @PostMapping("/batches")
-    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
-        return adminService.createBatch(dto);
-    }
-
-    @PostMapping("/stipend")
-    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
-        return adminService.giveStipend(dto);
-    }
-
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
-
-    @GetMapping("/trainers")
-    public List<Trainer> getAllTrainers() {
-        return adminService.getAllTrainers();
-    }
-
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatches() {
-        return adminService.getAllBatches();
-    }
-
-    // DELETE USER BY EMAIL
-    @DeleteMapping("/user/email/{email}")
-    public String deleteUserByEmail(@PathVariable String email) {
-        adminService.deleteUserByEmail(email);
-        return "User deleted successfully with email: " + email;
-    }
-
-    // DELETE TRAINER BY EMAIL
-    @DeleteMapping("/trainer/email/{email}")
-    public String deleteTrainerByEmail(@PathVariable String email) {
-        adminService.deleteTrainerByEmail(email);
-        return "Trainer deleted successfully with email: " + email;
-    }
-
-    // DELETE BATCH BY BATCH NAME
-    @DeleteMapping("/batch/name/{batchName}")
-    public String deleteBatchByName(@PathVariable String batchName) {
-        adminService.deleteBatchByName(batchName);
-        return "Batch deleted successfully with name: " + batchName;
-    }
-}
-
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserDao userDao;              // instance DAO
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // injected password encoder
-
-    // LOGIN (existing)
-    @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
-    }
-
-    /**
-     * Temporary endpoint to create the one-time ADMIN via Postman.
-     * - Ensures only ONE admin exists in the system.
-     * - After successful admin creation you should REMOVE this endpoint
-     *   (or at least lock it) from SecurityConfig.
-     */
-    
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
-
-        // 1) Check if an admin already exists
-        List<User> allUsers = userDao.findAll();
-        boolean adminExists = allUsers.stream()
-                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
-
-        if (adminExists) {
-            throw new UserAlreadyExistsException("Admin already exists!");
-        }
-
-        // 2) Check if email already used
-        User existing = userDao.findByEmail(dto.getEmail());
-        if (existing != null) {
-            throw new UserAlreadyExistsException("Email already registered!");
-        }
-
-        // 3) Create admin
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ADMIN");
-
-        userDao.save(user);
-
-        return "Admin created successfully!";
-    }
-
-}
 package com.finalproject.internMgmtSystem.controller;
 
 import com.finalproject.internMgmtSystem.dto.AttendanceDto;
@@ -347,6 +83,8 @@ public class TrainerController {
         return trainerService.getUsersByTrainerId(trainerId);
     }
 }
+
+
 package com.finalproject.internMgmtSystem.controller;
 
 import com.finalproject.internMgmtSystem.dto.FeedbackDto;
@@ -410,9 +148,725 @@ public class UserController {
 	}
 
 }
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AdminService {
+
+	@Autowired
+	private TrainerDao trainerDao;
+
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private BatchDao batchDao;
+
+	@Autowired
+	private StipendDao stipendDao;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private EmailUtil emailUtil;
+
+	public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+		Trainer exists = trainerDao.findByEmail(dto.getEmail());
+		if (exists != null) {
+			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+		}
+
+		Trainer trainer = new Trainer();
+		trainer.setName(dto.getName());
+		trainer.setEmail(dto.getEmail());
+		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+		trainer.setContact(dto.getContact());
+		trainer.setExperience(dto.getExperience());
+		trainer.setSkills(dto.getSkills());
+		trainer.setProfilePic(dto.getProfilePic());
+		trainer.setBio(dto.getBio());
+		trainer.setRole("TRAINER");
+
+		Trainer saved = trainerDao.save(trainer);
+
+		// send email (you already had this util)
+		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
+				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
+						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
+						+ "Regards,\nTeam");
+
+		return saved;
+	}
+
+	public InternshipBatch createBatch(BatchDto dto) {
+		InternshipBatch batch = new InternshipBatch();
+
+		batch.setBatchName(dto.getBatchName());
+		batch.setCourseName(dto.getCourseName());
+		batch.setTrainerId(dto.getTrainerId());
+		batch.setStartDate(dto.getStartDate());
+		batch.setEndDate(dto.getEndDate());
+		batch.setTotalSeats(dto.getTotalSeats());
+		batch.setAvailableSeats(dto.getAvailableSeats());
+
+		return batchDao.save(batch);
+	}
+
+	public Stipend giveStipend(StipendDto dto) {
+
+		User user = userDao.findById(dto.getUserId());
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+		}
+
+		Stipend stipend = new Stipend();
+		stipend.setUserId(dto.getUserId());
+		stipend.setUserName(dto.getUserName());
+		stipend.setPaymentMode(dto.getPaymentMode());
+		stipend.setAmount(dto.getAmount());
+
+		return stipendDao.save(stipend);
+	}
+
+	public List<User> getAllUsers() {
+		return userDao.findAll();
+	}
+
+	public List<Trainer> getAllTrainers() {
+		return trainerDao.findAll();
+	}
+
+	public List<InternshipBatch> getAllBatches() {
+		return batchDao.findAll();
+	}
+
+	public void deleteTrainer(Long id) {
+		if (trainerDao.findById(id) == null) {
+			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+		}
+		trainerDao.deleteById(id);
+	}
+
+	public void deleteUser(Long id) {
+		if (userDao.findById(id) == null) {
+			throw new ResourceNotFoundException("User not found with ID: " + id);
+		}
+		userDao.deleteById(id);
+	}
+
+	// --------- NEW: delete by email/name helpers ----------
+
+	// DELETE USER BY EMAIL
+	public void deleteUserByEmail(String email) {
+		User user = userDao.findByEmail(email);
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found with email: " + email);
+		}
+		userDao.deleteById(user.getUserId());
+	}
+
+	// DELETE TRAINER BY EMAIL
+	public void deleteTrainerByEmail(String email) {
+		Trainer trainer = trainerDao.findByEmail(email);
+		if (trainer == null) {
+			throw new ResourceNotFoundException("Trainer not found with email: " + email);
+		}
+		trainerDao.deleteByEmail(email);
+	}
+
+	// DELETE BATCH BY NAME
+	public void deleteBatchByName(String batchName) {
+		InternshipBatch batch = batchDao.findByName(batchName);
+		if (batch == null) {
+			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
+		}
+		batchDao.delete(batch.getBatchCode());
+	}
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+}
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        // USER LOGIN
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUserId(),
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+        }
+
+        // TRAINER LOGIN
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateTrainerToken(
+                trainer.getTrainerId(),
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole(),
+                trainer.getName()         // Trainer name added inside token
+        );
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(authority)
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    // USER TOKEN
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // TRAINER TOKEN (Trainer Name + Trainer ID added)
+    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
+                .claim("trainerId", trainerId)
+                .claim("trainerName", trainerName)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import java.util.List;
+
+public interface BatchDao {
+
+    InternshipBatch save(InternshipBatch batch);
+
+    InternshipBatch findById(Long batchCode);
+
+    List<InternshipBatch> findAll();
+
+    List<InternshipBatch> findByTrainerId(Long trainerId);
+
+    void update(InternshipBatch batch);
+
+    void delete(Long batchCode);
+
+    InternshipBatch findByName(String batchName);
+    
+    InternshipBatch findByBatchCode(Long batchCode);
+
+    void decrementAvailableSeats(Long batchCode);
+}
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class BatchDaoImpl implements BatchDao {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private RowMapper<InternshipBatch> mapper = (rs, rowNum) -> {
+		InternshipBatch b = new InternshipBatch();
+		b.setBatchCode(rs.getLong("batch_code"));
+		b.setBatchName(rs.getString("batch_name"));
+		b.setCourseName(rs.getString("course_name"));
+		b.setTrainerId(rs.getLong("trainer_id"));
+		b.setStartDate(rs.getDate("start_date"));
+		b.setEndDate(rs.getDate("end_date"));
+		b.setTotalSeats(rs.getInt("total_seats"));
+		b.setAvailableSeats(rs.getInt("available_seats"));
+		return b;
+	};
+
+	@Override
+	public InternshipBatch save(InternshipBatch batch) {
+		String sql = """
+				    INSERT INTO internship_batches
+				    (batch_name, course_name, trainer_id, start_date, end_date, total_seats, available_seats)
+				    VALUES (?, ?, ?, ?, ?, ?, ?)
+				""";
+
+		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		batch.setBatchCode(id);
+		return batch;
+	}
+
+	@Override
+	public InternshipBatch findById(Long batchCode) {
+		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_code = ?", mapper,
+				batchCode);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<InternshipBatch> findAll() {
+		return jdbcTemplate.query("SELECT * FROM internship_batches", mapper);
+	}
+
+	@Override
+	public List<InternshipBatch> findByTrainerId(Long trainerId) {
+		return jdbcTemplate.query("SELECT * FROM internship_batches WHERE trainer_id = ?", mapper, trainerId);
+	}
+
+	@Override
+	public void update(InternshipBatch batch) {
+		String sql = """
+				    UPDATE internship_batches SET batch_name=?, course_name=?, trainer_id=?, start_date=?,
+				    end_date=?, total_seats=?, available_seats=? WHERE batch_code=?
+				""";
+
+		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+
+				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats(),
+				batch.getBatchCode());
+	}
+
+	@Override
+	public void delete(Long batchCode) {
+		jdbcTemplate.update("DELETE FROM internship_batches WHERE batch_code = ?", batchCode);
+	}
+
+	@Override
+	public InternshipBatch findByName(String batchName) {
+		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_name = ?", mapper,
+				batchName);
+		return list.isEmpty() ? null : list.get(0);
+	}
+	
+	@Override
+	public InternshipBatch findByBatchCode(Long batchCode) {
+	    List<InternshipBatch> list = jdbcTemplate.query(
+	        "SELECT * FROM internship_batches WHERE batch_code = ?", mapper, batchCode);
+	    return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public void decrementAvailableSeats(Long batchCode) {
+	    String sql = """
+	        UPDATE internship_batches 
+	        SET available_seats = available_seats - 1 
+	        WHERE batch_code = ? AND available_seats > 0
+	    """;
+	    jdbcTemplate.update(sql, batchCode);
+	}
+
+}
 
 
-and this the current frontend
 
 import api from "./axiosConfig";
 
@@ -435,45 +889,9 @@ export const deleteUserByEmail = (email) =>
 
 // STIPEND
 export const giveStipend = (data) => api.post("/api/admin/stipend", data);
-import api from "./axiosConfig";
 
-export const loginApi = (data) => api.post("/api/auth/login", data);
-export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
-import axios from "axios";
-const api = axios.create({
-  baseURL: "http://localhost:9090",
-});
-
-api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
-  return config;
-});
-
-export default api;
-import api from "./axiosConfig";
-
-export const getTrainerBatches = (id) =>
-  api.get(`/api/trainer/batches/${id}`);
-
-export const createTask = (data) =>
-  api.post("/api/trainer/tasks", data);
-
-export const updateTask = (taskId, data) =>
-  api.put(`/api/trainer/tasks/${taskId}`, data);
-
-export const deleteTask = (taskId) =>
-  api.delete(`/api/trainer/tasks/${taskId}`);
-
-export const markAttendance = (data) =>
-  api.post("/api/trainer/attendance", data);
-
-export const givePerformance = (data) =>
-  api.post("/api/trainer/performance", data);
-
-// IMPORTANT: FIXED FUNCTION
-export const getUsersByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/UserBatch/${trainerId}`);
+// PUBLIC (No Auth Required)
+export const getAllBatchesPublic = () => api.get("/api/batches");
 import api from "./axiosConfig";
 
 export const registerUser = (data) => api.post("/api/user/register", data);
@@ -484,75 +902,6 @@ export const submitFeedback = (data) => api.post("/api/user/feedback", data);
 
 export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
 export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-
-export default function Navbar() {
-  const { logout, role, email } = useContext(AuthContext);
-  const nav = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    nav("/");
-  };
-
-  return (
-    <div className="nav">
-      <div className="nav-left">InternshipMgmt</div>
-      <div className="nav-right">
-        <span style={{ marginRight: 12 }}>{email}</span>
-        <button onClick={handleLogout} className="btn small">Logout</button>
-      </div>
-    </div>
-  );
-}
-import { Navigate, Outlet } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-
-export default function ProtectedRoute({ role }) {
-  const { token, role: userRole } = useContext(AuthContext);
-
-  if (!token) return <Navigate to="/" replace />;
-  if (role !== userRole) return <Navigate to="/" replace />;
-
-  return <Outlet />;
-}
-import React from "react";
-import { Link } from "react-router-dom";
-
-export default function Sidebar({ items = [] }) {
-  return (
-    <div className="sidebar">
-      {items.map((it) => (
-        <Link key={it.to} to={it.to} className="sidebar-link">
-          {it.label}
-        </Link>
-      ))}
-    </div>
-  );
-}
-import React, { useState, useEffect } from "react";
-import "../styles/theme.css";
-
-export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
-  }, [darkMode]);
-
-  return (
-    <div className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
-      {darkMode ? "🌞" : "🌙"}
-    </div>
-  );
-}
 import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
@@ -597,648 +946,26 @@ export default function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-import React, { useState, useEffect } from "react";
-import { createTask, getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/performance.css";
-
-export default function CreateTask() {
-  const trainerId = localStorage.getItem("trainerId");
-  const trainerName = localStorage.getItem("trainerName");
-
-  const [form, setForm] = useState({
-    userId: "",
-    trainerId,
-    description: "",
-    status: "PENDING",
-    deadline: "",
-    uploadFile: null,
-  });
-
-  const [users, setUsers] = useState([]);
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (trainerId) {
-      getUsersByTrainerId(trainerId)
-        .then((res) => setUsers(res.data))
-        .catch((err) =>
-          console.error("Failed to load user list for trainer:", err)
-        );
-    }
-  }, [trainerId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-    setError("");
-
-    if (!form.userId || !form.description) {
-      setError("⚠ Please fill all required fields!");
-      return;
-    }
-
-    try {
-      await createTask({
-        userId: Number(form.userId),
-        trainerId: Number(trainerId),
-        description: form.description,
-        status: form.status,
-        deadline: form.deadline,
-        uploadFile: form.uploadFile,
-      });
-
-      setMsg("Task Assigned Successfully ✔");
-      setForm({
-        ...form,
-        userId: "",
-        description: "",
-        deadline: "",
-        status: "PENDING",
-        uploadFile: null,
-      });
-    } catch (err) {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Failed to create task";
-      setError(String(backendMsg));
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Create Task</h3>
-
-        {msg && <div className="info success">{msg}</div>}
-        {error && <div className="info error">{error}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Trainer</label>
-          <input value={trainerName} disabled />
-
-          <label>Assign To (Intern)</label>
-          <select
-            value={form.userId}
-            onChange={(e) => setForm({ ...form, userId: e.target.value })}
-          >
-            <option value="">-- Select Intern --</option>
-            {users.map((u) => (
-              <option key={u.userId} value={u.userId}>
-                {u.userName} (Batch {u.batchCode})
-              </option>
-            ))}
-          </select>
-
-          <label>Description</label>
-          <textarea
-            placeholder="Describe task here..."
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          ></textarea>
-
-          <label>Deadline</label>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) =>
-              setForm({ ...form, deadline: e.target.value })
-            }
-          />
-
-          <label>Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            <option>PENDING</option>
-            <option>ONGOING</option>
-            <option>COMPLETED</option>
-          </select>
-
-          <button className="btn" type="submit">
-            Assign Task
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-import React, { useEffect, useState } from "react";
-import { givePerformance, getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/performance.css";
-
-export default function GivePerformance() {
-  const [form, setForm] = useState({
-    userId: "",
-    trainerId: "",
-    trainerName: "",
-    batchCode: "",
-    remarks: "",
-    taskEvaluationScore: "",
-  });
-
-  const [users, setUsers] = useState([]);
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const trainerId = localStorage.getItem("trainerId");
-    const trainerName = localStorage.getItem("trainerName");
-
-    setForm((prev) => ({
-      ...prev,
-      trainerId,
-      trainerName,
-    }));
-
-    if (trainerId) {
-      getUsersByTrainerId(trainerId)
-        .then((res) => setUsers(res.data))
-        .catch((err) => console.error("Users fetch failed:", err));
-    }
-  }, []);
-
-  const handleUserSelect = (e) => {
-    const userId = Number(e.target.value);
-    const selectedUser = users.find((u) => u.userId === userId);
-
-    setForm((prev) => ({
-      ...prev,
-      userId,
-      batchCode: selectedUser?.batchCode || "",
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-    setError("");
-
-    if (!form.userId || !form.batchCode) {
-      setError("⚠️ Select a user having valid batch assignment");
-      return;
-    }
-
-    try {
-      await givePerformance({
-        userId: Number(form.userId),
-        trainerId: Number(form.trainerId),
-        batchCode: Number(form.batchCode),
-        trainerName: form.trainerName,
-        remarks: form.remarks,
-        taskEvaluationScore: Number(form.taskEvaluationScore),
-      });
-
-      setMsg("Performance Saved Successfully ✔");
-      setForm({
-        ...form,
-        userId: "",
-        batchCode: "",
-        remarks: "",
-        taskEvaluationScore: "",
-      });
-
-    } catch (err) {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.response?.data ||
-        "Failed to save performance";
-
-      setError(String(backendMsg));
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Give Performance</h3>
-
-        {msg && <div className="info success">{msg}</div>}
-        {error && <div className="info error">{error}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Trainer</label>
-          <input value={form.trainerName} disabled />
-
-          <label>Intern</label>
-          <select value={form.userId} onChange={handleUserSelect}>
-            <option value="">-- Select Intern --</option>
-            {users.map((u) => (
-              <option key={u.userId} value={u.userId}>
-                {u.userName} (Batch {u.batchCode})
-              </option>
-            ))}
-          </select>
-
-          <label>Batch</label>
-          <input value={form.batchCode} disabled />
-
-          <label>Remarks</label>
-          <textarea
-            value={form.remarks}
-            onChange={(e) => setForm({ ...form, remarks: e.target.value })}
-          ></textarea>
-
-          <label>Score (0-100)</label>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            value={form.taskEvaluationScore}
-            onChange={(e) => setForm({ ...form, taskEvaluationScore: e.target.value })}
-          />
-
-          <button className="btn" type="submit">
-            Save
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { getUsersByTrainerId, markAttendance } from "../../api/trainerApi";
-
-export default function MarkAttendance() {
-  const trainerId = localStorage.getItem("trainerId") || 1;
-
-  const [users, setUsers] = useState([]);
-  const [attendanceList, setAttendanceList] = useState([]);
-  const [date, setDate] = useState("");
-  const [msg, setMsg] = useState("");
-
-  // Load all users in trainer's batches
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsersByTrainerId(trainerId);
-        setUsers(res.data || []);
-
-        // initialize attendance list with default present=true
-        const initial = (res.data || []).map((u) => ({
-          userId: u.userId,
-          batchCode: u.batchCode,
-          present: true, // default Present
-        }));
-        setAttendanceList(initial);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to load users");
-      }
-    };
-
-    fetchUsers();
-  }, [trainerId]);
-
-  // Change status Present/Absent for a specific user
-  const handleStatusChange = (index, value) => {
-    const updated = [...attendanceList];
-    updated[index].present = value === "true"; // convert string to boolean
-    setAttendanceList(updated);
-  };
-
-  // Submit attendance for all users
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-
-    if (!date) {
-      setMsg("Please select date first");
-      return;
-    }
-
-    try {
-      for (const a of attendanceList) {
-        await markAttendance({
-          userId: a.userId,
-          batchCode: a.batchCode,
-          date,
-          present: a.present,
-        });
-      }
-      setMsg("Attendance saved/updated for all users.");
-    } catch (e) {
-      console.error(e);
-      setMsg(e?.response?.data || e.message || "Error saving attendance");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Mark Attendance</h3>
-
-        {msg && <div className="info" style={{ marginBottom: 10 }}>{msg}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label style={{ marginRight: 8 }}>Date:</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-
-          {users.length === 0 ? (
-            <div style={{ marginTop: 20 }}>No users found in your batches.</div>
-          ) : (
-            <table className="table" style={{ marginTop: 20 }}>
-              <thead>
-                <tr>
-                  <th>User ID</th>
-                  <th>User Name</th>
-                  <th>Batch Code</th>
-                  <th>Status (Present / Absent)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u, index) => (
-                  <tr key={u.userId || u.email || index}>
-                    <td>{u.userId}</td>
-                    <td>{u.userName}</td>
-                    <td>{u.batchCode}</td>
-                    <td>
-                      <select
-                        value={attendanceList[index]?.present ? "true" : "false"}
-                        onChange={(e) =>
-                          handleStatusChange(index, e.target.value)
-                        }
-                      >
-                        <option value="true">Present</option>
-                        <option value="false">Absent</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
-          {users.length > 0 && (
-            <button className="btn" type="submit" style={{ marginTop: 10 }}>
-              Mark Attendance
-            </button>
-          )}
-        </form>
-      </div>
-    </div>
-  );
-}
-import React, { useState, useEffect } from "react";
-import { getTrainerBatches } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function TrainerBatches() {
-  const [list, setList] = useState([]);
-  const trainerId = localStorage.getItem("trainerId") || 1; // adjust as available
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await getTrainerBatches(trainerId);
-        setList(res.data);
-      } catch (e) { console.error(e); }
-    };
-    fetch();
-  }, [trainerId]);
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>My Batches</h3>
-        <ul>
-          {list.map(b => <li key={b.batchCode}>{b.batchName} - {b.courseName}</li>)}
-        </ul>
-      </div>
-    </div>
-  );
-}
 import React from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 
-export default function TrainerDashboard() {
+export default function AdminDashboard() {
   const items = [
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/users", label: "Users in Batch" }
+    { to: "/admin/create-trainer", label: "Create Trainer" },
+    { to: "/admin/view-trainers", label: "View Trainers" },
+    { to: "/admin/create-batch", label: "Create Batch" },
+    { to: "/admin/view-batches", label: "View Batches" },
+    { to: "/admin/give-stipend", label: "Give Stipend" },
+    { to: "/admin/view-users", label: "View Users" },
   ];
   return (
     <div className="layout">
       <Navbar />
       <Sidebar items={items} />
-      <div className="main"><h2>Trainer Dashboard</h2></div>
-    </div>
-  );
-}
-import React, { useState } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { getFeedbackByTrainerName } from "../../api/trainerApi";
-
-export default function TrainerFeedback() {
-  const [trainerName, setTrainerName] = useState("");
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const items = [
-    { to: "/trainer/dashboard", label: "Dashboard" },
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/users", label: "Users in Batch" },
-    { to: "/trainer/tasks", label: "View Tasks" },
-    { to: "/trainer/performance-list", label: "View Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" },
-  ];
-
-  const handleFetch = async (e) => {
-    e.preventDefault();
-    setMsg("");
-    setFeedbacks([]);
-    if (!trainerName) {
-      setMsg("Please enter Trainer Name");
-      return;
-    }
-    try {
-      const res = await getFeedbackByTrainerName(trainerName);
-      setFeedbacks(res.data || []);
-      if (!res.data || res.data.length === 0)
-        setMsg("No feedback found for this trainer");
-    } catch (err) {
-      setMsg(err?.response?.data || err.message || "Error fetching feedback");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
       <div className="main">
-        <h3>Feedback for Me</h3>
-
-        <form className="small-form" onSubmit={handleFetch}>
-          <input
-            placeholder="Trainer Name"
-            value={trainerName}
-            onChange={(e) => setTrainerName(e.target.value)}
-          />
-          <button className="btn" type="submit">
-            Load Feedback
-          </button>
-        </form>
-
-        {msg && <div className="info" style={{ marginTop: 10 }}>{msg}</div>}
-
-        {feedbacks.length > 0 && (
-          <table className="table" style={{ marginTop: 20 }}>
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>User Name</th>
-                <th>Comments</th>
-                <th>Rating</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {feedbacks.map((f, idx) => (
-                <tr key={f.id || idx}>
-                  <td>{f.userId}</td>
-                  <td>{f.userName}</td>
-                  <td>{f.comments || f.feedbackText}</td>
-                  <td>{f.rating}</td>
-                  <td>{f.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
-import React, { useState } from "react";
-import { updateTask } from "../../api/trainerApi";
-import { useParams } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function UpdateTask() {
-  const { taskId } = useParams();
-  const [form, setForm] = useState({ description: "", status: "PENDING", deadline: "" });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateTask(taskId, form);
-      setMsg("Task updated");
-    } catch (e) { setMsg(e?.response?.data || e.message); }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Update Task {taskId}</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <textarea placeholder="Description" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}></textarea>
-          <input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})} />
-          <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
-            <option>PENDING</option><option>ONGOING</option><option>COMPLETED</option>
-          </select>
-          <button className="btn" type="submit">Update</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-import React, { useEffect, useState } from "react";
-import { getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function UsersInBatch() {
-  const trainerId = localStorage.getItem("trainerId") || 1;
-  const [list, setList] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await getUsersByTrainerId(trainerId);
-        setList(res.data);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to fetch users");
-      }
-    };
-    fetch();
-  }, [trainerId]);
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Users in My Batches</h3>
-
-        {msg && <div className="info">{msg}</div>}
-
-        {list.length === 0 ? (
-          <div>No users found.</div>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>Batch Code</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((u) => (
-                <tr key={u.email}>
-                  <td>{u.userId}</td>
-                  <td>{u.userName}</td>
-                  <td>{u.email}</td>
-                  <td>{u.contactNo}</td>
-                  <td>{u.batchCode}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <h2>Admin Dashboard</h2>
+        <p>Use sidebar to navigate admin features.</p>
       </div>
     </div>
   );
@@ -1324,12 +1051,14 @@ export default function FeedbackForm() {
     </div>
   );
 }
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { registerUser } from "../../api/userApi";
+import { getAllBatchesPublic } from "../../api/adminApi";
 import formatError from "../../utils/formatError";
 
 export default function RegisterUser() {
   const [msg, setMsg] = useState("");
+  const [batches, setBatches] = useState([]);
 
   const [form, setForm] = useState({
     userName: "",
@@ -1350,33 +1079,60 @@ export default function RegisterUser() {
     profilePic: "",
   });
 
+  useEffect(() => {
+    fetchBatches();
+  }, []);
+
+  const fetchBatches = async () => {
+    try {
+      const res = await getAllBatchesPublic();
+      setBatches(res.data);
+    } catch (e) {
+      console.error("Failed to load batches", e);
+    }
+  };
+
+  const handleBatchSelect = (e) => {
+    const selectedBatch = batches.find(
+      (b) => b.batchName === e.target.value
+    );
+
+    if (selectedBatch) {
+      setForm({
+        ...form,
+        batchCode: selectedBatch.batchName,
+        startDate: selectedBatch.startDate,
+        endDate: selectedBatch.endDate,
+      });
+    }
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await registerUser(form);
       setMsg("User registered successfully!");
     } catch (e) {
-      setMsg(formatError(e)); // FIXED
+      setMsg(formatError(e));
     }
   };
 
   return (
     <div className="container">
       <h2>User Registration</h2>
-
       {msg && <p style={{ color: "red" }}>{msg}</p>}
 
       <form onSubmit={handleSubmit} className="form">
+        
         <input name="userName" placeholder="Name" onChange={handleChange} />
         <input name="email" placeholder="Email" onChange={handleChange} />
-        <input name="password" placeholder="Password" onChange={handleChange} />
-
-        <input name="dob" type="date" placeholder="DOB" onChange={handleChange} />
+        <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+        
+        <input name="dob" type="date" onChange={handleChange} />
         <input name="contactNo" placeholder="Contact No" onChange={handleChange} />
         <input name="address" placeholder="Address" onChange={handleChange} />
         <input name="collegeName" placeholder="College Name" onChange={handleChange} />
@@ -1384,16 +1140,35 @@ export default function RegisterUser() {
         <input name="major" placeholder="Major" onChange={handleChange} />
         <input name="team" placeholder="Team" onChange={handleChange} />
 
-        <input name="batchCode" placeholder="Batch Code" onChange={handleChange} />
-        <input name="startDate" type="date" placeholder="Start Date" onChange={handleChange} />
-        <input name="endDate" type="date" placeholder="End Date" onChange={handleChange} />
-        <input name="graduatingYear" placeholder="Graduating Year" onChange={handleChange} />
+        {/* Batch Dropdown */}
+        <select name="batchCode" value={form.batchCode} onChange={handleBatchSelect} required>
+          <option value="">Select Batch</option>
+          {batches.map((b) => (
+            <option key={b.batchName} value={b.batchName}>
+              {b.batchName} | {b.courseName} | Trainer ID: {b.trainerId}
+            </option>
+          ))}
+        </select>
 
+        {/* Auto-Filled */}
+        <input name="startDate" type="date" value={form.startDate} readOnly />
+        <input name="endDate" type="date" value={form.endDate} readOnly />
+
+        <input name="graduatingYear" placeholder="Graduating Year" onChange={handleChange} />
         <input name="resume" placeholder="Resume URL" onChange={handleChange} />
         <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
 
         <button className="btn">Register</button>
       </form>
+
+      {form.batchCode && (
+        <div className="batch-info">
+          <h4>Selected Batch Details</h4>
+          <p><strong>Batch:</strong> {form.batchCode}</p>
+          <p><strong>Start:</strong> {form.startDate}</p>
+          <p><strong>End:</strong> {form.endDate}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -1667,57 +1442,6 @@ export default function UserTasks() {
     </div>
   );
 }
-const formatDate = (value) => {
-  if (!value) return "N/A";
-
-  try {
-    const d = new Date(value);
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
-  } catch {}
-
-  return "N/A";
-};
-
-export default formatDate;
-export default function formatError(err) {
-  if (!err) return "Unknown error";
-
-  // If backend returned response
-  if (err.response) {
-    const data = err.response.data;
-
-    // Backend returned plain string
-    if (typeof data === "string") return data;
-
-    // Backend returned { message: "" }
-    if (data?.message) return data.message;
-
-    // Backend returned { error: "" }
-    if (data?.error) {
-      return typeof data.error === "string"
-        ? data.error
-        : JSON.stringify(data.error);
-    }
-
-    // Fallback parse
-    try {
-      return JSON.stringify(data);
-    } catch {
-      return "Server error";
-    }
-  }
-
-  // If request never reached server
-  return err.message || "Network error";
-}
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthProvider from "./context/AuthContext";
@@ -1746,6 +1470,7 @@ import UpdateTask from "./pages/Trainer/UpdateTask";
 import MarkAttendance from "./pages/Trainer/MarkAttendance";
 import GivePerformance from "./pages/Trainer/GivePerformance";
 import UsersInBatch from "./pages/Trainer/UsersInBatch";
+import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";  // 🔥 NEW
 
 // User
 import UserDashboard from "./pages/User/UserDashboard";
@@ -1753,8 +1478,6 @@ import UserTasks from "./pages/User/UserTasks";
 import UserPerformance from "./pages/User/UserPerformance";
 import BatchDetails from "./pages/User/BatchDetails";
 import FeedbackForm from "./pages/User/FeedbackForm";
-
-// NEW USER PAGES
 import UserStipends from "./pages/User/UserStipends";
 import UserAttendance from "./pages/User/UserAttendance";
 
@@ -1762,7 +1485,6 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {/* Dark/Light mode toggle */}
         <ThemeToggle />
 
         <Routes>
@@ -1791,6 +1513,7 @@ export default function App() {
             <Route path="/trainer/attendance" element={<MarkAttendance />} />
             <Route path="/trainer/performance" element={<GivePerformance />} />
             <Route path="/trainer/users" element={<UsersInBatch />} />
+            <Route path="/trainer/tasks" element={<TrainerViewTasks />} /> {/* 🔥 NEW */}
           </Route>
 
           {/* User Panel */}
@@ -1800,11 +1523,10 @@ export default function App() {
             <Route path="/user/performance" element={<UserPerformance />} />
             <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
             <Route path="/user/feedback" element={<FeedbackForm />} />
-
-            {/* 🔥 Newly added routes */}
             <Route path="/user/stipends" element={<UserStipends />} />
             <Route path="/user/attendance" element={<UserAttendance />} />
           </Route>
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
