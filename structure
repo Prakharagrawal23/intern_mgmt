@@ -1,402 +1,161 @@
 
-Expression
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM feedback WHERE trainer_id = ? ORDER BY date DESC]
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:101)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:70)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1580)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:675)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:721)
+2025-12-04T12:33:13.969+05:30 TRACE 33552 --- [nio-9090-exec-2] o.s.jdbc.core.StatementCreatorUtils      : Setting SQL statement parameter value: column index 1, parameter value [15], value class [java.lang.Long], SQL type unknown
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:752)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:765)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:823)
+	at com.finalproject.internMgmtSystem.repository.FeedbackDaoImpl.findByTrainerId(FeedbackDaoImpl.java:79)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.finalproject.internMgmtSystem.repository.FeedbackDaoImpl$$SpringCGLIB$$0.findByTrainerId(<generated>)
+	at com.finalproject.internMgmtSystem.service.TrainerService.viewFeedbackByTrainerId(TrainerService.java:144)
+	at com.finalproject.internMgmtSystem.controller.TrainerController.getFeedbackByTrainerId(TrainerController.java:88)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'trainer_id' in 'where clause'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:972)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:730)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:656)
+	... 117 more
+
+
+
+
+[eslint] 
+src\pages\Trainer\TrainerFeedback.jsx
+  Line 26:6:  React Hook useEffect has a missing dependency: 'loadFeedback'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src\pages\Trainer\TrainerFeedback.jsx
+  Line 26:6:  React Hook useEffect has a missing dependency: 'loadFeedback'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+webpack compiled with 1 warning
+
+
 not available
 ﻿
 react-dom-client.development.js:28003 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-:9090/api/trainer/fe…har%20agrawal%202:1 
+:9090/api/trainer/feedback/id/15:1 
  
- Failed to load resource: the server responded with a status of 404 ()
-react-dom-client.development.js:6099 
- Uncaught Error: Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-react-dom-client.development.js:9362 
- An error occurred in the <div> component.
-
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
-
-
-
-Uncaught runtime errors:
-×
-ERROR
-Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11923:11)
-    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11927:106)
-    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:12250:9)
-    at http://localhost:3000/static/js/bundle.js:12262:31
-    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13821:47)
-    at beginWork (http://localhost:3000/static/js/bundle.js:14637:1565)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:9089:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16998:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:16893:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:16878:7)
-
-
-
-import api from "./axiosConfig";
-
-export const getTrainerBatches = (id) =>
-  api.get(`/api/trainer/batches/${id}`);
-
-export const createTask = (data) =>
-  api.post("/api/trainer/tasks", data);
-
-export const updateTask = (taskId, data) =>
-  api.put(`/api/trainer/tasks/${taskId}`, data);
-
-export const deleteTask = (taskId) =>
-  api.delete(`/api/trainer/tasks/${taskId}`);
-
-export const markAttendance = (data) =>
-  api.post("/api/trainer/attendance", data);
-
-export const givePerformance = (data) =>
-  api.post("/api/trainer/performance", data);
-
-// IMPORTANT: FIXED FUNCTION
-export const getUsersByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/UserBatch/${trainerId}`);
-
-// Get All Tasks created by Trainer
-export const getTasksByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/tasks/${trainerId}`);
-
-// ⭐ NEW: Get Feedback by Trainer Name
-export const getFeedbackByTrainerName = (trainerName) =>
-  api.get(`/api/trainer/feedback/${trainerName}`);
-
-import api from "./axiosConfig";
-
-// USER REGISTRATION
-export const registerUser = (data) => api.post("/api/user/register", data);
-
-// PUBLIC BATCH LIST — no login required
-export const getAllBatchesPublic = () => api.get("/api/user/batches");
-
-// USER FEATURES
-export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
-export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
-export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
-export const submitFeedback = (data) => api.post("/api/user/feedback", data);
-export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
-export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
-
-
-import React from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/dashboard.css";
-
-export default function TrainerDashboard() {
-  const items = [
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/users", label: "Users in Batch" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/tasks", label: "View Tasks" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" } // ⭐ ADDED
-  ];
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-      <div className="main fadeIn">
-        <h2 className="dash-title">Trainer Portal</h2>
-        <p className="dash-sub">
-          Manage batches, tasks & attendance easily.
-        </p>
-
-        <div className="dashboard-info">
-          <div className="info-card">
-            <h3>📌 Assign Tasks</h3>
-            <p>Create assignments and track submissions.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>📝 Attendance</h3>
-            <p>Mark and review attendance daily.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>⭐ Performance</h3>
-            <p>Evaluate student progress and growth.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { getFeedbackByTrainerName } from "../../api/trainerApi";
-
-export default function TrainerFeedback() {
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const trainerName = localStorage.getItem("trainerName"); // AUTO-FETCH trainer name
-
-  const items = [
-    { to: "/trainer/dashboard", label: "Dashboard" },
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/users", label: "Users in Batch" },
-    { to: "/trainer/tasks", label: "View Tasks" },
-    { to: "/trainer/performance-list", label: "View Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" },
-  ];
-
-  useEffect(() => {
-    fetchFeedback();
-    // eslint-disable-next-line
-  }, []);
-
-  const fetchFeedback = async () => {
-    setMsg("");
-    try {
-      const res = await getFeedbackByTrainerName(trainerName);
-      setFeedbacks(res.data || []);
-      if (!res.data || res.data.length === 0) {
-        setMsg("No feedback found for you yet.");
-      }
-    } catch (err) {
-      setMsg(err?.response?.data || "Error fetching feedback");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-
-      <div className="main fadeIn">
-        <h3>⭐ Feedback Received</h3>
-
-        {msg && <div className="info">{msg}</div>}
-
-        {feedbacks.length > 0 && (
-          <table className="table" style={{ marginTop: 20 }}>
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>User Name</th>
-                <th>Feedback</th>
-                <th>Rating</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {feedbacks.map((f) => (
-                <tr key={f.id}>
-                  <td>{f.userId}</td>
-                  <td>{f.userName}</td>
-                  <td>{f.feedback}</td> {/* FIX DONE */}
-                  <td>{f.rating}</td>
-                  <td>{new Date(f.date).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
-
-
-import React from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/dashboard.css";
-
-export default function UserDashboard() {
-  const items = [
-    { to: "/user/tasks", label: "My Tasks" },
-    { to: "/user/performance", label: "My Performance" },
-    { to: "/user/stipends", label: "My Stipends" },
-    { to: "/user/attendance", label: "My Attendance" },
-    { to: "/user/feedback", label: "Give Feedback" },
-  ];
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-
-      <div className="main fadeIn">
-        <h2 className="dash-title">Intern Portal</h2>
-        <p className="dash-sub">Track your learning and performance.</p>
-
-        <div className="dashboard-info">
-          <div className="info-card">
-            <h3>📚 Tasks</h3>
-            <p>Track your deadlines and progress.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>📊 Performance</h3>
-            <p>Monitor scores and achievements.</p>
-          </div>
-
-          <div className="info-card">
-            <h3>💵 Stipends</h3>
-            <p>View stipend status securely.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useState } from "react";
-import { submitFeedback } from "../../api/userApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function FeedbackForm() {
-  const [form, setForm] = useState({ userId: "", userName: "", batchCode: "", trainerName: "", feedback: "", rating: 5 });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await submitFeedback(form);
-      setMsg("Feedback submitted.");
-      setTimeout(() => setMsg(""), 2000);
-    } catch (e) {
-      setMsg(e?.response?.data || e.message);
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Give Feedback</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="User ID" value={form.userId} onChange={(e)=>setForm({...form,userId:e.target.value})} />
-          <input placeholder="User Name" value={form.userName} onChange={(e)=>setForm({...form,userName:e.target.value})} />
-          <input placeholder="Batch Code" value={form.batchCode} onChange={(e)=>setForm({...form,batchCode:e.target.value})} />
-          <input placeholder="Trainer Name" value={form.trainerName} onChange={(e)=>setForm({...form,trainerName:e.target.value})} />
-          <textarea placeholder="Feedback" value={form.feedback} onChange={(e)=>setForm({...form,feedback:e.target.value})}></textarea>
-          <input placeholder="Rating (1-5)" value={form.rating} onChange={(e)=>setForm({...form,rating:Number(e.target.value)})} />
-          <button className="btn" type="submit">Submit</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";
-
-// Pages
-import Home from "./pages/Home/Home";
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
-
-// Admin Pages
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer Pages
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";
-import TrainerFeedback from "./pages/Trainer/TrainerFeedback"; // ⭐ NEW IMPORT
-
-// User Pages
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-import UserStipends from "./pages/User/UserStipends";
-import UserAttendance from "./pages/User/UserAttendance";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <ThemeToggle />
-
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin Panel */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer Panel */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-            <Route path="/trainer/tasks" element={<TrainerViewTasks />} />
-            <Route path="/trainer/feedback" element={<TrainerFeedback />} /> {/* ⭐ ADDED */}
-          </Route>
-
-          {/* User Panel */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-            <Route path="/user/stipends" element={<UserStipends />} />
-            <Route path="/user/attendance" element={<UserAttendance />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
+ Failed to load resource: the server responded with a status of 500 ()
+trainerApi.js:28 
+ 
+ GET http://localhost:9090/api/trainer/feedback/id/15 500 (Internal Server Error)
