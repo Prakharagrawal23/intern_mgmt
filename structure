@@ -1,9 +1,478 @@
-userApi.js:13   POST http://localhost:9090/api/user/feedback 400 (Bad Request)
+POST http://localhost:9090/api/user/feedback 400 (Bad Request)
+dispatchXhrRequest @ xhr.js:198
+xhr @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+httpMethod @ Axios.js:224
+wrap @ bind.js:12
+submitFeedback @ userApi.js:13
+handleSubmit @ FeedbackForm.jsx:13
+executeDispatch @ react-dom-client.development.js:19116
+runWithFiberInDEV @ react-dom-client.development.js:870
+processDispatchQueue @ react-dom-client.development.js:19165
+(anonymous) @ react-dom-client.development.js:19767
+batchedUpdates$1 @ react-dom-client.development.js:3255
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
+dispatchEvent @ react-dom-client.development.js:23584
+dispatchDiscreteEvent @ react-dom-client.development.js:23552
+<form>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+FeedbackForm @ FeedbackForm.jsx:27
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopConcurrentByScheduler @ react-dom-client.development.js:17634
+renderRootConcurrent @ react-dom-client.development.js:17615
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<FeedbackForm>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+App @ App.js:83
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+options.factory @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
+    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
+    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
+    at react-dom-client.development.js:7098:1
+    at reconcileChildren (react-dom-client.development.js:9699:1)
+    at beginWork (react-dom-client.development.js:11988:1)
+    at runWithFiberInDEV (react-dom-client.development.js:870:1)
+    at performUnitOfWork (react-dom-client.development.js:17639:1)
+    at workLoopSync (react-dom-client.development.js:17469:1)
+    at renderRootSync (react-dom-client.development.js:17450:1)
+throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
+throwOnInvalidObjectType @ react-dom-client.development.js:6109
+reconcileChildFibersImpl @ react-dom-client.development.js:7058
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<div>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+FeedbackForm @ FeedbackForm.jsx:26
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<FeedbackForm>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+App @ App.js:83
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+options.factory @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+FeedbackForm.jsx:26  An error occurred in the <div> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
 
 
-Give Feedback
-❌ Failed to submit feedback!
-prakhar agrawal 3
-good
-5
-Submit Feedback
+Uncaught runtime errors:
+×
+ERROR
+Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11923:11)
+    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11927:106)
+    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:12250:9)
+    at http://localhost:3000/static/js/bundle.js:12262:31
+    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13821:47)
+    at beginWork (http://localhost:3000/static/js/bundle.js:14637:1565)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:9089:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16998:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:16893:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:16878:7)
+
+
+
+import api from "./axiosConfig";
+
+// USER REGISTRATION
+export const registerUser = (data) => api.post("/api/user/register", data);
+
+// PUBLIC BATCH LIST — no login required
+export const getAllBatchesPublic = () => api.get("/api/user/batches");
+
+// USER FEATURES
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  // Extract JWT payload
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      return {
+        role: payload.role?.startsWith("ROLE_")
+          ? payload.role
+          : `ROLE_${payload.role}`, // Ensure role format is ROLE_*
+        email: payload.sub || payload.email || "",
+        userId: payload.userId,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token received");
+
+      // Save token, role, email to context + storage
+      login(token, role, email);
+
+      // Save IDs depending on role
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
+
+      if (role === "ROLE_USER" && userId) {
+        localStorage.setItem("userId", userId);
+      }
+
+      // Navigation by role
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+
+    } catch (error) {
+      setErr(error?.response?.data || "Login failed. Try again!");
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+
+        {/* LEFT SIDE (Brand Illustration) */}
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon">
+              <span className="brand-briefcase" />
+            </div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Admin working" className="login-illustration" />
+          </div>
+        </div>
+
+        {/* RIGHT SIDE (Login Form) */}
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            <span className="arrow-icon">←</span>
+            Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+              />
+            </div>
+
+            <button className="btn" type="submit">LOGIN</button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState } from "react";
+import { submitFeedback } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function FeedbackForm() {
+  const [form, setForm] = useState({ userId: "", userName: "", batchCode: "", trainerName: "", feedback: "", rating: 5 });
+  const [msg, setMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await submitFeedback(form);
+      setMsg("Feedback submitted.");
+      setTimeout(() => setMsg(""), 2000);
+    } catch (e) {
+      setMsg(e?.response?.data || e.message);
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Give Feedback</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={(e)=>setForm({...form,userId:e.target.value})} />
+          <input placeholder="User Name" value={form.userName} onChange={(e)=>setForm({...form,userName:e.target.value})} />
+          <input placeholder="Batch Code" value={form.batchCode} onChange={(e)=>setForm({...form,batchCode:e.target.value})} />
+          <input placeholder="Trainer Name" value={form.trainerName} onChange={(e)=>setForm({...form,trainerName:e.target.value})} />
+          <textarea placeholder="Feedback" value={form.feedback} onChange={(e)=>setForm({...form,feedback:e.target.value})}></textarea>
+          <input placeholder="Rating (1-5)" value={form.rating} onChange={(e)=>setForm({...form,rating:Number(e.target.value)})} />
+          <button className="btn" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./context/AuthContext";
+import ProtectedRoute from "./components/protectedRoute";
+import ThemeToggle from "./components/ThemeToggle";
+
+// Pages
+import Home from "./pages/Home/Home";
+import Login from "./pages/Auth/Login";
+import RegisterUser from "./pages/User/RegisterUser";
+
+// Admin Pages
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import CreateTrainer from "./pages/Admin/CreateTrainer";
+import ViewTrainers from "./pages/Admin/ViewTrainers";
+import CreateBatch from "./pages/Admin/CreateBatch";
+import ViewBatches from "./pages/Admin/ViewBatches";
+import GiveStipend from "./pages/Admin/GiveStipend";
+import ViewUsers from "./pages/Admin/ViewUsers";
+
+// Trainer Pages
+import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
+import TrainerBatches from "./pages/Trainer/TrainerBatches";
+import CreateTask from "./pages/Trainer/CreateTask";
+import UpdateTask from "./pages/Trainer/UpdateTask";
+import MarkAttendance from "./pages/Trainer/MarkAttendance";
+import GivePerformance from "./pages/Trainer/GivePerformance";
+import UsersInBatch from "./pages/Trainer/UsersInBatch";
+import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";
+import TrainerFeedback from "./pages/Trainer/TrainerFeedback"; // ⭐ NEW IMPORT
+
+// User Pages
+import UserDashboard from "./pages/User/UserDashboard";
+import UserTasks from "./pages/User/UserTasks";
+import UserPerformance from "./pages/User/UserPerformance";
+import BatchDetails from "./pages/User/BatchDetails";
+import FeedbackForm from "./pages/User/FeedbackForm";
+import UserStipends from "./pages/User/UserStipends";
+import UserAttendance from "./pages/User/UserAttendance";
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <ThemeToggle />
+
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/user/register" element={<RegisterUser />} />
+
+          {/* Admin Panel */}
+          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
+            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
+            <Route path="/admin/create-batch" element={<CreateBatch />} />
+            <Route path="/admin/view-batches" element={<ViewBatches />} />
+            <Route path="/admin/give-stipend" element={<GiveStipend />} />
+            <Route path="/admin/view-users" element={<ViewUsers />} />
+          </Route>
+
+          {/* Trainer Panel */}
+          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
+            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
+            <Route path="/trainer/batches" element={<TrainerBatches />} />
+            <Route path="/trainer/create-task" element={<CreateTask />} />
+            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
+            <Route path="/trainer/attendance" element={<MarkAttendance />} />
+            <Route path="/trainer/performance" element={<GivePerformance />} />
+            <Route path="/trainer/users" element={<UsersInBatch />} />
+            <Route path="/trainer/tasks" element={<TrainerViewTasks />} />
+            <Route path="/trainer/feedback" element={<TrainerFeedback />} /> {/* ⭐ ADDED */}
+          </Route>
+
+          {/* User Panel */}
+          <Route element={<ProtectedRoute role="ROLE_USER" />}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/user/tasks" element={<UserTasks />} />
+            <Route path="/user/performance" element={<UserPerformance />} />
+            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
+            <Route path="/user/feedback" element={<FeedbackForm />} />
+            <Route path="/user/stipends" element={<UserStipends />} />
+            <Route path="/user/attendance" element={<UserAttendance />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
