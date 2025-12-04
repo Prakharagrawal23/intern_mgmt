@@ -1,15 +1,324 @@
-Compiled with warnings.
+import api from "./axiosConfig";
 
-[eslint] 
-src\pages\User\FeedbackForm.jsx
-  Line 10:10:  'trainerId' is assigned a value but never used  no-unused-vars
+// USER REGISTRATION
+export const registerUser = (data) => api.post("/api/user/register", data);
 
-Search for the keywords to learn more about each warning.
-To ignore, add // eslint-disable-next-line to the line before.
+// PUBLIC BATCH LIST — no login required
+export const getAllBatchesPublic = () => api.get("/api/user/batches");
 
-WARNING in [eslint] 
-src\pages\User\FeedbackForm.jsx
-  Line 10:10:  'trainerId' is assigned a value but never used  no-unused-vars
+// USER FEATURES
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
 
-webpack compiled with 1 warning
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  // Extract JWT payload
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      return {
+        role: payload.role?.startsWith("ROLE_")
+          ? payload.role
+          : `ROLE_${payload.role}`, // Ensure role format is ROLE_*
+        email: payload.sub || payload.email || "",
+        userId: payload.userId,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
+
+      if (!role) throw new Error("Invalid token received");
+
+      // Save token, role, email to context + storage
+      login(token, role, email);
+
+      // Save IDs depending on role
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
+
+      if (role === "ROLE_USER" && userId) {
+        localStorage.setItem("userId", userId);
+      }
+
+      // Navigation by role
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+
+    } catch (error) {
+      setErr(error?.response?.data || "Login failed. Try again!");
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+
+        {/* LEFT SIDE (Brand Illustration) */}
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon">
+              <span className="brand-briefcase" />
+            </div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Admin working" className="login-illustration" />
+          </div>
+        </div>
+
+        {/* RIGHT SIDE (Login Form) */}
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            <span className="arrow-icon">←</span>
+            Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+              />
+            </div>
+
+            <button className="btn" type="submit">LOGIN</button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import { submitFeedback, getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
+
+export default function FeedbackForm() {
+  const userId = localStorage.getItem("userId");
+  const batchCode = localStorage.getItem("batchCode"); // batch saved previously
+
+  const [trainerName, setTrainerName] = useState("");
+
+  const [form, setForm] = useState({
+    userId,
+    userName: "",
+    batchCode,
+    trainerId: "",
+    trainerName: "",
+    feedback: "",
+    rating: 5,
+  });
+
+  const [msg, setMsg] = useState("");
+
+  // ⭐ Auto fetch trainer details using batchCode
+  useEffect(() => {
+    const loadTrainerDetails = async () => {
+      if (!batchCode) return;
+
+      try {
+        const res = await getBatchDetails(batchCode);
+        const batch = res.data;
+
+        setTrainerName(batch.trainerName);
+
+        setForm((prev) => ({
+          ...prev,
+          trainerId: batch.trainerId,
+          trainerName: batch.trainerName,
+        }));
+      } catch (error) {
+        console.log("Trainer details fetch failed", error);
+      }
+    };
+
+    loadTrainerDetails();
+  }, [batchCode]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await submitFeedback(form);
+      setMsg("Feedback submitted successfully!");
+      setForm({ ...form, feedback: "" });
+    } catch (err) {
+      console.log(err);
+      setMsg("Failed to submit feedback!");
+    }
+  };
+
+  const items = [
+    { to: "/user/tasks", label: "My Tasks" },
+    { to: "/user/performance", label: "My Performance" },
+    { to: "/user/stipends", label: "My Stipends" },
+    { to: "/user/attendance", label: "My Attendance" },
+    { to: "/user/feedback", label: "Give Feedback" },
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main fadeIn">
+        <h2 className="dash-title">Give Feedback</h2>
+        {msg && <div className="info">{msg}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Your Name"
+            value={form.userName}
+            onChange={(e) => setForm({ ...form, userName: e.target.value })}
+            required
+          />
+
+          {/* Trainer name auto-filled */}
+          <input type="text" value={trainerName} readOnly />
+
+          <textarea
+            placeholder="Write feedback..."
+            value={form.feedback}
+            onChange={(e) => setForm({ ...form, feedback: e.target.value })}
+            required
+          ></textarea>
+
+          <input
+            type="number"
+            min="1"
+            max="5"
+            value={form.rating}
+            onChange={(e) =>
+              setForm({ ...form, rating: Number(e.target.value) })
+            }
+            required
+          />
+
+          <button className="btn" type="submit">
+            Submit Feedback
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 
