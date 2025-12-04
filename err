@@ -1,5 +1,37 @@
 import api from "./axiosConfig";
 
+export const getTrainerBatches = (id) =>
+  api.get(`/api/trainer/batches/${id}`);
+
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
+
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
+
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
+
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
+
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
+
+export const getUsersByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
+
+export const getTasksByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/tasks/${trainerId}`);
+
+// ⭐ Correct Feedback API using trainerId
+export const getFeedbackByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/feedback/id/${trainerId}`);
+
+
+
+import api from "./axiosConfig";
+
 // USER REGISTRATION
 export const registerUser = (data) => api.post("/api/user/register", data);
 
@@ -13,6 +45,8 @@ export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
 export const submitFeedback = (data) => api.post("/api/user/feedback", data);
 export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
 export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
 
 
 import React, { createContext, useState, useEffect } from "react";
@@ -59,6 +93,8 @@ export default function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+
 
 
 import React, { useState, useContext } from "react";
@@ -214,9 +250,10 @@ import "../../styles/dashboard.css";
 
 export default function FeedbackForm() {
   const userId = localStorage.getItem("userId");
-  const batchCode = localStorage.getItem("batchCode"); // batch saved previously
+  const batchCode = localStorage.getItem("batchCode");
 
-  const [trainerName, setTrainerName] = useState("");
+  const [trainerList, setTrainerList] = useState([]);
+  const [msg, setMsg] = useState("");
 
   const [form, setForm] = useState({
     userId,
@@ -228,31 +265,45 @@ export default function FeedbackForm() {
     rating: 5,
   });
 
-  const [msg, setMsg] = useState("");
-
-  // ⭐ Auto fetch trainer details using batchCode
+  // Fetch trainer info from batch
   useEffect(() => {
-    const loadTrainerDetails = async () => {
+    const loadTrainerData = async () => {
       if (!batchCode) return;
 
       try {
         const res = await getBatchDetails(batchCode);
         const batch = res.data;
 
-        setTrainerName(batch.trainerName);
+        // Backend returns trainer object or list?
+        const trainers = batch.trainers ? batch.trainers : [batch];
 
-        setForm((prev) => ({
-          ...prev,
-          trainerId: batch.trainerId,
-          trainerName: batch.trainerName,
-        }));
+        setTrainerList(trainers);
+
+        if (trainers.length === 1) {
+          // Auto assign trainer if only one
+          setForm((prev) => ({
+            ...prev,
+            trainerId: trainers[0].trainerId,
+            trainerName: trainers[0].trainerName || trainers[0].trainer,
+          }));
+        }
       } catch (error) {
-        console.log("Trainer details fetch failed", error);
+        console.log("Trainer fetch failed:", error);
       }
     };
-
-    loadTrainerDetails();
+    loadTrainerData();
   }, [batchCode]);
+
+  const handleTrainerChange = (e) => {
+    const selectedId = e.target.value;
+    const trainer = trainerList.find((t) => t.trainerId === selectedId);
+
+    setForm({
+      ...form,
+      trainerId: trainer?.trainerId,
+      trainerName: trainer?.trainerName || trainer?.trainer,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -260,8 +311,7 @@ export default function FeedbackForm() {
       await submitFeedback(form);
       setMsg("Feedback submitted successfully!");
       setForm({ ...form, feedback: "" });
-    } catch (err) {
-      console.log(err);
+    } catch (e) {
       setMsg("Failed to submit feedback!");
     }
   };
@@ -280,6 +330,7 @@ export default function FeedbackForm() {
       <Sidebar items={items} />
       <div className="main fadeIn">
         <h2 className="dash-title">Give Feedback</h2>
+
         {msg && <div className="info">{msg}</div>}
 
         <form className="small-form" onSubmit={handleSubmit}>
@@ -291,16 +342,28 @@ export default function FeedbackForm() {
             required
           />
 
-          {/* Trainer name auto-filled */}
-          <input type="text" value={trainerName} readOnly />
+          <label>Select Trainer</label>
+          <select
+            value={form.trainerId}
+            onChange={handleTrainerChange}
+            required
+          >
+            <option value="">-- Select Trainer --</option>
+            {trainerList.map((t) => (
+              <option key={t.trainerId} value={t.trainerId}>
+                {t.trainerName || t.trainer}
+              </option>
+            ))}
+          </select>
 
           <textarea
             placeholder="Write feedback..."
             value={form.feedback}
             onChange={(e) => setForm({ ...form, feedback: e.target.value })}
             required
-          ></textarea>
+          />
 
+          <label>Rating</label>
           <input
             type="number"
             min="1"
@@ -321,4 +384,15 @@ export default function FeedbackForm() {
   );
 }
 
+
+Give Feedback
+Your Name
+Select Trainer
+-- Select Trainer --
+Write feedback...
+Rating
+5
+
+
+i am not getting any trainer the trainer should automatically fetch 
 
