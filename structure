@@ -1,3 +1,188 @@
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BatchDao batchDao; // 🔥 FIXED — Autowired properly
+
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody RegisterUserDto dto) {
+        return userService.registerUser(dto);
+    }
+
+    @GetMapping("/{userId}/tasks")
+    public List<Task> getTasks(@PathVariable Long userId) {
+        return userService.getTasks(userId);
+    }
+
+    @GetMapping("/{userId}/performance")
+    public List<Performance> getPerformance(@PathVariable Long userId) {
+        return userService.getPerformance(userId);
+    }
+
+    @GetMapping("/{userId}/stipends")
+    public List<Stipend> getStipends(@PathVariable Long userId) {
+        return userService.getStipendHistory(userId);
+    }
+
+    @GetMapping("/batch/{batchCode}")
+    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+        return userService.getBatchDetails(batchCode);
+    }
+
+    @PostMapping("/feedback")
+    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+        return userService.submitFeedback(dto);
+    }
+
+    @GetMapping("/{userId}/attendance")
+    public List<Attendance> getAttendance(@PathVariable Long userId) {
+        return userService.getAttendance(userId);
+    }
+
+    // 📌 NEW PUBLIC ENDPOINT
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatchesPublic() {
+        return batchDao.findAll(); // 🟢 Now resolved and working!
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerId(dto.getTrainerId());   // ⭐ ADD THIS
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
+
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+}
+
+
 package com.finalproject.internMgmtSystem.service;
 
 import com.finalproject.internMgmtSystem.dto.LoginRequest;
@@ -61,8 +246,6 @@ public class AuthService {
         );
     }
 }
-
-
 
 
 package com.finalproject.internMgmtSystem.security;
@@ -147,6 +330,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+
 
 
 package com.finalproject.internMgmtSystem.security;
@@ -280,6 +464,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 }
 
 
+
 package com.finalproject.internMgmtSystem.security;
 
 import com.finalproject.internMgmtSystem.model.Trainer;
@@ -342,6 +527,13 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+
+
+import api from "./axiosConfig";
+
+export const loginApi = (data) => api.post("/api/auth/login", data);
+export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
+
 
 
 import api from "./axiosConfig";
@@ -411,6 +603,7 @@ export default function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
 
 
 import React, { useState, useContext } from "react";
@@ -558,3 +751,167 @@ export default function Login() {
     </div>
   );
 }
+
+
+import React, { useState, useEffect } from "react";
+import { submitFeedback } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function FeedbackForm() {
+  const [form, setForm] = useState({
+    userId: "",
+    userName: "",
+    batchCode: "",
+    trainerId: "",     // ⭐ ADDED
+    trainerName: "",
+    feedback: "",
+    rating: 5,
+  });
+
+  const [msg, setMsg] = useState("");
+
+  // Auto pre-fill from localStorage
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      userId: String(localStorage.getItem("userId") || ""),
+      userName: String(localStorage.getItem("email") || ""),
+      batchCode: String(localStorage.getItem("batchCode") || ""),
+      // If you store trainerId somewhere (e.g. when user selects trainer)
+      trainerId: String(localStorage.getItem("trainerId") || ""),
+      trainerName: String(localStorage.getItem("trainerName") || ""),
+    }));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+
+    if (!form.feedback.trim()) {
+      setMsg("Please write feedback before submitting!");
+      return;
+    }
+
+    // Build payload with correct types
+    const payload = {
+      userId: form.userId ? Number(form.userId) : null,
+      userName: form.userName,
+      batchCode: form.batchCode ? Number(form.batchCode) : null,
+      trainerId: form.trainerId ? Number(form.trainerId) : null,  // ⭐ IMPORTANT
+      trainerName: form.trainerName,
+      feedback: form.feedback,
+      rating: Number(form.rating),
+    };
+
+    try {
+      await submitFeedback(payload);
+      setMsg("Feedback submitted successfully ✔");
+      setTimeout(() => setMsg(""), 2500);
+      setForm((prev) => ({ ...prev, feedback: "" }));
+    } catch (e) {
+      const data = e?.response?.data;
+
+      let text = "Failed to submit!";
+      if (typeof data === "string") {
+        text = data;
+      } else if (data && typeof data === "object") {
+        // Common case for validation errors
+        // Example: { trainerId: "Trainer ID is required", rating: "..." }
+        const parts = [];
+        for (const key in data) {
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            parts.push(`${key}: ${data[key]}`);
+          }
+        }
+        if (parts.length) {
+          text = parts.join(" | ");
+        } else {
+          text = JSON.stringify(data);
+        }
+      }
+
+      setMsg(text); // always a STRING → React safe
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Give Feedback</h3>
+
+        {msg && <div className="info">{msg}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          {/* User ID (read-only) */}
+          <input value={form.userId} disabled />
+
+          {/* User name (read-only or editable as you wish) */}
+          <input value={form.userName} disabled />
+
+          {/* Batch Code */}
+          <input
+            value={form.batchCode}
+            onChange={(e) =>
+              setForm({ ...form, batchCode: e.target.value })
+            }
+            placeholder="Batch Code"
+            required
+          />
+
+          {/* Trainer ID (optional visible or hidden) */}
+          {/* You can hide this input if you don't want user to see it */}
+          <input
+            value={form.trainerId}
+            onChange={(e) =>
+              setForm({ ...form, trainerId: e.target.value })
+            }
+            placeholder="Trainer ID (optional or auto-filled)"
+          />
+
+          {/* Trainer Name */}
+          <input
+            value={form.trainerName}
+            onChange={(e) =>
+              setForm({ ...form, trainerName: e.target.value })
+            }
+            placeholder="Trainer Name"
+            required
+          />
+
+          {/* Feedback Text */}
+          <textarea
+            placeholder="Write your feedback here..."
+            value={form.feedback}
+            onChange={(e) =>
+              setForm({ ...form, feedback: e.target.value })
+            }
+            required
+          />
+
+          {/* Rating */}
+          <input
+            type="number"
+            min="1"
+            max="5"
+            value={form.rating}
+            onChange={(e) =>
+              setForm({ ...form, rating: Number(e.target.value) })
+            }
+            required
+          />
+
+          <button className="btn" type="submit">
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+userApi.js:13   POST http://localhost:9090/api/user/feedback 403 (Forbidden)
