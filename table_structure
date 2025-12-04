@@ -1,1184 +1,333 @@
-package com.finalproject.internMgmtSystem.controller;
+import api from "./axiosConfig";
 
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.service.AdminService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+export const getTrainerBatches = (id) =>
+  api.get(`/api/trainer/batches/${id}`);
 
-import java.util.List;
+export const createTask = (data) =>
+  api.post("/api/trainer/tasks", data);
 
-@RestController
-@RequestMapping("/api/admin")
-@CrossOrigin
-public class AdminController {
+export const updateTask = (taskId, data) =>
+  api.put(`/api/trainer/tasks/${taskId}`, data);
 
-    @Autowired
-    private AdminService adminService;
+export const deleteTask = (taskId) =>
+  api.delete(`/api/trainer/tasks/${taskId}`);
 
-    @PostMapping("/trainers")
-    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
-        return adminService.registerTrainer(dto);
-    }
+export const markAttendance = (data) =>
+  api.post("/api/trainer/attendance", data);
 
-    @PostMapping("/batches")
-    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
-        return adminService.createBatch(dto);
-    }
+export const givePerformance = (data) =>
+  api.post("/api/trainer/performance", data);
 
-    @PostMapping("/stipend")
-    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
-        return adminService.giveStipend(dto);
-    }
+export const getUsersByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/UserBatch/${trainerId}`);
 
-    @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return adminService.getAllUsers();
-    }
+export const getTasksByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/tasks/${trainerId}`);
 
-    @GetMapping("/trainers")
-    public List<Trainer> getAllTrainers() {
-        return adminService.getAllTrainers();
-    }
+// ⭐ Correct Feedback API using trainerId
+export const getFeedbackByTrainerId = (trainerId) =>
+  api.get(`/api/trainer/feedback/id/${trainerId}`);
 
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatches() {
-        return adminService.getAllBatches();
-    }
 
-    // DELETE USER BY EMAIL
-    @DeleteMapping("/user/email/{email}")
-    public String deleteUserByEmail(@PathVariable String email) {
-        adminService.deleteUserByEmail(email);
-        return "User deleted successfully with email: " + email;
-    }
 
-    // DELETE TRAINER BY EMAIL
-    @DeleteMapping("/trainer/email/{email}")
-    public String deleteTrainerByEmail(@PathVariable String email) {
-        adminService.deleteTrainerByEmail(email);
-        return "Trainer deleted successfully with email: " + email;
-    }
+import React, { createContext, useState, useEffect } from "react";
 
-    // DELETE BATCH BY BATCH NAME
-    @DeleteMapping("/batch/name/{batchName}")
-    public String deleteBatchByName(@PathVariable String batchName) {
-        adminService.deleteBatchByName(batchName);
-        return "Batch deleted successfully with name: " + batchName;
-    }
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    // Sync on mount (in case token stored before)
+    const t = localStorage.getItem("token");
+    if (t && !token) setToken(t);
+    const r = localStorage.getItem("role");
+    if (r && !role) setRole(r);
+    const e = localStorage.getItem("email");
+    if (e && !email) setEmail(e);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newRole);
+    localStorage.setItem("email", newEmail || "");
+    setToken(newToken);
+    setRole(newRole);
+    setEmail(newEmail || "");
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 
-package com.finalproject.internMgmtSystem.controller;
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
 
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
 
-import jakarta.validation.Valid;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserDao userDao;              // instance DAO
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // injected password encoder
-
-    // LOGIN (existing)
-    @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role,
+        email: payload.sub || payload.email || "",
+        userId: payload.userId || payload.id,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+      };
+    } catch {
+      return {};
     }
+  };
 
-    /**
-     * Temporary endpoint to create the one-time ADMIN via Postman.
-     * - Ensures only ONE admin exists in the system.
-     * - After successful admin creation you should REMOVE this endpoint
-     *   (or at least lock it) from SecurityConfig.
-     */
-    
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
 
-        // 1) Check if an admin already exists
-        List<User> allUsers = userDao.findAll();
-        boolean adminExists = allUsers.stream()
-                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+      const { role, email, userId, trainerId, trainerName } =
+        parseJwtPayload(token);
 
-        if (adminExists) {
-            throw new UserAlreadyExistsException("Admin already exists!");
-        }
+      if (!role) throw new Error("Invalid token payload");
 
-        // 2) Check if email already used
-        User existing = userDao.findByEmail(dto.getEmail());
-        if (existing != null) {
-            throw new UserAlreadyExistsException("Email already registered!");
-        }
+      login(token, role, email);
 
-        // 3) Create admin
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ADMIN");
+      if (userId) localStorage.setItem("userId", userId);
+      if (role === "ROLE_TRAINER") {
+        if (trainerId) localStorage.setItem("trainerId", trainerId);
+        if (trainerName) localStorage.setItem("trainerName", trainerName);
+      }
 
-        userDao.save(user);
-
-        return "Admin created successfully!";
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      setErr(error?.response?.data || error.message || "Login failed");
     }
+  };
 
+  return (
+    <div className="login-page">
+      <div className="login-card">
+
+        {/* LEFT SIDE */}
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon">
+              <span className="brand-briefcase" />
+            </div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Admin working" className="login-illustration" />
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            <span className="arrow-icon">←</span>
+            Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input type="email" placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input type="password" placeholder="Password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required />
+            </div>
+
+            <button className="btn" type="submit">LOGIN</button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 
-package com.finalproject.internMgmtSystem.controller;
 
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.service.TrainerService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
 
-import java.util.List;
+export default function TrainerDashboard() {
+  const items = [
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" } // ⭐ ADDED
+  ];
 
-@RestController
-@RequestMapping("/api/trainer")
-@CrossOrigin
-public class TrainerController {
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main fadeIn">
+        <h2 className="dash-title">Trainer Portal</h2>
+        <p className="dash-sub">
+          Manage batches, tasks & attendance easily.
+        </p>
 
-    @Autowired
-    private TrainerService trainerService;
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>📌 Assign Tasks</h3>
+            <p>Create assignments and track submissions.</p>
+          </div>
 
-    // View all batches assigned to trainer
-    @GetMapping("/batches/{trainerId}")
-    public List<InternshipBatch> getBatches(@PathVariable Long trainerId) {
-        return trainerService.getBatches(trainerId);
-    }
+          <div className="info-card">
+            <h3>📝 Attendance</h3>
+            <p>Mark and review attendance daily.</p>
+          </div>
 
-    // Add Task
-    @PostMapping("/tasks")
-    public Task addTask(@Valid @RequestBody TaskDto dto) {
-        return trainerService.addTask(dto);
-    }
-    
- // View all tasks assigned by the trainer
-    @GetMapping("/tasks/{trainerId}")
-    public List<Task> getTasksByTrainerId(@PathVariable Long trainerId) {
-        return trainerService.getTasksByTrainerId(trainerId);
-    }
-
-
-    // Update Task
-    @PutMapping("/tasks/{taskId}")
-    public String updateTask(@Valid @RequestBody TaskDto dto, @PathVariable Long taskId) {
-        trainerService.updateTask(dto, taskId);
-        return "Task updated successfully";
-    }
-
-    // Delete Task
-    @DeleteMapping("/tasks/{taskId}")
-    public String deleteTask(@PathVariable Long taskId) {
-        trainerService.deleteTask(taskId);
-        return "Task deleted successfully";
-    }
-
-    // Mark Attendance
-    @PostMapping("/attendance")
-    public Attendance markAttendance(@Valid @RequestBody AttendanceDto dto) {
-        return trainerService.markAttendance(dto);
-    }
-
-    // Update Performance
-    @PostMapping("/performance")
-    public Performance updatePerformance(@Valid @RequestBody PerformanceDto dto) {
-        return trainerService.updatePerformance(dto);
-    }
-
-    // View Feedback
-    @GetMapping("/feedback/{trainerName}")
-    public List<Feedback> getFeedback(@PathVariable String trainerName) {
-        return trainerService.viewFeedback(trainerName);
-    }
-    
-	// View all performance records assigned by the trainer
-	@GetMapping("/performance/{trainerId}")
-	public List<Performance> getPerformanceByTrainerId(@PathVariable Long trainerId) {
-		return trainerService.getPerformanceByTrainerId(trainerId);
-	}
-
-  //Fetching the batches and corresponding users
-    @GetMapping("/UserBatch/{trainerId}")
-    public List<UserBatchDto> getUsersByTrainerId(@PathVariable int trainerId) {
-        return trainerService.getUsersByTrainerId(trainerId);
-    }
+          <div className="info-card">
+            <h3>⭐ Performance</h3>
+            <p>Evaluate student progress and growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 
-package com.finalproject.internMgmtSystem.controller;
 
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { getFeedbackByTrainerId } from "../../api/trainerApi";
+import "../../styles/dashboard.css";
 
-import java.util.List;
+export default function TrainerFeedback() {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [msg, setMsg] = useState("");
 
-@RestController
-@RequestMapping("/api/user")
-@CrossOrigin
-public class UserController {
+  const trainerId = localStorage.getItem("trainerId");
 
-	@Autowired
-	private UserService userService;
+  const items = [
+    { to: "/trainer/dashboard", label: "Dashboard" },
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" },
+  ];
 
-	// User registration
-	@PostMapping("/register")
-	public User register(@Valid @RequestBody RegisterUserDto dto) {
-		return userService.registerUser(dto);
-	}
+  useEffect(() => {
+    loadFeedback();
+    // eslint-disable-next-line
+  }, []);
 
-	// Get Tasks
-	@GetMapping("/{userId}/tasks")
-	public List<Task> getTasks(@PathVariable Long userId) {
-		return userService.getTasks(userId);
-	}
-
-	// Get Performance
-	@GetMapping("/{userId}/performance")
-	public List<Performance> getPerformance(@PathVariable Long userId) {
-		return userService.getPerformance(userId);
-	}
-
-	// Get Stipend History
-	@GetMapping("/{userId}/stipends")
-	public List<Stipend> getStipends(@PathVariable Long userId) {
-		return userService.getStipendHistory(userId);
-	}
-
-	// Get Batch Details
-	@GetMapping("/batch/{batchCode}")
-	public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
-		return userService.getBatchDetails(batchCode);
-	}
-
-	// Submit Feedback
-	@PostMapping("/feedback")
-	public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
-		return userService.submitFeedback(dto);
-	}
-
-	// Get Attendance
-	@GetMapping("/{userId}/attendance")
-	public List<Attendance> getAttendance(@PathVariable Long userId) {
-		return userService.getAttendance(userId);
-	}
-
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.*;
-import com.finalproject.internMgmtSystem.util.EmailUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class AdminService {
-
-	@Autowired
-	private TrainerDao trainerDao;
-
-	@Autowired
-	private UserDao userDao;
-
-	@Autowired
-	private BatchDao batchDao;
-
-	@Autowired
-	private StipendDao stipendDao;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private EmailUtil emailUtil;
-
-	public Trainer registerTrainer(RegisterTrainerDto dto) {
-
-		Trainer exists = trainerDao.findByEmail(dto.getEmail());
-		if (exists != null) {
-			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
-		}
-
-		Trainer trainer = new Trainer();
-		trainer.setName(dto.getName());
-		trainer.setEmail(dto.getEmail());
-		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
-		trainer.setContact(dto.getContact());
-		trainer.setExperience(dto.getExperience());
-		trainer.setSkills(dto.getSkills());
-		trainer.setProfilePic(dto.getProfilePic());
-		trainer.setBio(dto.getBio());
-		trainer.setRole("TRAINER");
-
-		Trainer saved = trainerDao.save(trainer);
-
-		// send email (you already had this util)
-		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
-				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
-						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
-						+ "Regards,\nTeam");
-
-		return saved;
-	}
-
-	public InternshipBatch createBatch(BatchDto dto) {
-		InternshipBatch batch = new InternshipBatch();
-
-		batch.setBatchName(dto.getBatchName());
-		batch.setCourseName(dto.getCourseName());
-		batch.setTrainerId(dto.getTrainerId());
-		batch.setStartDate(dto.getStartDate());
-		batch.setEndDate(dto.getEndDate());
-		batch.setTotalSeats(dto.getTotalSeats());
-		batch.setAvailableSeats(dto.getAvailableSeats());
-
-		return batchDao.save(batch);
-	}
-
-	public Stipend giveStipend(StipendDto dto) {
-
-		User user = userDao.findById(dto.getUserId());
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
-		}
-
-		Stipend stipend = new Stipend();
-		stipend.setUserId(dto.getUserId());
-		stipend.setUserName(dto.getUserName());
-		stipend.setPaymentMode(dto.getPaymentMode());
-		stipend.setAmount(dto.getAmount());
-
-		return stipendDao.save(stipend);
-	}
-
-	public List<User> getAllUsers() {
-		return userDao.findAll();
-	}
-
-	public List<Trainer> getAllTrainers() {
-		return trainerDao.findAll();
-	}
-
-	public List<InternshipBatch> getAllBatches() {
-		return batchDao.findAll();
-	}
-
-	public void deleteTrainer(Long id) {
-		if (trainerDao.findById(id) == null) {
-			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
-		}
-		trainerDao.deleteById(id);
-	}
-
-	public void deleteUser(Long id) {
-		if (userDao.findById(id) == null) {
-			throw new ResourceNotFoundException("User not found with ID: " + id);
-		}
-		userDao.deleteById(id);
-	}
-
-	// --------- NEW: delete by email/name helpers ----------
-
-	// DELETE USER BY EMAIL
-	public void deleteUserByEmail(String email) {
-		User user = userDao.findByEmail(email);
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found with email: " + email);
-		}
-		userDao.deleteById(user.getUserId());
-	}
-
-	// DELETE TRAINER BY EMAIL
-	public void deleteTrainerByEmail(String email) {
-		Trainer trainer = trainerDao.findByEmail(email);
-		if (trainer == null) {
-			throw new ResourceNotFoundException("Trainer not found with email: " + email);
-		}
-		trainerDao.deleteByEmail(email);
-	}
-
-	// DELETE BATCH BY NAME
-	public void deleteBatchByName(String batchName) {
-		InternshipBatch batch = batchDao.findByName(batchName);
-		if (batch == null) {
-			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
-		}
-		batchDao.delete(batch.getBatchCode());
-	}
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public String login(LoginRequest loginRequest) {
-
-        User user = userDao.findByEmail(loginRequest.getEmail());
-        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
-
-        if (user == null && trainer == null) {
-            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
-        }
-
-        // USER LOGIN
-        if (user != null) {
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new RuntimeException("Invalid password");
-            }
-
-            return jwtUtil.generateToken(
-                    user.getUserId(),
-                    user.getEmail(),
-                    "ROLE_" + user.getRole()
-            );
-        }
-
-        // TRAINER LOGIN
-        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return jwtUtil.generateTrainerToken(
-                trainer.getTrainerId(),
-                trainer.getEmail(),
-                "ROLE_" + trainer.getRole(),
-                trainer.getName()         // Trainer name added inside token
-        );
+  const loadFeedback = async () => {
+    try {
+      const res = await getFeedbackByTrainerId(trainerId);
+      if (!res.data.length) {
+        setMsg("No Feedback Available");
+        return;
+      }
+      setFeedbacks(res.data);
+    } catch {
+      setMsg("Error loading feedback!");
     }
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-
-@Service
-public class TrainerService {
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-    
-    @Autowired
-    private UserBatchDao UserBatchDao;
-
-    public List<InternshipBatch> getBatches(Long trainerId) {
-        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
-        }
-
-        return list;
-    }
-
-    public Task addTask(TaskDto dto) {
-
-        // Optional: validate if user exists / trainer exists
-
-        Task t = new Task();
-        t.setUserId(dto.getUserId());
-        t.setDescription(dto.getDescription());
-        t.setTrainerId(dto.getTrainerId());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        return taskDao.save(t);
-    }
-
-    public void updateTask(TaskDto dto, Long taskId) {
-        Task t = taskDao.findById(taskId);
-        if (t == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
-        }
-
-        t.setDescription(dto.getDescription());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        taskDao.update(t);
-    }
-
-    public void deleteTask(Long id) {
-        Task exists = taskDao.findById(id);
-        if (exists == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + id);
-        }
-
-        taskDao.delete(id);
-    }
-
-    public Attendance markAttendance(AttendanceDto dto) {
-
-        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
-            throw new RuntimeException("Cannot mark attendance for future dates");
-        }
-
-        Attendance a = new Attendance();
-        a.setUserId(dto.getUserId());
-        a.setBatchCode(dto.getBatchCode());
-        a.setDate(dto.getDate());
-        a.setPresent(dto.getPresent());
-
-        return attendanceDao.save(a);
-    }
-
-    public Performance updatePerformance(PerformanceDto dto) {
-
-        Performance p = new Performance();
-
-        p.setUserId(dto.getUserId());
-        p.setTrainerId(dto.getTrainerId());
-        p.setBatchCode(dto.getBatchCode());       // NEW
-        p.setTrainerName(dto.getTrainerName());   // NEW
-        p.setRemarks(dto.getRemarks());
-        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
-
-        return performanceDao.save(p);
-    }
-
-
-    public List<Feedback> viewFeedback(String trainerName) {
-        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
-        }
-
-        return list;
-    }
-    
-    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
-        return UserBatchDao.getUsersByTrainerId(trainerId);
-    }
-    public List<Task> getTasksByTrainerId(Long trainerId) {
-        List<Task> tasks = taskDao.findByTrainerId(trainerId);
-        if (tasks.isEmpty()) {
-            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
-        }
-        return tasks;
-    }
-
-    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
-        List<Performance> list = performanceDao.findByTrainerId(trainerId);
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
-        }
-        return list;
-    }
-
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class UserService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private StipendDao stipendDao;
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public User registerUser(RegisterUserDto dto) {
-
-        User exists = userDao.findByEmail(dto.getEmail());
-        if (exists != null) {
-            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
-        }
-
-        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
-        }
-        if (batch.getAvailableSeats() <= 0) {
-            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
-        }
-        batchDao.decrementAvailableSeats(dto.getBatchCode());
-
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setDob(dto.getDob());
-        user.setContactNo(dto.getContactNo());
-        user.setAddress(dto.getAddress());
-        user.setCollegeName(dto.getCollegeName());
-        user.setGrade(dto.getGrade());
-        user.setMajor(dto.getMajor());
-        user.setTeam(dto.getTeam());
-        user.setBatchCode(dto.getBatchCode());
-        user.setStartDate(dto.getStartDate());
-        user.setEndDate(dto.getEndDate());
-        user.setGraduatingYear(dto.getGraduatingYear());
-        user.setResume(dto.getResume());
-        user.setProfilePic(dto.getProfilePic());
-        user.setRole("USER");
-
-        return userDao.save(user);
-    }
-
-    public List<Task> getTasks(Long userId) {
-        return taskDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public List<Performance> getPerformance(Long userId) {
-        return performanceDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public List<Stipend> getStipendHistory(Long userId) {
-        return stipendDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public InternshipBatch getBatchDetails(Long batchCode) {
-        InternshipBatch batch = batchDao.findById(batchCode);
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
-        }
-        return batch;
-    }
-
-    public Feedback submitFeedback(FeedbackDto dto) {
-        Feedback f = new Feedback();
-        f.setUserId(dto.getUserId());
-        f.setUserName(dto.getUserName());
-        f.setBatchCode(dto.getBatchCode());
-        f.setTrainerName(dto.getTrainerName());
-        f.setFeedback(dto.getFeedback());
-        f.setRating(dto.getRating());
-        return feedbackDao.save(f);
-    }
-
-    public List<Attendance> getAttendance(Long userId) {
-        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
-
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found: " + email);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN (Trainer Name + Trainer ID added)
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register"
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import java.util.List;
-
-public interface BatchDao {
-
-    InternshipBatch save(InternshipBatch batch);
-
-    InternshipBatch findById(Long batchCode);
-
-    List<InternshipBatch> findAll();
-
-    List<InternshipBatch> findByTrainerId(Long trainerId);
-
-    void update(InternshipBatch batch);
-
-    void delete(Long batchCode);
-
-    InternshipBatch findByName(String batchName);
-    
-    InternshipBatch findByBatchCode(Long batchCode);
-
-    void decrementAvailableSeats(Long batchCode);
-}
-
-
-package com.finalproject.internMgmtSystem.repository;
-
-import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.repository.BatchDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-public class BatchDaoImpl implements BatchDao {
-
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
-	private RowMapper<InternshipBatch> mapper = (rs, rowNum) -> {
-		InternshipBatch b = new InternshipBatch();
-		b.setBatchCode(rs.getLong("batch_code"));
-		b.setBatchName(rs.getString("batch_name"));
-		b.setCourseName(rs.getString("course_name"));
-		b.setTrainerId(rs.getLong("trainer_id"));
-		b.setStartDate(rs.getDate("start_date"));
-		b.setEndDate(rs.getDate("end_date"));
-		b.setTotalSeats(rs.getInt("total_seats"));
-		b.setAvailableSeats(rs.getInt("available_seats"));
-		return b;
-	};
-
-	@Override
-	public InternshipBatch save(InternshipBatch batch) {
-		String sql = """
-				    INSERT INTO internship_batches
-				    (batch_name, course_name, trainer_id, start_date, end_date, total_seats, available_seats)
-				    VALUES (?, ?, ?, ?, ?, ?, ?)
-				""";
-
-		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
-				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats());
-
-		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-		batch.setBatchCode(id);
-		return batch;
-	}
-
-	@Override
-	public InternshipBatch findById(Long batchCode) {
-		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_code = ?", mapper,
-				batchCode);
-		return list.isEmpty() ? null : list.get(0);
-	}
-
-	@Override
-	public List<InternshipBatch> findAll() {
-		return jdbcTemplate.query("SELECT * FROM internship_batches", mapper);
-	}
-
-	@Override
-	public List<InternshipBatch> findByTrainerId(Long trainerId) {
-		return jdbcTemplate.query("SELECT * FROM internship_batches WHERE trainer_id = ?", mapper, trainerId);
-	}
-
-	@Override
-	public void update(InternshipBatch batch) {
-		String sql = """
-				    UPDATE internship_batches SET batch_name=?, course_name=?, trainer_id=?, start_date=?,
-				    end_date=?, total_seats=?, available_seats=? WHERE batch_code=?
-				""";
-
-		jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
-
-				batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats(),
-				batch.getBatchCode());
-	}
-
-	@Override
-	public void delete(Long batchCode) {
-		jdbcTemplate.update("DELETE FROM internship_batches WHERE batch_code = ?", batchCode);
-	}
-
-	@Override
-	public InternshipBatch findByName(String batchName) {
-		List<InternshipBatch> list = jdbcTemplate.query("SELECT * FROM internship_batches WHERE batch_name = ?", mapper,
-				batchName);
-		return list.isEmpty() ? null : list.get(0);
-	}
-	
-	@Override
-	public InternshipBatch findByBatchCode(Long batchCode) {
-	    List<InternshipBatch> list = jdbcTemplate.query(
-	        "SELECT * FROM internship_batches WHERE batch_code = ?", mapper, batchCode);
-	    return list.isEmpty() ? null : list.get(0);
-	}
-
-	@Override
-	public void decrementAvailableSeats(Long batchCode) {
-	    String sql = """
-	        UPDATE internship_batches 
-	        SET available_seats = available_seats - 1 
-	        WHERE batch_code = ? AND available_seats > 0
-	    """;
-	    jdbcTemplate.update(sql, batchCode);
-	}
-
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+
+      <div className="main fadeIn">
+        <h2 className="dash-title">⭐ Feedback Received</h2>
+        {msg && <div className="info">{msg}</div>}
+
+        {feedbacks.length > 0 && (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Batch</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {feedbacks.map((f) => (
+                <tr key={f.id}>
+                  <td>{f.userName}</td>
+                  <td>{f.batchCode}</td>
+                  <td>{f.feedback}</td>
+                  <td>{f.rating} ⭐</td>
+                  <td>{new Date(f.date).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
 }
