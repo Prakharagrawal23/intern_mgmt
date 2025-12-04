@@ -1,53 +1,48 @@
 
-Module not found: Error: Can't resolve '../../styles/registerUser.css' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src\pages\User'
-WARNING in [eslint] 
-src\pages\User\RegisterUser.jsx
-  Line 43:54:  Expected '===' and instead saw '=='  eqeqeq
+Expression
+not available
+﻿
+react-dom-client.development.js:28003 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+:9090/api/trainer/fe…har%20agrawal%202:1 
+ 
+ Failed to load resource: the server responded with a status of 404 ()
+react-dom-client.development.js:6099 
+ Uncaught Error: Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
+    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
+    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
+    at react-dom-client.development.js:7098:1
+    at reconcileChildren (react-dom-client.development.js:9699:1)
+    at beginWork (react-dom-client.development.js:11988:1)
+    at runWithFiberInDEV (react-dom-client.development.js:870:1)
+    at performUnitOfWork (react-dom-client.development.js:17639:1)
+    at workLoopSync (react-dom-client.development.js:17469:1)
+    at renderRootSync (react-dom-client.development.js:17450:1)
+react-dom-client.development.js:9362 
+ An error occurred in the <div> component.
 
-ERROR in ./src/pages/User/RegisterUser.jsx 8:0-39
-Module not found: Error: Can't resolve '../../styles/registerUser.css' in 'C:\Users\703440062\Desktop\react frontend\intership-mgmt-frontend\src\pages\User'
-
-webpack compiled with 1 error and 1 warning
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
 
 
-import api from "./axiosConfig";
 
-// TRAINER
-export const createTrainer = (data) => api.post("/api/admin/trainers", data);
-export const getTrainers = () => api.get("/api/admin/trainers");
-export const deleteTrainerByEmail = (email) =>
-  api.delete(`/api/admin/trainer/email/${email}`);
+Uncaught runtime errors:
+×
+ERROR
+Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11923:11)
+    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11927:106)
+    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:12250:9)
+    at http://localhost:3000/static/js/bundle.js:12262:31
+    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13821:47)
+    at beginWork (http://localhost:3000/static/js/bundle.js:14637:1565)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:9089:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16998:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:16893:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:16878:7)
 
-// BATCH
-export const createBatch = (data) => api.post("/api/admin/batches", data);
-export const getBatches = () => api.get("/api/admin/batches");
-export const deleteBatchByName = (batchName) =>
-  api.delete(`/api/admin/batch/name/${batchName}`);
 
-// USERS
-export const getUsers = () => api.get("/api/admin/users");
-export const deleteUserByEmail = (email) =>
-  api.delete(`/api/admin/user/email/${email}`);
 
-// STIPEND
-export const giveStipend = (data) => api.post("/api/admin/stipend", data);
-
-import api from "./axiosConfig";
-
-export const loginApi = (data) => api.post("/api/auth/login", data);
-export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
-import axios from "axios";
-const api = axios.create({
-  baseURL: "http://localhost:9090",
-});
-
-api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
-  return config;
-});
-
-export default api;
 import api from "./axiosConfig";
 
 export const getTrainerBatches = (id) =>
@@ -75,6 +70,11 @@ export const getUsersByTrainerId = (trainerId) =>
 // Get All Tasks created by Trainer
 export const getTasksByTrainerId = (trainerId) =>
   api.get(`/api/trainer/tasks/${trainerId}`);
+
+// ⭐ NEW: Get Feedback by Trainer Name
+export const getFeedbackByTrainerName = (trainerName) =>
+  api.get(`/api/trainer/feedback/${trainerName}`);
+
 import api from "./axiosConfig";
 
 // USER REGISTRATION
@@ -90,222 +90,225 @@ export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
 export const submitFeedback = (data) => api.post("/api/user/feedback", data);
 export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
 export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
 import React from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
 
-export default function AdminDashboard() {
+export default function TrainerDashboard() {
   const items = [
-    { to: "/admin/create-trainer", label: "Create Trainer" },
-    { to: "/admin/view-trainers", label: "View Trainers" },
-    { to: "/admin/create-batch", label: "Create Batch" },
-    { to: "/admin/view-batches", label: "View Batches" },
-    { to: "/admin/give-stipend", label: "Give Stipend" },
-    { to: "/admin/view-users", label: "View Users" },
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" } // ⭐ ADDED
   ];
+
   return (
     <div className="layout">
       <Navbar />
       <Sidebar items={items} />
-      <div className="main">
-        <h2>Admin Dashboard</h2>
-        <p>Use sidebar to navigate admin features.</p>
+      <div className="main fadeIn">
+        <h2 className="dash-title">Trainer Portal</h2>
+        <p className="dash-sub">
+          Manage batches, tasks & attendance easily.
+        </p>
+
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>📌 Assign Tasks</h3>
+            <p>Create assignments and track submissions.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>📝 Attendance</h3>
+            <p>Mark and review attendance daily.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>⭐ Performance</h3>
+            <p>Evaluate student progress and growth.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-import React, { createContext, useState, useEffect } from "react";
 
-export const AuthContext = createContext();
 
-export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
-
-  useEffect(() => {
-    // Sync on mount (in case token stored before)
-    const t = localStorage.getItem("token");
-    if (t && !token) setToken(t);
-    const r = localStorage.getItem("role");
-    if (r && !role) setRole(r);
-    const e = localStorage.getItem("email");
-    if (e && !email) setEmail(e);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
-    localStorage.setItem("email", newEmail || "");
-    setToken(newToken);
-    setRole(newRole);
-    setEmail(newEmail || "");
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    setToken(null);
-    setRole(null);
-    setEmail(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ token, role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
 import React, { useState, useEffect } from "react";
-import { registerUser, getAllBatchesPublic } from "../../api/userApi";
-import formatError from "../../utils/formatError";
-import "../../styles/registerUser.css"; // optional custom style
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { getFeedbackByTrainerName } from "../../api/trainerApi";
 
-export default function RegisterUser() {
+export default function TrainerFeedback() {
+  const [feedbacks, setFeedbacks] = useState([]);
   const [msg, setMsg] = useState("");
-  const [batches, setBatches] = useState([]);
 
-  const [form, setForm] = useState({
-    userName: "",
-    email: "",
-    password: "",
-    dob: "",
-    contactNo: "",
-    address: "",
-    collegeName: "",
-    grade: "",
-    major: "",
-    team: "",
-    batchCode: "",
-    startDate: "",
-    endDate: "",
-    graduatingYear: "",
-    resume: "",
-    profilePic: "",
-  });
+  const trainerName = localStorage.getItem("trainerName"); // AUTO-FETCH trainer name
+
+  const items = [
+    { to: "/trainer/dashboard", label: "Dashboard" },
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/performance-list", label: "View Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" },
+  ];
 
   useEffect(() => {
-    loadBatches();
+    fetchFeedback();
+    // eslint-disable-next-line
   }, []);
 
-  const loadBatches = async () => {
+  const fetchFeedback = async () => {
+    setMsg("");
     try {
-      const res = await getAllBatchesPublic();
-      setBatches(res.data);
+      const res = await getFeedbackByTrainerName(trainerName);
+      setFeedbacks(res.data || []);
+      if (!res.data || res.data.length === 0) {
+        setMsg("No feedback found for you yet.");
+      }
     } catch (err) {
-      console.error("Failed to load batches:", err);
+      setMsg(err?.response?.data || "Error fetching feedback");
     }
   };
 
-  const handleBatchSelect = (e) => {
-    const selected = batches.find((b) => b.batchCode == e.target.value);
-    if (!selected) return;
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
 
-    setForm({
-      ...form,
-      batchCode: selected.batchCode,
-      startDate: selected.startDate,
-      endDate: selected.endDate,
-    });
-  };
+      <div className="main fadeIn">
+        <h3>⭐ Feedback Received</h3>
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+        {msg && <div className="info">{msg}</div>}
+
+        {feedbacks.length > 0 && (
+          <table className="table" style={{ marginTop: 20 }}>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {feedbacks.map((f) => (
+                <tr key={f.id}>
+                  <td>{f.userId}</td>
+                  <td>{f.userName}</td>
+                  <td>{f.feedback}</td> {/* FIX DONE */}
+                  <td>{f.rating}</td>
+                  <td>{new Date(f.date).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
+
+export default function UserDashboard() {
+  const items = [
+    { to: "/user/tasks", label: "My Tasks" },
+    { to: "/user/performance", label: "My Performance" },
+    { to: "/user/stipends", label: "My Stipends" },
+    { to: "/user/attendance", label: "My Attendance" },
+    { to: "/user/feedback", label: "Give Feedback" },
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+
+      <div className="main fadeIn">
+        <h2 className="dash-title">Intern Portal</h2>
+        <p className="dash-sub">Track your learning and performance.</p>
+
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>📚 Tasks</h3>
+            <p>Track your deadlines and progress.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>📊 Performance</h3>
+            <p>Monitor scores and achievements.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>💵 Stipends</h3>
+            <p>View stipend status securely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState } from "react";
+import { submitFeedback } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function FeedbackForm() {
+  const [form, setForm] = useState({ userId: "", userName: "", batchCode: "", trainerName: "", feedback: "", rating: 5 });
+  const [msg, setMsg] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await registerUser(form);
-      setMsg("🎉 User Registered Successfully!");
-      setTimeout(() => setMsg(""), 2500);
-    } catch (err) {
-      setMsg(formatError(err));
+      await submitFeedback(form);
+      setMsg("Feedback submitted.");
+      setTimeout(() => setMsg(""), 2000);
+    } catch (e) {
+      setMsg(e?.response?.data || e.message);
     }
   };
 
   return (
-    <div className="container register-container">
-      <h2>Register User</h2>
-      {msg && <p className="alert-msg">{msg}</p>}
-
-      <form onSubmit={handleSubmit} className="register-form">
-
-        <input required name="userName" placeholder="Full Name" onChange={handleChange} />
-        <input required name="email" placeholder="Email" onChange={handleChange} />
-        <input required name="password" type="password" placeholder="Password" onChange={handleChange} />
-
-        <input required name="dob" type="date" onChange={handleChange} />
-        <input required name="contactNo" placeholder="Contact No" onChange={handleChange} />
-        <input required name="address" placeholder="Address" onChange={handleChange} />
-        <input required name="collegeName" placeholder="College Name" onChange={handleChange} />
-
-        <input name="grade" placeholder="Grade" onChange={handleChange} />
-        <input name="major" placeholder="Major" onChange={handleChange} />
-        <input name="team" placeholder="Team" onChange={handleChange} />
-
-        {/* 🔥 BATCH DROPDOWN */}
-        <select
-          name="batchCode"
-          value={form.batchCode}
-          onChange={handleBatchSelect}
-          required
-        >
-          <option value="">Select Batch</option>
-          {batches.map((b) => (
-            <option key={b.batchCode} value={b.batchCode}>
-              {b.batchName} — {b.courseName} | Seats: {b.availableSeats}
-            </option>
-          ))}
-        </select>
-
-        {/* Auto-populated */}
-        <input name="startDate" type="date" value={form.startDate} readOnly />
-        <input name="endDate" type="date" value={form.endDate} readOnly />
-
-        <input name="graduatingYear" placeholder="Graduation Year" onChange={handleChange} />
-        <input name="resume" placeholder="Resume URL" onChange={handleChange} />
-        <input name="profilePic" placeholder="Profile Pic URL" onChange={handleChange} />
-
-        <button className="btn register-btn">Register</button>
-      </form>
-
-      {form.batchCode && (
-        <div className="batch-preview">
-          <h4>Batch Details</h4>
-          <p><strong>Batch ID:</strong> {form.batchCode}</p>
-          <p><strong>Start:</strong> {form.startDate}</p>
-          <p><strong>End:</strong> {form.endDate}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-import React from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function UserDashboard() {
- const items = [
-  { to: "/user/tasks", label: "My Tasks" },
-  { to: "/user/performance", label: "My Performance" },
-  { to: "/user/stipends", label: "My Stipends" },
-  { to: "/user/attendance", label: "My Attendance" },
-  { to: "/user/feedback", label: "Give Feedback" },
-];
-  return (
     <div className="layout">
       <Navbar />
-      <Sidebar items={items} />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
       <div className="main">
-        <h2>Welcome, User</h2>
-        <p>Use the sidebar to navigate.</p>
+        <h3>Give Feedback</h3>
+        {msg && <div className="info">{msg}</div>}
+        <form className="small-form" onSubmit={handleSubmit}>
+          <input placeholder="User ID" value={form.userId} onChange={(e)=>setForm({...form,userId:e.target.value})} />
+          <input placeholder="User Name" value={form.userName} onChange={(e)=>setForm({...form,userName:e.target.value})} />
+          <input placeholder="Batch Code" value={form.batchCode} onChange={(e)=>setForm({...form,batchCode:e.target.value})} />
+          <input placeholder="Trainer Name" value={form.trainerName} onChange={(e)=>setForm({...form,trainerName:e.target.value})} />
+          <textarea placeholder="Feedback" value={form.feedback} onChange={(e)=>setForm({...form,feedback:e.target.value})}></textarea>
+          <input placeholder="Rating (1-5)" value={form.rating} onChange={(e)=>setForm({...form,rating:Number(e.target.value)})} />
+          <button className="btn" type="submit">Submit</button>
+        </form>
       </div>
     </div>
   );
 }
+
+
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthProvider from "./context/AuthContext";
@@ -317,7 +320,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Auth/Login";
 import RegisterUser from "./pages/User/RegisterUser";
 
-// Admin
+// Admin Pages
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import CreateTrainer from "./pages/Admin/CreateTrainer";
 import ViewTrainers from "./pages/Admin/ViewTrainers";
@@ -326,7 +329,7 @@ import ViewBatches from "./pages/Admin/ViewBatches";
 import GiveStipend from "./pages/Admin/GiveStipend";
 import ViewUsers from "./pages/Admin/ViewUsers";
 
-// Trainer
+// Trainer Pages
 import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
 import TrainerBatches from "./pages/Trainer/TrainerBatches";
 import CreateTask from "./pages/Trainer/CreateTask";
@@ -334,9 +337,10 @@ import UpdateTask from "./pages/Trainer/UpdateTask";
 import MarkAttendance from "./pages/Trainer/MarkAttendance";
 import GivePerformance from "./pages/Trainer/GivePerformance";
 import UsersInBatch from "./pages/Trainer/UsersInBatch";
-import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";  // 🔥 NEW
+import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";
+import TrainerFeedback from "./pages/Trainer/TrainerFeedback"; // ⭐ NEW IMPORT
 
-// User
+// User Pages
 import UserDashboard from "./pages/User/UserDashboard";
 import UserTasks from "./pages/User/UserTasks";
 import UserPerformance from "./pages/User/UserPerformance";
@@ -352,7 +356,7 @@ export default function App() {
         <ThemeToggle />
 
         <Routes>
-          {/* Public Routes */}
+          {/* Public */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/user/register" element={<RegisterUser />} />
@@ -377,7 +381,8 @@ export default function App() {
             <Route path="/trainer/attendance" element={<MarkAttendance />} />
             <Route path="/trainer/performance" element={<GivePerformance />} />
             <Route path="/trainer/users" element={<UsersInBatch />} />
-            <Route path="/trainer/tasks" element={<TrainerViewTasks />} /> {/* 🔥 NEW */}
+            <Route path="/trainer/tasks" element={<TrainerViewTasks />} />
+            <Route path="/trainer/feedback" element={<TrainerFeedback />} /> {/* ⭐ ADDED */}
           </Route>
 
           {/* User Panel */}
@@ -390,7 +395,6 @@ export default function App() {
             <Route path="/user/stipends" element={<UserStipends />} />
             <Route path="/user/attendance" element={<UserAttendance />} />
           </Route>
-
         </Routes>
       </BrowserRouter>
     </AuthProvider>
