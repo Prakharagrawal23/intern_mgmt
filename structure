@@ -1,396 +1,264 @@
-/* Global reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
 
-/* PAGE BACKGROUND */
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff9f0;
-  padding: 20px;
-}
+export default function AdminDashboard() {
+  const items = [
+    { to: "/admin/create-trainer", label: "Create Trainer" },
+    { to: "/admin/view-trainers", label: "View Trainers" },
+    { to: "/admin/create-batch", label: "Create Batch" },
+    { to: "/admin/view-batches", label: "View Batches" },
+    { to: "/admin/give-stipend", label: "Give Stipend" },
+    { to: "/admin/view-users", label: "View Users" },
+  ];
 
-/* MAIN CARD (two columns) */
-.login-card {
-  width: 100%;
-  max-width: 1050px;
-  background: #ffffff;
-  border-radius: 24px;
-  display: flex;
-  overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-}
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
 
-/* LEFT SIDE */
-.login-left {
-  flex: 1.1;
-  background: #fff3dd;
-  padding: 40px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-}
+      <div className="main fadeIn">
+        <h2 className="dash-title">Admin Portal</h2>
+        <p className="dash-sub">
+          Manage entire internship workflow efficiently.
+        </p>
 
-/* Top branding (logo + text) */
-.login-brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>👨‍🏫 Trainers</h3>
+            <p>Create & monitor trainer accounts and assignments.</p>
+          </div>
 
-/* Simple briefcase icon using pure CSS to match reference */
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: #f79e3b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+          <div className="info-card">
+            <h3>📚 Internship Batches</h3>
+            <p>Plan upcoming batches and track seat availability.</p>
+          </div>
 
-.brand-briefcase {
-  width: 22px;
-  height: 14px;
-  border-radius: 4px;
-  border: 2px solid #fff;
-  display: block;
-  position: relative;
-}
+          <div className="info-card">
+            <h3>🧑‍🎓 Interns</h3>
+            <p>View intern details and allocate them to batches.</p>
+          </div>
 
-.brand-briefcase::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 4px;
-  border-radius: 4px;
-  border: 2px solid #fff;
-}
-
-/* Brand text */
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.brand-title {
-  font-size: 16px;
-  letter-spacing: 2px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #2f2f3a;
-}
-
-.brand-subtitle {
-  font-size: 13px;
-  color: #7d7c86;
-}
-
-/* Left heading */
-.login-left-heading {
-  margin-top: 40px;
-}
-
-.login-left-heading h1 {
-  font-size: 34px;
-  color: #262633;
-  margin-bottom: 8px;
-}
-
-.login-left-heading p {
-  font-size: 14px;
-  color: #6f6f7a;
-}
-
-/* Illustration */
-.login-illustration-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-top: 5px;
-   width: 100%;
-}
-
-.login-illustration {
-  max-width: 290px;
-  width: 100%;
-  pointer-events: none;
-  user-select: none;
-  /* smooth floating animation */
-  animation: float 3.2s ease-in-out infinite;
-}
-
-/* subtle glow under the image */
-.login-illustration-wrapper::after {
-  content: "";
-  position: absolute;
-  bottom: 28px;
-  left: 18%;
-  right: 18%;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 0.22),
-    transparent 70%
+          <div className="info-card">
+            <h3>💰 Stipends</h3>
+            <p>Distribute stipends and monitor financial reports.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-  opacity: 0.3;
-  filter: blur(4px);
 }
 
-/* RIGHT SIDE */
-.login-right {
-  flex: 1;
-  padding: 40px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: #ffffff;
+
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
+
+export default function TrainerDashboard() {
+  const items = [
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" } // ⭐ ADDED
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+      <div className="main fadeIn">
+        <h2 className="dash-title">Trainer Portal</h2>
+        <p className="dash-sub">
+          Manage batches, tasks & attendance easily.
+        </p>
+
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>📌 Assign Tasks</h3>
+            <p>Create assignments and track submissions.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>📝 Attendance</h3>
+            <p>Mark and review attendance daily.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>⭐ Performance</h3>
+            <p>Evaluate student progress and growth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-.login-right-header h2 {
+
+
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
+
+export default function UserDashboard() {
+  const items = [
+    { to: "/user/tasks", label: "My Tasks" },
+    { to: "/user/performance", label: "My Performance" },
+    { to: "/user/stipends", label: "My Stipends" },
+    { to: "/user/attendance", label: "My Attendance" },
+    { to: "/user/feedback", label: "Give Feedback" },
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+
+      <div className="main fadeIn">
+        <h2 className="dash-title">Intern Portal</h2>
+        <p className="dash-sub">Track your learning and performance.</p>
+
+        <div className="dashboard-info">
+          <div className="info-card">
+            <h3>📚 Tasks</h3>
+            <p>Track your deadlines and progress.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>📊 Performance</h3>
+            <p>Monitor scores and achievements.</p>
+          </div>
+
+          <div className="info-card">
+            <h3>💵 Stipends</h3>
+            <p>View stipend status securely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background: rgba(5, 10, 20, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    z-index: 100;
+}
+
+.nav-left {
+    font-weight: 700;
+    color: white;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar {
+    width: 220px;
+    padding-top: 70px;
+    background: rgba(2, 6, 23, 0.6);
+    min-height: 100vh;
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-link {
+    display: block;
+    padding: 12px 16px;
+    color: #bcd6ff;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-left-color: var(--accent2);
+    color: #fff;
+}
+
+.main {
+    margin-left: 220px;
+    padding: 80px 28px;
+    width: 100%;
+}
+.dash-title {
   font-size: 28px;
+  font-weight: 700;
   margin-bottom: 6px;
-  color: #1e1e2c;
+  color: #222;
 }
 
-.login-right-header p {
-  font-size: 14px;
-  color: #7b7b88;
-  margin-bottom: 28px;
-}
-
-/* Error message */
-.error {
-  background: #ffe0e0;
-  color: #d8000c;
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-/* FORM */
-.form {
-  width: 100%;
-}
-
-/* Input group with icon */
-.input-group {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.input-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  opacity: 0.7;
-}
-
-/* Input fields */
-.form input {
-  width: 100%;
-  padding: 12px 14px 12px 40px;
-  border-radius: 10px;
-  border: 1px solid #d1d1dc;
+.dash-sub {
   font-size: 15px;
-  transition: border 0.25s ease, box-shadow 0.25s ease, transform 0.1s ease;
-  background: #fafafb;
+  margin-bottom: 18px;
+  color: #666;
 }
 
-.form input:focus {
+/* Info Cards */
+.dashboard-info {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid #eee;
+  transform: translateY(0);
+  transition: 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(247, 158, 59, 0.2);
   border-color: #f79e3b;
-  box-shadow: 0 0 0 3px rgba(247, 158, 59, 0.2);
-  outline: none;
-  background: #ffffff;
-  transform: translateY(-1px);
 }
 
-/* Button */
-.btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background: #f79e3b;
-  color: #ffffff;
+.info-card h3 {
   font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-    background 0.25s ease;
-  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.5);
+  margin-bottom: 6px;
+  color: #111;
 }
 
-.btn:hover {
-  background: #f38a10;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 26px rgba(247, 158, 59, 0.55);
+.info-card p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
 }
 
-.btn:active {
-  transform: translateY(0);
-  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.45);
+/* Smooth fade animation */
+.fadeIn {
+  animation: fadeInDash .6s ease-in-out;
+}
+@keyframes fadeInDash {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Register link */
-.switch-auth {
-  margin-top: 14px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.switch-auth a {
-  color: #f38a10;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.switch-auth a:hover {
-  text-decoration: underline;
-}
-
-/* Floating animation for illustration */
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .login-card {
-    flex-direction: column;
-    max-width: 520px;
-  }
-
-  .login-left {
-    padding: 28px 24px;
-  }
-
-  .login-right {
-    padding: 28px 24px 32px;
-  }
-
-  .login-left-heading h1 {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-page {
-    padding: 10px;
-  }
-
-  .login-left-heading h1 {
-    font-size: 24px;
-  }
-
-  .login-right-header h2 {
-    font-size: 22px;
-  }
-}
-/* Left panel enhancements */
-.enhanced-left {
-  background: radial-gradient(circle at top left, #ffe7c9, #ffdfa6, #ffd07a);
-  position: relative;
-  overflow: hidden;
-}
-
-.enhanced-left::before {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  top: -40px;
-  right: -40px;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 50%;
-  filter: blur(30px);
-  animation: pulse 4s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-}
-
-/* Animation effects */
-.pop-in { animation: popIn .8s ease forwards; }
-.slide-up { animation: slideUp .9s ease forwards; }
-.float-up { animation: floatUp 1.3s ease-in-out infinite alternate; }
-
-@keyframes popIn {
-  0% { opacity: 0; transform: scale(.8); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideUp {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(6px); }
-  100% { transform: translateY(-6px); }
-}
-
-/* Back Home button improved */
-.back-home-btn {
-  background: #ffb75e;
-  border: none;
-  color: #fff;
-  font-size: 14px;
-  padding: 10px 22px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
-  transition: background .3s ease, transform .3s ease, box-shadow .3s ease;
-  box-shadow: 0px 6px 18px rgba(245, 152, 44, 0.4);
-}
-
-.back-home-btn:hover {
-  background: #f29420;
-  transform: translateX(-4px);
-  box-shadow: 0px 12px 22px rgba(245, 152, 44, 0.5);
-}
-
-.back-home-btn:active {
-  transform: translateY(0);
-}
-
-.arrow-icon {
-  font-size: 16px;
-  transition: transform .3s ease;
-}
-
-.back-home-btn:hover .arrow-icon {
-  transform: translateX(-4px);
-}
