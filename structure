@@ -409,8 +409,48 @@ public class TrainerController {
 
 }
 
+
+mysql> ALTER TABLE feedback
+    -> ADD COLUMN trainer_id BIGINT AFTER batch_code;
+Query OK, 0 rows affected (0.14 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
 mysql> ALTER TABLE feedback
     -> ADD CONSTRAINT fk_feedback_trainer
     -> FOREIGN KEY (trainer_id) REFERENCES trainer(id);
 ERROR 1824 (HY000): Failed to open the referenced table 'trainer'
-mysql>
+mysql> describe trainers;
+
+
+mysql> describe trainers;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
+| name        | varchar(255) | NO   |     | NULL              |                   |
+| email       | varchar(255) | NO   | UNI | NULL              |                   |
+| password    | varchar(255) | NO   |     | NULL              |                   |
+| contact     | varchar(20)  | YES  |     | NULL              |                   |
+| experience  | int          | YES  |     | NULL              |                   |
+| skills      | text         | YES  |     | NULL              |                   |
+| profile_pic | varchar(255) | YES  |     | NULL              |                   |
+| bio         | text         | YES  |     | NULL              |                   |
+| role        | varchar(50)  | NO   |     | TRAINER           |                   |
+| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+11 rows in set (0.03 sec)
+
+mysql> describe feedback;
++--------------+--------------+------+-----+-------------------+-------------------+
+| Field        | Type         | Null | Key | Default           | Extra             |
++--------------+--------------+------+-----+-------------------+-------------------+
+| id           | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_id      | bigint       | NO   | MUL | NULL              |                   |
+| user_name    | varchar(255) | NO   |     | NULL              |                   |
+| batch_code   | bigint       | NO   | MUL | NULL              |                   |
+| trainer_id   | bigint       | YES  |     | NULL              |                   |
+| trainer_name | varchar(255) | NO   |     | NULL              |                   |
+| date         | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| feedback     | text         | YES  |     | NULL              |                   |
+| rating       | int          | NO   |     | NULL              |                   |
++--------------+--------------+------+-----+-------------------+-------------------+
