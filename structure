@@ -1,137 +1,347 @@
-POST http://localhost:9090/api/user/feedback 400 (Bad Request)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-submitFeedback @ userApi.js:13
-handleSubmit @ FeedbackForm.jsx:13
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-<form>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-FeedbackForm @ FeedbackForm.jsx:27
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopConcurrentByScheduler @ react-dom-client.development.js:17634
-renderRootConcurrent @ react-dom-client.development.js:17615
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<FeedbackForm>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:83
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:11
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
-throwOnInvalidObjectType @ react-dom-client.development.js:6109
-reconcileChildFibersImpl @ react-dom-client.development.js:7058
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-FeedbackForm @ FeedbackForm.jsx:26
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<FeedbackForm>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-App @ App.js:83
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16498
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<App>
-exports.jsxDEV @ react-jsx-dev-runtime.development.js:327
-./src/index.js @ index.js:11
-options.factory @ react refresh:37
-__webpack_require__ @ bootstrap:22
-(anonymous) @ startup:7
-(anonymous) @ startup:7
-FeedbackForm.jsx:26  An error occurred in the <div> component.
+package com.finalproject.internMgmtSystem.service;
 
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        // USER LOGIN
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUserId(),
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+        }
+
+        // TRAINER LOGIN
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateTrainerToken(
+                trainer.getTrainerId(),
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole(),
+                trainer.getName()         // Trainer name added inside token
+        );
+    }
+}
 
 
-Uncaught runtime errors:
-×
-ERROR
-Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11923:11)
-    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11927:106)
-    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:12250:9)
-    at http://localhost:3000/static/js/bundle.js:12262:31
-    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13821:47)
-    at beginWork (http://localhost:3000/static/js/bundle.js:14637:1565)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:9089:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16998:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:16893:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:16878:7)
 
+
+package com.finalproject.internMgmtSystem.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register",
+                        "/api/user/batches" // ✔ Public Access
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    // USER TOKEN
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // TRAINER TOKEN (Trainer Name + Trainer ID added)
+    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
+                .claim("trainerId", trainerId)
+                .claim("trainerName", trainerName)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(authority)
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.security;
+
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
+}
+
+
+import axios from "axios";
+const api = axios.create({
+  baseURL: "http://localhost:9090",
+});
+
+api.interceptors.request.use((config) => {
+  const t = localStorage.getItem("token");
+  if (t) config.headers.Authorization = `Bearer ${t}`;
+  return config;
+});
+
+export default api;
 
 
 import api from "./axiosConfig";
@@ -151,7 +361,6 @@ export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
 export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
 
 
-
 import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
@@ -162,23 +371,29 @@ export default function AuthProvider({ children }) {
   const [email, setEmail] = useState(localStorage.getItem("email"));
 
   useEffect(() => {
-    // Sync on mount (in case token stored before)
-    const t = localStorage.getItem("token");
-    if (t && !token) setToken(t);
-    const r = localStorage.getItem("role");
-    if (r && !role) setRole(r);
-    const e = localStorage.getItem("email");
-    if (e && !email) setEmail(e);
+    const savedToken = localStorage.getItem("token");
+    const savedRole = localStorage.getItem("role");
+    const savedEmail = localStorage.getItem("email");
+
+    if (savedToken && !token) setToken(String(savedToken));
+    if (savedRole && !role) setRole(String(savedRole));
+    if (savedEmail && !email) setEmail(String(savedEmail));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newRole);
-    localStorage.setItem("email", newEmail || "");
-    setToken(newToken);
-    setRole(newRole);
-    setEmail(newEmail || "");
+    // ✅ Ensure everything stored is STRING — no objects
+    const fixToken = String(newToken || "");
+    const fixRole = String(newRole || "");
+    const fixEmail = String(newEmail || "");
+
+    localStorage.setItem("token", fixToken);
+    localStorage.setItem("role", fixRole);
+    localStorage.setItem("email", fixEmail);
+
+    setToken(fixToken);
+    setRole(fixRole);
+    setEmail(fixEmail);
   };
 
   const logout = () => {
@@ -211,19 +426,19 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
 
-  // Extract JWT payload
+  // Decode JWT payload
   const parseJwtPayload = (token) => {
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-
       return {
         role: payload.role?.startsWith("ROLE_")
           ? payload.role
-          : `ROLE_${payload.role}`, // Ensure role format is ROLE_*
+          : `ROLE_${payload.role}`,
         email: payload.sub || payload.email || "",
         userId: payload.userId,
         trainerId: payload.trainerId,
-        trainerName: payload.trainerName
+        trainerName: payload.trainerName,
+        batchCode: payload.batchCode
       };
     } catch {
       return {};
@@ -238,25 +453,27 @@ export default function Login() {
       const res = await loginApi(form);
       const token = res.data;
 
-      const { role, email, userId, trainerId, trainerName } =
+      const { role, email, userId, trainerId, trainerName, batchCode } =
         parseJwtPayload(token);
 
-      if (!role) throw new Error("Invalid token received");
+      login(token, role, email); // store string values only
 
-      // Save token, role, email to context + storage
-      login(token, role, email);
-
-      // Save IDs depending on role
+      // IMPORTANT: store IDs as STRING
       if (role === "ROLE_TRAINER") {
-        if (trainerId) localStorage.setItem("trainerId", trainerId);
-        if (trainerName) localStorage.setItem("trainerName", trainerName);
+        if (trainerId !== undefined)
+          localStorage.setItem("trainerId", String(trainerId));
+        if (trainerName !== undefined)
+          localStorage.setItem("trainerName", String(trainerName));
       }
 
-      if (role === "ROLE_USER" && userId) {
-        localStorage.setItem("userId", userId);
+      if (role === "ROLE_USER") {
+        if (userId !== undefined)
+          localStorage.setItem("userId", String(userId));
+        if (batchCode !== undefined)
+          localStorage.setItem("batchCode", String(batchCode));
       }
 
-      // Navigation by role
+      // Redirect by role
       if (role === "ROLE_ADMIN") nav("/admin/dashboard");
       else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
       else nav("/user/dashboard");
@@ -269,13 +486,9 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-
-        {/* LEFT SIDE (Brand Illustration) */}
         <div className="login-left enhanced-left">
           <div className="login-brand pop-in">
-            <div className="brand-icon">
-              <span className="brand-briefcase" />
-            </div>
+            <div className="brand-icon"><span className="brand-briefcase" /></div>
             <div className="brand-text">
               <div className="brand-title">INTERN-CONNECT</div>
               <div className="brand-subtitle">Portal</div>
@@ -292,7 +505,7 @@ export default function Login() {
           </div>
         </div>
 
-        {/* RIGHT SIDE (Login Form) */}
+        {/* RIGHT SIDE */}
         <div className="login-right">
           <button className="back-home-btn" onClick={() => nav("/")}>
             <span className="arrow-icon">←</span>
@@ -313,7 +526,9 @@ export default function Login() {
                 type="email"
                 placeholder="Email"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
                 required
               />
             </div>
@@ -324,7 +539,9 @@ export default function Login() {
                 type="password"
                 placeholder="Password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
                 required
               />
             </div>
@@ -334,145 +551,10 @@ export default function Login() {
             <div className="switch-auth">
               <a href="/user/register">Register as User</a>
             </div>
+
           </form>
         </div>
-
       </div>
     </div>
-  );
-}
-
-
-import React, { useState } from "react";
-import { submitFeedback } from "../../api/userApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-
-export default function FeedbackForm() {
-  const [form, setForm] = useState({ userId: "", userName: "", batchCode: "", trainerName: "", feedback: "", rating: 5 });
-  const [msg, setMsg] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await submitFeedback(form);
-      setMsg("Feedback submitted.");
-      setTimeout(() => setMsg(""), 2000);
-    } catch (e) {
-      setMsg(e?.response?.data || e.message);
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Give Feedback</h3>
-        {msg && <div className="info">{msg}</div>}
-        <form className="small-form" onSubmit={handleSubmit}>
-          <input placeholder="User ID" value={form.userId} onChange={(e)=>setForm({...form,userId:e.target.value})} />
-          <input placeholder="User Name" value={form.userName} onChange={(e)=>setForm({...form,userName:e.target.value})} />
-          <input placeholder="Batch Code" value={form.batchCode} onChange={(e)=>setForm({...form,batchCode:e.target.value})} />
-          <input placeholder="Trainer Name" value={form.trainerName} onChange={(e)=>setForm({...form,trainerName:e.target.value})} />
-          <textarea placeholder="Feedback" value={form.feedback} onChange={(e)=>setForm({...form,feedback:e.target.value})}></textarea>
-          <input placeholder="Rating (1-5)" value={form.rating} onChange={(e)=>setForm({...form,rating:Number(e.target.value)})} />
-          <button className="btn" type="submit">Submit</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";
-
-// Pages
-import Home from "./pages/Home/Home";
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
-
-// Admin Pages
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer Pages
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";
-import TrainerFeedback from "./pages/Trainer/TrainerFeedback"; // ⭐ NEW IMPORT
-
-// User Pages
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-import UserStipends from "./pages/User/UserStipends";
-import UserAttendance from "./pages/User/UserAttendance";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <ThemeToggle />
-
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin Panel */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer Panel */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-            <Route path="/trainer/tasks" element={<TrainerViewTasks />} />
-            <Route path="/trainer/feedback" element={<TrainerFeedback />} /> {/* ⭐ ADDED */}
-          </Route>
-
-          {/* User Panel */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-            <Route path="/user/stipends" element={<UserStipends />} />
-            <Route path="/user/attendance" element={<UserAttendance />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
   );
 }
