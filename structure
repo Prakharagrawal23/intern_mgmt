@@ -19,30 +19,131 @@ export default function AdminDashboard() {
       <Sidebar items={items} />
 
       <div className="main fadeIn">
-        <h2 className="dash-title">Admin Portal</h2>
-        <p className="dash-sub">
-          Manage entire internship workflow efficiently.
-        </p>
-
-        <div className="dashboard-info">
-          <div className="info-card">
-            <h3>👨‍🏫 Trainers</h3>
-            <p>Create & monitor trainer accounts and assignments.</p>
+        {/* Top header row with title + search + profile */}
+        <div className="dashboard-header">
+          <div className="page-title-block">
+            <h2 className="dash-title">Admin Portal</h2>
+            <p className="dash-sub">
+              Manage the entire internship workflow efficiently.
+            </p>
           </div>
 
-          <div className="info-card">
-            <h3>📚 Internship Batches</h3>
-            <p>Plan upcoming batches and track seat availability.</p>
+          <div className="dash-actions">
+            <div className="dash-search">
+              <input
+                className="dash-search-input"
+                placeholder="Search interns, batches, trainers..."
+              />
+            </div>
+
+            <div className="dash-actions-right">
+              <div className="theme-toggle">
+                <button className="toggle-btn active">☀</button>
+                <button className="toggle-btn">🌙</button>
+              </div>
+              <div className="bell-icon">
+                <span>🔔</span>
+              </div>
+              <div className="dash-avatar">
+                <img
+                  src="https://i.pravatar.cc/100?img=12"
+                  alt="Admin"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome banner */}
+        <div className="welcome-banner admin-banner">
+          <div className="banner-text">
+            <p className="banner-subtitle">Welcome back 👋</p>
+            <h3 className="banner-title">Good to see you, Admin</h3>
+            <p className="banner-body">
+              Monitor trainers, batches, interns and stipends from one place.
+              Keep everything aligned with the internship plan.
+            </p>
+            <div className="banner-stats">
+              <div>
+                <span className="banner-stat-label">Core Controls</span>
+                <span className="banner-stat-value">Trainers & Batches</span>
+              </div>
+              <div>
+                <span className="banner-stat-label">Focus</span>
+                <span className="banner-stat-value">Intern Experience</span>
+              </div>
+            </div>
           </div>
 
-          <div className="info-card">
-            <h3>🧑‍🎓 Interns</h3>
-            <p>View intern details and allocate them to batches.</p>
+          <div className="banner-image">
+            <img
+              src="https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Admin overview"
+            />
+          </div>
+        </div>
+
+        {/* Summary row using your real modules */}
+        <div className="summary-grid">
+          <div className="summary-card">
+            <h3 className="summary-title">👨‍🏫 Trainers</h3>
+            <p className="summary-text">
+              Create and manage trainer accounts, map them to batches and keep
+              their access up-to-date.
+            </p>
+          </div>
+          <div className="summary-card">
+            <h3 className="summary-title">📚 Internship Batches</h3>
+            <p className="summary-text">
+              Configure new internship batches, define timelines and track seat
+              availability.
+            </p>
+          </div>
+          <div className="summary-card">
+            <h3 className="summary-title">🧑‍🎓 Interns</h3>
+            <p className="summary-text">
+              View intern details, map them to trainers and assign them into
+              appropriate batches.
+            </p>
+          </div>
+          <div className="summary-card">
+            <h3 className="summary-title">💰 Stipends</h3>
+            <p className="summary-text">
+              Release stipends, maintain payout history and keep financial
+              records clean.
+            </p>
+          </div>
+        </div>
+
+        {/* Extra section using same content, more card feel like layout */}
+        <div className="section-wrapper">
+          <div className="section-header">
+            <h3 className="section-title">Quick Access</h3>
+            <p className="section-subtitle">
+              Frequently managed areas of your internship system.
+            </p>
           </div>
 
-          <div className="info-card">
-            <h3>💰 Stipends</h3>
-            <p>Distribute stipends and monitor financial reports.</p>
+          <div className="dashboard-info">
+            <div className="info-card">
+              <h3>👨‍🏫 Trainers</h3>
+              <p>Create & monitor trainer accounts and assignments.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>📚 Internship Batches</h3>
+              <p>Plan upcoming batches and track seat availability.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>🧑‍🎓 Interns</h3>
+              <p>View intern details and allocate them to batches.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>💰 Stipends</h3>
+              <p>Distribute stipends and monitor financial reports.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -64,40 +165,138 @@ export default function TrainerDashboard() {
     { to: "/trainer/tasks", label: "View Tasks" },
     { to: "/trainer/attendance", label: "Mark Attendance" },
     { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" } // ⭐ ADDED
+    { to: "/trainer/feedback", label: "View Feedback" }, // ⭐ ADDED
   ];
 
   return (
     <div className="layout">
       <Navbar />
       <Sidebar items={items} />
+
       <div className="main fadeIn">
-        <h2 className="dash-title">Trainer Portal</h2>
-        <p className="dash-sub">
-          Manage batches, tasks & attendance easily.
-        </p>
-
-        <div className="dashboard-info">
-          <div className="info-card">
-            <h3>📌 Assign Tasks</h3>
-            <p>Create assignments and track submissions.</p>
+        {/* Top header row */}
+        <div className="dashboard-header">
+          <div className="page-title-block">
+            <h2 className="dash-title">Trainer Portal</h2>
+            <p className="dash-sub">
+              Manage batches, tasks & attendance with ease.
+            </p>
           </div>
 
-          <div className="info-card">
-            <h3>📝 Attendance</h3>
-            <p>Mark and review attendance daily.</p>
+          <div className="dash-actions">
+            <div className="dash-search">
+              <input
+                className="dash-search-input"
+                placeholder="Search users, tasks, attendance..."
+              />
+            </div>
+
+            <div className="dash-actions-right">
+              <div className="theme-toggle">
+                <button className="toggle-btn active">☀</button>
+                <button className="toggle-btn">🌙</button>
+              </div>
+              <div className="bell-icon">
+                <span>🔔</span>
+              </div>
+              <div className="dash-avatar">
+                <img
+                  src="https://i.pravatar.cc/100?img=32"
+                  alt="Trainer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome banner */}
+        <div className="welcome-banner trainer-banner">
+          <div className="banner-text">
+            <p className="banner-subtitle">Welcome back 👋</p>
+            <h3 className="banner-title">Hello Trainer</h3>
+            <p className="banner-body">
+              Keep an eye on your batch performance and pending tasks. Your
+              guidance drives intern success.
+            </p>
+            <div className="banner-stats">
+              <div>
+                <span className="banner-stat-label">My Batches</span>
+                <span className="banner-stat-value">03</span>
+              </div>
+              <div>
+                <span className="banner-stat-label">Pending Reviews</span>
+                <span className="banner-stat-value">09</span>
+              </div>
+            </div>
           </div>
 
-          <div className="info-card">
-            <h3>⭐ Performance</h3>
-            <p>Evaluate student progress and growth.</p>
+          <div className="banner-image">
+            <img
+              src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Trainer overview"
+            />
+          </div>
+        </div>
+
+        {/* Summary stats row */}
+        <div className="summary-grid">
+          <div className="summary-card">
+            <p className="summary-label">Tasks Assigned</p>
+            <h3 className="summary-value">24</h3>
+            <p className="summary-footer">Across all active batches</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Submissions</p>
+            <h3 className="summary-value">80%</h3>
+            <p className="summary-footer">Average submission rate</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Attendance</p>
+            <h3 className="summary-value">92%</h3>
+            <p className="summary-footer">Overall batch attendance</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Feedback Received</p>
+            <h3 className="summary-value">14</h3>
+            <p className="summary-footer">New feedback this week</p>
+          </div>
+        </div>
+
+        {/* Existing info cards (upgraded section) */}
+        <div className="section-wrapper">
+          <div className="section-header">
+            <h3 className="section-title">Teaching Tools</h3>
+            <p className="section-subtitle">
+              Create tasks, mark attendance and track performance.
+            </p>
+          </div>
+
+          <div className="dashboard-info">
+            <div className="info-card">
+              <h3>📌 Assign Tasks</h3>
+              <p>Create assignments and track submissions.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>📝 Attendance</h3>
+              <p>Mark and review attendance daily.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>⭐ Performance</h3>
+              <p>Evaluate student progress and growth.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>💬 Feedback</h3>
+              <p>Review feedback shared by your interns.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
 
 
 import React from "react";
@@ -120,23 +319,121 @@ export default function UserDashboard() {
       <Sidebar items={items} />
 
       <div className="main fadeIn">
-        <h2 className="dash-title">Intern Portal</h2>
-        <p className="dash-sub">Track your learning and performance.</p>
-
-        <div className="dashboard-info">
-          <div className="info-card">
-            <h3>📚 Tasks</h3>
-            <p>Track your deadlines and progress.</p>
+        {/* Top header row */}
+        <div className="dashboard-header">
+          <div className="page-title-block">
+            <h2 className="dash-title">Intern Portal</h2>
+            <p className="dash-sub">Track your learning and performance.</p>
           </div>
 
-          <div className="info-card">
-            <h3>📊 Performance</h3>
-            <p>Monitor scores and achievements.</p>
+          <div className="dash-actions">
+            <div className="dash-search">
+              <input
+                className="dash-search-input"
+                placeholder="Search tasks, scores, attendance..."
+              />
+            </div>
+
+            <div className="dash-actions-right">
+              <div className="theme-toggle">
+                <button className="toggle-btn active">☀</button>
+                <button className="toggle-btn">🌙</button>
+              </div>
+              <div className="bell-icon">
+                <span>🔔</span>
+              </div>
+              <div className="dash-avatar">
+                <img
+                  src="https://i.pravatar.cc/100?img=56"
+                  alt="Intern"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome banner */}
+        <div className="welcome-banner user-banner">
+          <div className="banner-text">
+            <p className="banner-subtitle">Welcome back 👋</p>
+            <h3 className="banner-title">Hi, Intern</h3>
+            <p className="banner-body">
+              You’re doing great! Keep completing tasks on time and watching
+              your performance graph go up.
+            </p>
+            <div className="banner-stats">
+              <div>
+                <span className="banner-stat-label">Tasks Completed</span>
+                <span className="banner-stat-value">18/24</span>
+              </div>
+              <div>
+                <span className="banner-stat-label">Attendance</span>
+                <span className="banner-stat-value">95%</span>
+              </div>
+            </div>
           </div>
 
-          <div className="info-card">
-            <h3>💵 Stipends</h3>
-            <p>View stipend status securely.</p>
+          <div className="banner-image">
+            <img
+              src="https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Intern overview"
+            />
+          </div>
+        </div>
+
+        {/* Summary stats row */}
+        <div className="summary-grid">
+          <div className="summary-card">
+            <p className="summary-label">Upcoming Tasks</p>
+            <h3 className="summary-value">03</h3>
+            <p className="summary-footer">Due in the next 7 days</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Average Score</p>
+            <h3 className="summary-value">8.4</h3>
+            <p className="summary-footer">Out of 10 this month</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Stipend Status</p>
+            <h3 className="summary-value">On Track</h3>
+            <p className="summary-footer">No pending compliance</p>
+          </div>
+          <div className="summary-card">
+            <p className="summary-label">Feedback Given</p>
+            <h3 className="summary-value">05</h3>
+            <p className="summary-footer">Trainer & batch feedback</p>
+          </div>
+        </div>
+
+        {/* Existing info cards (as a section) */}
+        <div className="section-wrapper">
+          <div className="section-header">
+            <h3 className="section-title">Your Modules</h3>
+            <p className="section-subtitle">
+              Access everything related to your internship journey.
+            </p>
+          </div>
+
+          <div className="dashboard-info">
+            <div className="info-card">
+              <h3>📚 Tasks</h3>
+              <p>Track your deadlines and progress.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>📊 Performance</h3>
+              <p>Monitor scores and achievements.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>💵 Stipends</h3>
+              <p>View stipend status securely.</p>
+            </div>
+
+            <div className="info-card">
+              <h3>🕒 Attendance</h3>
+              <p>Check your daily presence records.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -146,119 +443,485 @@ export default function UserDashboard() {
 
 
 
+/* Layout */
 .layout {
-    display: flex;
-    min-height: 100vh;
+  display: flex;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #e3f0ff 0, #f6f8ff 40%, #ffffff 100%);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
+/* Top Navbar */
 .nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    background: rgba(5, 10, 20, 0.6);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  z-index: 100;
 }
 
 .nav-left {
-    font-weight: 700;
-    color: white;
+  font-weight: 700;
+  color: #0b63f6;
+  letter-spacing: 0.4px;
 }
 
 .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 220px;
-    padding-top: 70px;
-    background: rgba(2, 6, 23, 0.6);
-    min-height: 100vh;
-    border-right: 1px solid rgba(255, 255, 255, 0.03);
+  width: 230px;
+  padding-top: 70px;
+  background: linear-gradient(180deg, #0b63f6 0%, #2563eb 40%, #1d4ed8 100%);
+  min-height: 100vh;
+  border-right: 0;
+  box-shadow: 4px 0 18px rgba(37, 99, 235, 0.35);
+  position: sticky;
+  top: 0;
 }
 
 .sidebar-link {
-    display: block;
-    padding: 12px 16px;
-    color: #bcd6ff;
-    text-decoration: none;
-    border-left: 4px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  color: #e0ecff;
+  text-decoration: none;
+  border-left: 4px solid transparent;
+  font-size: 14px;
+  transition: 0.22s ease;
 }
 
 .sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.02);
-    border-left-color: var(--accent2);
-    color: #fff;
+  background: rgba(15, 23, 42, 0.15);
+  border-left-color: #facc15;
+  color: #ffffff;
 }
 
+/* Main content */
 .main {
-    margin-left: 220px;
-    padding: 80px 28px;
-    width: 100%;
+  margin-left: 230px;
+  padding: 80px 30px 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
+/* Page header row */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.page-title-block {
+  min-width: 200px;
+}
+
 .dash-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 6px;
-  color: #222;
+  margin-bottom: 4px;
+  color: #0f172a;
 }
 
 .dash-sub {
-  font-size: 15px;
-  margin-bottom: 18px;
-  color: #666;
+  font-size: 14px;
+  margin-bottom: 0;
+  color: #64748b;
 }
 
-/* Info Cards */
-.dashboard-info {
-  margin-top: 12px;
+/* Header right actions */
+.dash-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.dash-search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 420px;
+}
+
+.dash-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  outline: none;
+  font-size: 13px;
+  background: #f8fafc url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='16.65' y1='16.65' x2='21' y2='21'/%3E%3C/svg%3E")
+    no-repeat 11px center;
+  background-size: 14px;
+  transition: border 0.18s ease, box-shadow 0.2s ease, background-color 0.2s;
+}
+
+.dash-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.dash-search-input:focus {
+  border-color: #0b63f6;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.45);
+  background-color: #ffffff;
+}
+
+.dash-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: #e0ecff;
+}
+
+.toggle-btn {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toggle-btn.active {
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.2);
+}
+
+.bell-icon span {
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dash-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.5);
+}
+
+.dash-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Welcome banner */
+.welcome-banner {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr);
+  gap: 18px;
+  background: linear-gradient(135deg, #0b63f6 0%, #2563eb 40%, #1d4ed8 100%);
+  border-radius: 18px;
+  padding: 20px 22px;
+  color: #e5edff;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::before {
+  content: "";
+  position: absolute;
+  right: -60px;
+  top: -40px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(248, 250, 252, 0.38), transparent);
+  opacity: 0.6;
+}
+
+.banner-text {
+  position: relative;
+  z-index: 1;
+}
+
+.banner-subtitle {
+  font-size: 14px;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.banner-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.banner-body {
+  font-size: 14px;
+  max-width: 440px;
+  color: #e0ebff;
+  margin-bottom: 14px;
+}
+
+.banner-body .highlight {
+  font-weight: 700;
+  color: #fffbeb;
+}
+
+.banner-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.banner-stats > div {
+  background: rgba(15, 23, 42, 0.16);
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+.banner-stat-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+.banner-stat-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Banner image */
+.banner-image {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.banner-image img {
+  max-width: 100%;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
+  object-fit: cover;
+  height: 180px;
+}
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.summary-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+  transition: transform 0.22s ease, box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.45);
+}
+
+.summary-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.summary-footer {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Section wrapper */
+.section-wrapper {
+  margin-top: 10px;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Info Cards (existing, visually enhanced) */
+.dashboard-info {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
 }
 
 .info-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px 20px;
-  border: 1px solid #eee;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  border: 1px solid #e5e7eb;
   transform: translateY(0);
   transition: 0.25s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  bottom: -40px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.45), transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
 .info-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 26px rgba(247, 158, 59, 0.2);
-  border-color: #f79e3b;
+  box-shadow: 0 16px 30px rgba(248, 178, 68, 0.25);
+  border-color: #f59e0b;
+}
+
+.info-card:hover::after {
+  opacity: 1;
 }
 
 .info-card h3 {
-  font-size: 16px;
+  font-size: 15px;
   margin-bottom: 6px;
-  color: #111;
+  color: #111827;
 }
 
 .info-card p {
   font-size: 13px;
-  color: #666;
-  line-height: 1.4;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
-/* Smooth fade animation */
+/* Animation */
 .fadeIn {
-  animation: fadeInDash .6s ease-in-out;
-}
-@keyframes fadeInDash {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  animation: fadeInDash 0.55s ease-in-out;
 }
 
+@keyframes fadeInDash {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 1024px) {
+  .welcome-banner {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+    padding: 80px 16px 24px;
+  }
+
+  .sidebar {
+    display: none; /* assume you may later handle mobile sidebar with hamburger */
+  }
+
+  .welcome-banner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .banner-image {
+    justify-content: flex-start;
+  }
+
+  .banner-image img {
+    height: 170px;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-header {
+    align-items: flex-start;
+  }
+
+  .dash-actions {
+    justify-content: flex-start;
+  }
+
+  .dash-actions-right {
+    justify-content: flex-start;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .banner-stats {
+    flex-direction: column;
+  }
+}
