@@ -1,5 +1,3 @@
-{"resume":"Resume URL/path is required","address":"Address is required","endDate":"End date is required","batchCode":"batch Code is required","team":"Team selection is required","userName":"User name is required","collegeName":"College name is required","password":"Password is required","major":"Major is required","dob":"Date of birth is required","grade":"Grade is required","startDate":"Start date is required","email":"Email is required","graduatingYear":"Graduating year is required","contactNo":"Contact number is required"}
-
 import React, { useState, useEffect } from "react";
 import { registerUser, getAllBatchesPublic } from "../../api/userApi";
 import formatError from "../../utils/formatError";
@@ -285,349 +283,800 @@ export default function RegisterUser() {
 }
 
 
-/* PAGE BACKGROUND */
-.register-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff9f0; /* same family as login */
-  padding: 24px;
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role: payload.role?.startsWith("ROLE_")
+          ? payload.role
+          : `ROLE_${payload.role}`,
+        sub: payload.sub || "",
+        userId: payload.userId,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+        batchCode: payload.batchCode,
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data;
+      const { role, sub, userId, trainerId, trainerName, batchCode } =
+        parseJwtPayload(token);
+
+      login(token, role, String(sub));
+
+      if (role === "ROLE_TRAINER" && trainerId !== undefined) {
+        localStorage.setItem("trainerId", String(trainerId));
+        localStorage.setItem("trainerName", String(trainerName));
+      }
+
+      if (role === "ROLE_USER" && userId !== undefined) {
+        localStorage.setItem("userId", String(userId));
+        localStorage.setItem("batchCode", String(batchCode));
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+
+    } catch (error) {
+      setErr(
+        error?.response?.data?.message ||
+          "Invalid credentials! Please enter correct email & password."
+      );
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+
+        {/* LEFT PANEL */}
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon"><span className="brand-briefcase" /></div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
+          </div>
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            <span className="arrow-icon">←</span> Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <button className="btn" type="submit">LOGIN</button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
-/* Outer container */
-.register-container {
-  width: 100%;
-  max-width: 1100px;
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    const savedRole = localStorage.getItem("role");
+    const savedEmail = localStorage.getItem("email");
+
+    if (savedToken && !token) setToken(String(savedToken));
+    if (savedRole && !role) setRole(String(savedRole));
+    if (savedEmail && !email) setEmail(String(savedEmail));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    // ✅ Ensure everything stored is STRING — no objects
+    const fixToken = String(newToken || "");
+    const fixRole = String(newRole || "");
+    const fixEmail = String(newEmail || "");
+
+    localStorage.setItem("token", fixToken);
+    localStorage.setItem("role", fixRole);
+    localStorage.setItem("email", fixEmail);
+
+    setToken(fixToken);
+    setRole(fixRole);
+    setEmail(fixEmail);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-/* Card */
-.register-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 28px 34px 30px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-  animation: fadeInReg 0.6s ease-out;
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private UserDao userDao;              // instance DAO
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // injected password encoder
+
+    // LOGIN (existing)
+    @PostMapping("/login")
+    public String login(@Valid @RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
+    }
+
+    /**
+     * Temporary endpoint to create the one-time ADMIN via Postman.
+     * - Ensures only ONE admin exists in the system.
+     * - After successful admin creation you should REMOVE this endpoint
+     *   (or at least lock it) from SecurityConfig.
+     */
+    
+    @PostMapping("/create-admin")
+    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
+
+        // 1) Check if an admin already exists
+        List<User> allUsers = userDao.findAll();
+        boolean adminExists = allUsers.stream()
+                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
+
+        if (adminExists) {
+            throw new UserAlreadyExistsException("Admin already exists!");
+        }
+
+        // 2) Check if email already used
+        User existing = userDao.findByEmail(dto.getEmail());
+        if (existing != null) {
+            throw new UserAlreadyExistsException("Email already registered!");
+        }
+
+        // 3) Create admin
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole("ADMIN");
+
+        userDao.save(user);
+
+        return "Admin created successfully!";
+    }
+
+}
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BatchDao batchDao; // 🔥 FIXED — Autowired properly
+
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody RegisterUserDto dto) {
+        return userService.registerUser(dto);
+    }
+
+    @GetMapping("/{userId}/tasks")
+    public List<Task> getTasks(@PathVariable Long userId) {
+        return userService.getTasks(userId);
+    }
+
+    @GetMapping("/{userId}/performance")
+    public List<Performance> getPerformance(@PathVariable Long userId) {
+        return userService.getPerformance(userId);
+    }
+
+    @GetMapping("/{userId}/stipends")
+    public List<Stipend> getStipends(@PathVariable Long userId) {
+        return userService.getStipendHistory(userId);
+    }
+
+    @GetMapping("/batch/{batchCode}")
+    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+        return userService.getBatchDetails(batchCode);
+    }
+
+    @PostMapping("/feedback")
+    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+        return userService.submitFeedback(dto);
+    }
+
+    @GetMapping("/{userId}/attendance")
+    public List<Attendance> getAttendance(@PathVariable Long userId) {
+        return userService.getAttendance(userId);
+    }
+
+    // 📌 NEW PUBLIC ENDPOINT
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatchesPublic() {
+        return batchDao.findAll(); // 🟢 Now resolved and working!
+    }
 }
 
-/* Header */
-.register-header h2 {
-  font-size: 26px;
-  color: #1f1f2d;
-  margin-bottom: 4px;
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerId(dto.getTrainerId());   // ⭐ ADD THIS
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
+
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
 }
 
-.register-header p {
-  font-size: 14px;
-  color: #7a7a87;
-  margin-bottom: 20px;
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        // USER LOGIN
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUserId(),
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+        }
+
+        // TRAINER LOGIN
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateTrainerToken(
+                trainer.getTrainerId(),
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole(),
+                trainer.getName()         // Trainer name added inside token
+        );
+    }
 }
+package com.finalproject.internMgmtSystem.security;
 
-/* STEPPER */
-.stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 22px;
-  position: relative;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userDao.findByEmail(email);
+        if (user != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
+            );
+        }
+
+        Trainer trainer = trainerDao.findByEmail(email);
+        if (trainer != null) {
+            return new org.springframework.security.core.userdetails.User(
+                    trainer.getEmail(),
+                    trainer.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
+            );
+        }
+
+        throw new UsernameNotFoundException("User not found: " + email);
+    }
 }
+package com.finalproject.internMgmtSystem.security;
 
-.stepper::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 12%;
-  right: 12%;
-  height: 2px;
-  background: #e3e3ee;
-  transform: translateY(-50%);
-  z-index: 0;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        final String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (!jwtUtil.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
+        String role = jwtUtil.extractRole(token);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userId, null, List.of(authority)
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
 }
+package com.finalproject.internMgmtSystem.security;
 
-.step-item {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    // USER TOKEN
+    public String generateToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    // TRAINER TOKEN (Trainer Name + Trainer ID added)
+    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
+                .claim("trainerId", trainerId)
+                .claim("trainerName", trainerName)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
+package com.finalproject.internMgmtSystem.security;
 
-.step-item:nth-child(1) {
-  align-items: flex-start;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
+
+@Configuration
+public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable());
+
+        // VERY IMPORTANT: enable CORS here
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/api/auth/login",
+                        "/api/user/register",
+                        "/api/user/batches" // ✔ Public Access
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
+                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .anyRequest().authenticated()
+        );
+
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // FULL CORS CONFIGURATION FOR SPRING SECURITY
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }
-.step-item:nth-child(3) {
-  align-items: flex-end;
-}
+ use internmgmtsystem;
+Database changed
+mysql> select * from users;
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
+|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
+|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
+|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
+|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
+|      21 | admin@gmail.com   | rajul@gmail.com           | $2a$10$uEIs9AWnd.4qZq5PoKFQ/uAyluPzo3yuexCFxiywEajTFOLJW26qi | 2025-12-16 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-05 15:51:11 |          7 |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+9 rows in set (0.00 sec)
 
-.step-circle {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2px solid #d0d0dd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  font-weight: 600;
-  font-size: 14px;
-  color: #8a8aa0;
-  transition: all 0.3s ease;
-}
-
-.step-label {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #8a8aa0;
-}
-
-/* Active / completed states using login theme colors */
-.step-item.active .step-circle {
-  background: #f79e3b;
-  border-color: #f79e3b;
-  color: #ffffff;
-  box-shadow: 0 0 0 4px rgba(247, 158, 59, 0.25);
-}
-
-.step-item.active .step-label {
-  color: #2b2b38;
-  font-weight: 600;
-}
-
-.step-item.completed .step-circle {
-  background: #2ac27b;
-  border-color: #2ac27b;
-  color: #ffffff;
-}
-
-.step-item.completed .step-label {
-  color: #3d3d4a;
-}
-
-/* ALERT MESSAGE */
-.alert-msg {
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  margin-bottom: 12px;
-}
-
-.success-msg {
-  background: #e7ffed;
-  color: #0f8b32;
-}
-
-.error-msg {
-  background: #ffe0e0;
-  color: #d8000c;
-}
-
-/* FORM */
-.register-form {
-  margin-top: 8px;
-}
-
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2e2e3a;
-  margin-bottom: 14px;
-}
-
-/* Rows & fields */
-.field-row {
-  display: flex;
-  gap: 18px;
-  margin-bottom: 14px;
-}
-
-.field {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.field label {
-  font-size: 13px;
-  color: #5e5e6c;
-  margin-bottom: 4px;
-}
-
-.field label span {
-  color: #e14848;
-}
-
-.field input,
-.field select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d1dc;
-  font-size: 14px;
-  background: #fafafb;
-  outline: none;
-  transition: border 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
-}
-
-.field input:focus,
-.field select:focus {
-  border-color: #f79e3b;
-  box-shadow: 0 0 0 3px rgba(247, 158, 59, 0.2);
-  background: #ffffff;
-}
-
-.field small {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #8c8c9b;
-}
-
-/* Batch preview box */
-.batch-preview {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #fff7ea;
-  border: 1px dashed #f3a846;
-  font-size: 13px;
-  color: #5a4a33;
-}
-
-.batch-preview h4 {
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-/* STEP ACTION BUTTONS */
-.step-actions {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-/* Buttons – reuse theme similar to login */
-.btn {
-  padding: 9px 22px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  transition: background 0.25s ease, transform 0.15s ease,
-    box-shadow 0.25s ease;
-}
-
-/* secondary / back */
-.secondary-btn {
-  background: #f3f3fa;
-  color: #4b4b5a;
-}
-
-.secondary-btn:hover {
-  background: #e3e3f2;
-}
-
-/* next */
-.next-btn {
-  background: #f79e3b;
-  color: #ffffff;
-  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.35);
-}
-
-.next-btn:hover {
-  background: #f38a10;
-  transform: translateY(-1px);
-  box-shadow: 0 12px 22px rgba(247, 158, 59, 0.45);
-}
-
-/* final register */
-.register-btn {
-  background: #2ac27b;
-  color: #ffffff;
-  box-shadow: 0 8px 18px rgba(42, 194, 123, 0.35);
-}
-
-.register-btn:hover {
-  background: #1ea565;
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(42, 194, 123, 0.45);
-}
-
-/* ANIMATIONS */
-@keyframes fadeInReg {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .register-card {
-    padding: 22px 18px 24px;
-  }
-
-  .stepper::before {
-    left: 18%;
-    right: 18%;
-  }
-}
-
-@media (max-width: 700px) {
-  .field-row {
-    flex-direction: column;
-  }
-
-  .stepper {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .stepper::before {
-    display: none;
-  }
-
-  .step-item,
-  .step-item:nth-child(1),
-  .step-item:nth-child(3) {
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .register-page {
-    padding: 10px;
-  }
-
-  .register-header h2 {
-    font-size: 22px;
-  }
-}
-/* BACK TO HOME BUTTON */
-.back-home-btn {
-  background: #ffb75e;
-  border: none;
-  color: #fff;
-  font-size: 14px;
-  padding: 8px 18px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-  transition: background 0.3s ease, transform 0.3s ease;
-  box-shadow: 0px 6px 18px rgba(243, 152, 46, 0.4);
-}
-
-.back-home-btn:hover {
-  background: #f3941a;
-  transform: translateX(-4px);
-}
+mysql>
