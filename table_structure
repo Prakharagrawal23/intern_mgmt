@@ -1,553 +1,633 @@
-import React, { useState, useContext } from "react";
-import { loginApi } from "../../api/authApi";
-import { AuthContext } from "../../context/AuthContext";
+{"resume":"Resume URL/path is required","address":"Address is required","endDate":"End date is required","batchCode":"batch Code is required","team":"Team selection is required","userName":"User name is required","collegeName":"College name is required","password":"Password is required","major":"Major is required","dob":"Date of birth is required","grade":"Grade is required","startDate":"Start date is required","email":"Email is required","graduatingYear":"Graduating year is required","contactNo":"Contact number is required"}
+
+import React, { useState, useEffect } from "react";
+import { registerUser, getAllBatchesPublic } from "../../api/userApi";
+import formatError from "../../utils/formatError";
 import { useNavigate } from "react-router-dom";
-import "../../styles/login.css";
-import AdminIllustration from "../../image/login.png";
+import "../../styles/registerUser.css";
 
-export default function Login() {
-  const { login } = useContext(AuthContext);
-  const nav = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [err, setErr] = useState("");
+export default function RegisterUser() {
+  const [msg, setMsg] = useState("");
+  const [batches, setBatches] = useState([]);
+  const [currentStep, setCurrentStep] = useState(1);
+  const navigate = useNavigate();
 
-  const parseJwtPayload = (token) => {
+  const [form, setForm] = useState({
+    userName: "",
+    email: "",
+    password: "",
+    dob: "",
+    contactNo: "",
+    address: "",
+    collegeName: "",
+    grade: "",
+    major: "",
+    team: "",
+    batchCode: "",
+    startDate: "",
+    endDate: "",
+    graduatingYear: "",
+    resume: "",
+    profilePic: "",
+  });
+
+  useEffect(() => {
+    loadBatches();
+  }, []);
+
+  const loadBatches = async () => {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return {
-        role: payload.role?.startsWith("ROLE_")
-          ? payload.role
-          : `ROLE_${payload.role}`,
-        sub: payload.sub || "",
-        userId: payload.userId,
-        trainerId: payload.trainerId,
-        trainerName: payload.trainerName,
-        batchCode: payload.batchCode,
-      };
-    } catch {
-      return {};
+      const res = await getAllBatchesPublic();
+      setBatches(res.data);
+    } catch (err) {
+      console.error("Failed to load batches:", err);
     }
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleBatchSelect = (e) => {
+    const val = Number(e.target.value);
+    const selected = batches.find((b) => b.batchCode === val);
+
+    if (!selected) return;
+
+    setForm({
+      ...form,
+      batchCode: selected.batchCode,
+      startDate: selected.startDate?.slice(0, 10),
+      endDate: selected.endDate?.slice(0, 10),
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
-
     try {
-      const res = await loginApi(form);
-      const token = res.data;
-      const { role, sub, userId, trainerId, trainerName, batchCode } =
-        parseJwtPayload(token);
-
-      login(token, role, String(sub));
-
-      if (role === "ROLE_TRAINER" && trainerId !== undefined) {
-        localStorage.setItem("trainerId", String(trainerId));
-        localStorage.setItem("trainerName", String(trainerName));
-      }
-
-      if (role === "ROLE_USER" && userId !== undefined) {
-        localStorage.setItem("userId", String(userId));
-        localStorage.setItem("batchCode", String(batchCode));
-      }
-
-      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
-      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
-      else nav("/user/dashboard");
-
-    } catch (error) {
-      setErr(
-        error?.response?.data?.message ||
-          "Invalid credentials! Please enter correct email & password."
-      );
+      await registerUser(form);
+      setMsg("🎉 User Registered Successfully!");
+      setTimeout(() => {
+        navigate("/"); // redirect to login
+      }, 1800);
+    } catch (err) {
+      setMsg(formatError(err));
+      setTimeout(() => setMsg(""), 2000);
     }
   };
 
+  const goNext = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
+  const goBack = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
+  const isSuccessMsg = msg.startsWith("🎉");
+
   return (
-    <div className="login-page">
-      <div className="login-card">
+    <div className="register-page">
+      <div className="container register-container">
+        <div className="register-card">
 
-        {/* LEFT PANEL */}
-        <div className="login-left enhanced-left">
-          <div className="login-brand pop-in">
-            <div className="brand-icon"><span className="brand-briefcase" /></div>
-            <div className="brand-text">
-              <div className="brand-title">INTERN-CONNECT</div>
-              <div className="brand-subtitle">Portal</div>
-            </div>
-          </div>
-
-          <div className="login-left-heading slide-up">
-            <h1>Welcome Back 👋</h1>
-            <p>Manage the entire internship workflow efficiently.</p>
-          </div>
-
-          <div className="login-illustration-wrapper float-up">
-            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
-          </div>
-        </div>
-
-        {/* RIGHT PANEL */}
-        <div className="login-right">
-          <button className="back-home-btn" onClick={() => nav("/")}>
-            <span className="arrow-icon">←</span> Home
+          {/* BACK TO HOME */}
+          <button
+            className="back-home-btn"
+            onClick={() => navigate("/")}
+          >
+            ← Home
           </button>
 
-          <div className="login-right-header">
-            <h2>Login Here</h2>
-            <p>Enter your credentials to access dashboard</p>
+          <div className="register-header">
+            <h2>Intern Application</h2>
+            <p>Fill in your details to apply for the internship program.</p>
           </div>
 
-          {err && <div className="error">{err}</div>}
-
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="input-group">
-              <span className="input-icon">👤</span>
-              <input
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
-                required
-              />
+          {/* Stepper */}
+          <div className="stepper">
+            <div className={`step-item ${currentStep === 1 ? "active" : currentStep > 1 ? "completed" : ""}`}>
+              <div className="step-circle">1</div>
+              <span className="step-label">Personal Information</span>
             </div>
 
-            <div className="input-group">
-              <span className="input-icon">🔒</span>
-              <input
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={(e) =>
-                  setForm({ ...form, password: e.target.value })
-                }
-                required
-              />
+            <div className={`step-item ${currentStep === 2 ? "active" : currentStep > 2 ? "completed" : ""}`}>
+              <div className="step-circle">2</div>
+              <span className="step-label">Education</span>
             </div>
 
-            <button className="btn" type="submit">LOGIN</button>
+            <div className={`step-item ${currentStep === 3 ? "active" : ""}`}>
+              <div className="step-circle">3</div>
+              <span className="step-label">Uploads</span>
+            </div>
+          </div>
 
-            <div className="switch-auth">
-              <a href="/user/register">Register as User</a>
+          {msg && (
+            <p className={`alert-msg ${isSuccessMsg ? "success-msg" : "error-msg"}`}>
+              {msg}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="register-form">
+
+            {/* ================= STEP 1 ================= */}
+            {currentStep === 1 && (
+              <div className="step-content">
+
+                <div className="section-title">Personal Information</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Full Name *</label>
+                    <input required name="userName" placeholder="Your full name" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Email *</label>
+                    <input required name="email" type="email" placeholder="you@example.com" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Password *</label>
+                    <input required name="password" type="password" placeholder="Create password" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Date of Birth *</label>
+                    <input required name="dob" type="date" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Contact No *</label>
+                    <input required name="contactNo" placeholder="Mobile number" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Address *</label>
+                    <input required name="address" placeholder="Current address" onChange={handleChange} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ================= STEP 2 ================= */}
+            {currentStep === 2 && (
+              <div className="step-content">
+                <div className="section-title">Education & Internship Details</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>College Name *</label>
+                    <input required name="collegeName" placeholder="College / University" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Grade</label>
+                    <input name="grade" placeholder="e.g. 8.2 CGPA" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Major</label>
+                    <input name="major" placeholder="e.g. Computer Science" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Team (Optional)</label>
+                    <input name="team" placeholder="Preferred team" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Graduation Year</label>
+                    <input name="graduatingYear" placeholder="2026" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Select Batch *</label>
+                    <select
+                      required
+                      name="batchCode"
+                      value={form.batchCode || ""}
+                      onChange={handleBatchSelect}
+                    >
+                      <option value="">Choose a batch</option>
+                      {batches.map((b) => (
+                        <option key={b.batchCode} value={b.batchCode} disabled={b.availableSeats <= 0}>
+                          {b.batchName} | {b.courseName} | Seats: {b.availableSeats}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" value={form.startDate || ""} readOnly />
+                  </div>
+                  <div className="field">
+                    <label>End Date</label>
+                    <input type="date" name="endDate" value={form.endDate || ""} readOnly />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ================= STEP 3 ================= */}
+            {currentStep === 3 && (
+              <div className="step-content">
+                <div className="section-title">Uploads</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Resume URL</label>
+                    <input name="resume" placeholder="Drive / Portfolio link" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Profile Pic URL</label>
+                    <input name="profilePic" placeholder="Photo URL link" onChange={handleChange} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step Navigation */}
+            <div className="step-actions">
+              {currentStep > 1 && (
+                <button className="btn secondary-btn" type="button" onClick={goBack}>
+                  ← Back
+                </button>
+              )}
+
+              {currentStep < 3 && (
+                <button className="btn next-btn" type="button" onClick={goNext}>
+                  Next →
+                </button>
+              )}
+
+              {currentStep === 3 && (
+                <button className="btn register-btn" type="submit">
+                  Register Now ✔
+                </button>
+              )}
             </div>
           </form>
-        </div>
 
+        </div>
       </div>
     </div>
   );
 }
 
 
-
-
-
-/* Global reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
 /* PAGE BACKGROUND */
-.login-page {
+.register-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fff9f0;
-  padding: 20px;
+  background: #fff9f0; /* same family as login */
+  padding: 24px;
 }
 
-/* MAIN CARD (two columns) */
-.login-card {
+/* Outer container */
+.register-container {
   width: 100%;
-  max-width: 1050px;
+  max-width: 1100px;
+}
+
+/* Card */
+.register-card {
   background: #ffffff;
-  border-radius: 24px;
-  display: flex;
-  overflow: hidden;
+  border-radius: 20px;
+  padding: 28px 34px 30px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  animation: fadeInReg 0.6s ease-out;
 }
 
-/* LEFT SIDE */
-.login-left {
-  flex: 1.1;
-  background: #fff3dd;
-  padding: 40px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+/* Header */
+.register-header h2 {
+  font-size: 26px;
+  color: #1f1f2d;
+  margin-bottom: 4px;
 }
 
-/* Top branding (logo + text) */
-.login-brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-/* Simple briefcase icon using pure CSS to match reference */
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: #f79e3b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.brand-briefcase {
-  width: 22px;
-  height: 14px;
-  border-radius: 4px;
-  border: 2px solid #fff;
-  display: block;
-  position: relative;
-}
-
-.brand-briefcase::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 4px;
-  border-radius: 4px;
-  border: 2px solid #fff;
-}
-
-/* Brand text */
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.brand-title {
-  font-size: 16px;
-  letter-spacing: 2px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #2f2f3a;
-}
-
-.brand-subtitle {
-  font-size: 13px;
-  color: #7d7c86;
-}
-
-/* Left heading */
-.login-left-heading {
-  margin-top: 40px;
-}
-
-.login-left-heading h1 {
-  font-size: 34px;
-  color: #262633;
-  margin-bottom: 8px;
-}
-
-.login-left-heading p {
+.register-header p {
   font-size: 14px;
-  color: #6f6f7a;
+  color: #7a7a87;
+  margin-bottom: 20px;
 }
 
-/* Illustration */
-.login-illustration-wrapper {
+/* STEPPER */
+.stepper {
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-top: 5px;
-   width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  position: relative;
 }
 
-.login-illustration {
-  max-width: 290px;
-  width: 100%;
-  pointer-events: none;
-  user-select: none;
-  /* smooth floating animation */
-  animation: float 3.2s ease-in-out infinite;
-}
-
-/* subtle glow under the image */
-.login-illustration-wrapper::after {
+.stepper::before {
   content: "";
   position: absolute;
-  bottom: 28px;
-  left: 18%;
-  right: 18%;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 0.22),
-    transparent 70%
-  );
-  opacity: 0.3;
-  filter: blur(4px);
+  top: 50%;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: #e3e3ee;
+  transform: translateY(-50%);
+  z-index: 0;
 }
 
-/* RIGHT SIDE */
-.login-right {
-  flex: 1;
-  padding: 40px 42px;
+.step-item {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.step-item:nth-child(1) {
+  align-items: flex-start;
+}
+.step-item:nth-child(3) {
+  align-items: flex-end;
+}
+
+.step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #d0d0dd;
+  display: flex;
+  align-items: center;
   justify-content: center;
   background: #ffffff;
-}
-
-.login-right-header h2 {
-  font-size: 28px;
-  margin-bottom: 6px;
-  color: #1e1e2c;
-}
-
-.login-right-header p {
+  font-weight: 600;
   font-size: 14px;
-  color: #7b7b88;
-  margin-bottom: 28px;
+  color: #8a8aa0;
+  transition: all 0.3s ease;
 }
 
-/* Error message */
-.error {
-  background: #ffe6e6;
-  color: #b30000;
-  border-left: 4px solid #ff4d4d;
-  padding: 10px 14px;
+.step-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #8a8aa0;
+}
+
+/* Active / completed states using login theme colors */
+.step-item.active .step-circle {
+  background: #f79e3b;
+  border-color: #f79e3b;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(247, 158, 59, 0.25);
+}
+
+.step-item.active .step-label {
+  color: #2b2b38;
+  font-weight: 600;
+}
+
+.step-item.completed .step-circle {
+  background: #2ac27b;
+  border-color: #2ac27b;
+  color: #ffffff;
+}
+
+.step-item.completed .step-label {
+  color: #3d3d4a;
+}
+
+/* ALERT MESSAGE */
+.alert-msg {
+  padding: 10px 12px;
+  border-radius: 8px;
   font-size: 14px;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  animation: shake 0.25s ease;
+  margin-bottom: 12px;
 }
 
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  50% { transform: translateX(3px); }
-  75% { transform: translateX(-3px); }
-  100% { transform: translateX(0); }
+.success-msg {
+  background: #e7ffed;
+  color: #0f8b32;
 }
 
+.error-msg {
+  background: #ffe0e0;
+  color: #d8000c;
+}
 
 /* FORM */
-.form {
-  width: 100%;
+.register-form {
+  margin-top: 8px;
 }
 
-/* Input group with icon */
-.input-group {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.input-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  opacity: 0.7;
-}
-
-/* Input fields */
-.form input {
-  width: 100%;
-  padding: 12px 14px 12px 40px;
-  border-radius: 10px;
-  border: 1px solid #d1d1dc;
-  font-size: 15px;
-  transition: border 0.25s ease, box-shadow 0.25s ease, transform 0.1s ease;
-  background: #fafafb;
-}
-
-.form input:focus {
-  border-color: #f79e3b;
-  box-shadow: 0 0 0 3px rgba(247, 158, 59, 0.2);
-  outline: none;
-  background: #ffffff;
-  transform: translateY(-1px);
-}
-
-/* Button */
-.btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background: #f79e3b;
-  color: #ffffff;
+.section-title {
   font-size: 16px;
   font-weight: 600;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-    background 0.25s ease;
-  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.5);
+  color: #2e2e3a;
+  margin-bottom: 14px;
 }
 
-.btn:hover {
-  background: #f38a10;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 26px rgba(247, 158, 59, 0.55);
+/* Rows & fields */
+.field-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
 }
 
-.btn:active {
-  transform: translateY(0);
-  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.45);
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Register link */
-.switch-auth {
-  margin-top: 14px;
-  text-align: center;
+.field label {
+  font-size: 13px;
+  color: #5e5e6c;
+  margin-bottom: 4px;
+}
+
+.field label span {
+  color: #e14848;
+}
+
+.field input,
+.field select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d1dc;
+  font-size: 14px;
+  background: #fafafb;
+  outline: none;
+  transition: border 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #f79e3b;
+  box-shadow: 0 0 0 3px rgba(247, 158, 59, 0.2);
+  background: #ffffff;
+}
+
+.field small {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #8c8c9b;
+}
+
+/* Batch preview box */
+.batch-preview {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff7ea;
+  border: 1px dashed #f3a846;
+  font-size: 13px;
+  color: #5a4a33;
+}
+
+.batch-preview h4 {
+  margin-bottom: 4px;
   font-size: 14px;
 }
 
-.switch-auth a {
-  color: #f38a10;
-  text-decoration: none;
-  font-weight: 500;
+/* STEP ACTION BUTTONS */
+.step-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-.switch-auth a:hover {
-  text-decoration: underline;
+/* Buttons – reuse theme similar to login */
+.btn {
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  transition: background 0.25s ease, transform 0.15s ease,
+    box-shadow 0.25s ease;
 }
 
-/* Floating animation for illustration */
-@keyframes float {
-  0% {
-    transform: translateY(0);
+/* secondary / back */
+.secondary-btn {
+  background: #f3f3fa;
+  color: #4b4b5a;
+}
+
+.secondary-btn:hover {
+  background: #e3e3f2;
+}
+
+/* next */
+.next-btn {
+  background: #f79e3b;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(247, 158, 59, 0.35);
+}
+
+.next-btn:hover {
+  background: #f38a10;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(247, 158, 59, 0.45);
+}
+
+/* final register */
+.register-btn {
+  background: #2ac27b;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(42, 194, 123, 0.35);
+}
+
+.register-btn:hover {
+  background: #1ea565;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(42, 194, 123, 0.45);
+}
+
+/* ANIMATIONS */
+@keyframes fadeInReg {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  50% {
-    transform: translateY(-12px);
-  }
-  100% {
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .login-card {
+  .register-card {
+    padding: 22px 18px 24px;
+  }
+
+  .stepper::before {
+    left: 18%;
+    right: 18%;
+  }
+}
+
+@media (max-width: 700px) {
+  .field-row {
     flex-direction: column;
-    max-width: 520px;
   }
 
-  .login-left {
-    padding: 28px 24px;
+  .stepper {
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .login-right {
-    padding: 28px 24px 32px;
+  .stepper::before {
+    display: none;
   }
 
-  .login-left-heading h1 {
-    font-size: 28px;
+  .step-item,
+  .step-item:nth-child(1),
+  .step-item:nth-child(3) {
+    align-items: flex-start;
   }
 }
 
 @media (max-width: 480px) {
-  .login-page {
+  .register-page {
     padding: 10px;
   }
 
-  .login-left-heading h1 {
-    font-size: 24px;
-  }
-
-  .login-right-header h2 {
+  .register-header h2 {
     font-size: 22px;
   }
 }
-/* Left panel enhancements */
-.enhanced-left {
-  background: radial-gradient(circle at top left, #ffe7c9, #ffdfa6, #ffd07a);
-  position: relative;
-  overflow: hidden;
-}
-
-.enhanced-left::before {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  top: -40px;
-  right: -40px;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 50%;
-  filter: blur(30px);
-  animation: pulse 4s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-}
-
-/* Animation effects */
-.pop-in { animation: popIn .8s ease forwards; }
-.slide-up { animation: slideUp .9s ease forwards; }
-.float-up { animation: floatUp 1.3s ease-in-out infinite alternate; }
-
-@keyframes popIn {
-  0% { opacity: 0; transform: scale(.8); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideUp {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(6px); }
-  100% { transform: translateY(-6px); }
-}
-
-/* Back Home button improved */
+/* BACK TO HOME BUTTON */
 .back-home-btn {
   background: #ffb75e;
   border: none;
   color: #fff;
   font-size: 14px;
-  padding: 10px 22px;
+  padding: 8px 18px;
   border-radius: 50px;
   cursor: pointer;
   font-weight: 600;
+  letter-spacing: 0.4px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 16px;
-  transition: background .3s ease, transform .3s ease, box-shadow .3s ease;
-  box-shadow: 0px 6px 18px rgba(245, 152, 44, 0.4);
+  margin-bottom: 12px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0px 6px 18px rgba(243, 152, 46, 0.4);
 }
 
 .back-home-btn:hover {
-  background: #f29420;
-  transform: translateX(-4px);
-  box-shadow: 0px 12px 22px rgba(245, 152, 44, 0.5);
-}
-
-.back-home-btn:active {
-  transform: translateY(0);
-}
-
-.arrow-icon {
-  font-size: 16px;
-  transition: transform .3s ease;
-}
-
-.back-home-btn:hover .arrow-icon {
+  background: #f3941a;
   transform: translateX(-4px);
 }
