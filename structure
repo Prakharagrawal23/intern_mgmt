@@ -1,3 +1,48 @@
+select * from users;
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
+|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
+|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
+|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
+|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
+|      21 | admin@gmail.com   | rajul@gmail.com           | $2a$10$uEIs9AWnd.4qZq5PoKFQ/uAyluPzo3yuexCFxiywEajTFOLJW26qi | 2025-12-16 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-05 15:51:11 |          7 |
+|      22 | rajat agrawal     | rajat@gmail.com           | $2a$10$buSa.JjGiHKFU6Acx13AA.hY9.h6tIH2ik3N./qdgk4uAgCIKFFnK | 2001-10-23 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-05 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-05 16:33:27 |          9 |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+10 rows in set (0.00 sec)
+
+mysql> describe users;
++-----------------+--------------+------+-----+-------------------+-------------------+
+| Field           | Type         | Null | Key | Default           | Extra             |
++-----------------+--------------+------+-----+-------------------+-------------------+
+| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_name       | varchar(255) | NO   |     | NULL              |                   |
+| email           | varchar(255) | NO   | UNI | NULL              |                   |
+| password        | varchar(255) | NO   |     | NULL              |                   |
+| dob             | date         | YES  |     | NULL              |                   |
+| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
+| address         | varchar(255) | YES  |     | NULL              |                   |
+| college_name    | varchar(255) | YES  |     | NULL              |                   |
+| grade           | varchar(50)  | YES  |     | NULL              |                   |
+| major           | varchar(255) | YES  |     | NULL              |                   |
+| team            | varchar(255) | YES  |     | NULL              |                   |
+| start_date      | date         | YES  |     | NULL              |                   |
+| end_date        | date         | YES  |     | NULL              |                   |
+| graduating_year | int          | YES  |     | NULL              |                   |
+| resume          | varchar(255) | YES  |     | NULL              |                   |
+| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
+| role            | varchar(50)  | NO   |     | USER              |                   |
+| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code      | bigint       | YES  | MUL | NULL              |                   |
++-----------------+--------------+------+-----+-------------------+-------------------+
+19 rows in set (0.02 sec)
+
+mysql>
+
 package com.finalproject.internMgmtSystem.model;
 
 import java.sql.Date;
