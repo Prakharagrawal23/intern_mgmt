@@ -1,516 +1,3 @@
-package com.finalproject.internMgmtSystem.controller;
-
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.BatchDao;
-import com.finalproject.internMgmtSystem.service.UserService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/user")
-@CrossOrigin
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private BatchDao batchDao; // 🔥 FIXED — Autowired properly
-
-    @PostMapping("/register")
-    public User register(@Valid @RequestBody RegisterUserDto dto) {
-        return userService.registerUser(dto);
-    }
-
-    @GetMapping("/{userId}/tasks")
-    public List<Task> getTasks(@PathVariable Long userId) {
-        return userService.getTasks(userId);
-    }
-
-    @GetMapping("/{userId}/performance")
-    public List<Performance> getPerformance(@PathVariable Long userId) {
-        return userService.getPerformance(userId);
-    }
-
-    @GetMapping("/{userId}/stipends")
-    public List<Stipend> getStipends(@PathVariable Long userId) {
-        return userService.getStipendHistory(userId);
-    }
-
-    @GetMapping("/batch/{batchCode}")
-    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
-        return userService.getBatchDetails(batchCode);
-    }
-
-    @PostMapping("/feedback")
-    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
-        return userService.submitFeedback(dto);
-    }
-
-    @GetMapping("/{userId}/attendance")
-    public List<Attendance> getAttendance(@PathVariable Long userId) {
-        return userService.getAttendance(userId);
-    }
-
-    // 📌 NEW PUBLIC ENDPOINT
-    @GetMapping("/batches")
-    public List<InternshipBatch> getAllBatchesPublic() {
-        return batchDao.findAll(); // 🟢 Now resolved and working!
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class UserService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private StipendDao stipendDao;
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public User registerUser(RegisterUserDto dto) {
-
-        User exists = userDao.findByEmail(dto.getEmail());
-        if (exists != null) {
-            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
-        }
-
-        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
-        }
-        if (batch.getAvailableSeats() <= 0) {
-            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
-        }
-        batchDao.decrementAvailableSeats(dto.getBatchCode());
-
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setDob(dto.getDob());
-        user.setContactNo(dto.getContactNo());
-        user.setAddress(dto.getAddress());
-        user.setCollegeName(dto.getCollegeName());
-        user.setGrade(dto.getGrade());
-        user.setMajor(dto.getMajor());
-        user.setTeam(dto.getTeam());
-        user.setBatchCode(dto.getBatchCode());
-        user.setStartDate(dto.getStartDate());
-        user.setEndDate(dto.getEndDate());
-        user.setGraduatingYear(dto.getGraduatingYear());
-        user.setResume(dto.getResume());
-        user.setProfilePic(dto.getProfilePic());
-        user.setRole("USER");
-
-        return userDao.save(user);
-    }
-
-    public List<Task> getTasks(Long userId) {
-        return taskDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public List<Performance> getPerformance(Long userId) {
-        return performanceDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public List<Stipend> getStipendHistory(Long userId) {
-        return stipendDao.findByUserId(userId); // ✨ Allow empty list
-    }
-
-    public InternshipBatch getBatchDetails(Long batchCode) {
-        InternshipBatch batch = batchDao.findById(batchCode);
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
-        }
-        return batch;
-    }
-
-    public Feedback submitFeedback(FeedbackDto dto) {
-        Feedback f = new Feedback();
-        f.setUserId(dto.getUserId());
-        f.setUserName(dto.getUserName());
-        f.setBatchCode(dto.getBatchCode());
-        f.setTrainerName(dto.getTrainerName());
-        f.setFeedback(dto.getFeedback());
-        f.setRating(dto.getRating());
-        return feedbackDao.save(f);
-    }
-
-    public List<Attendance> getAttendance(Long userId) {
-        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public String login(LoginRequest loginRequest) {
-
-        User user = userDao.findByEmail(loginRequest.getEmail());
-        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
-
-        if (user == null && trainer == null) {
-            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
-        }
-
-        // USER LOGIN
-        if (user != null) {
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new RuntimeException("Invalid password");
-            }
-
-            return jwtUtil.generateToken(
-                    user.getUserId(),
-                    user.getEmail(),
-                    "ROLE_" + user.getRole()
-            );
-        }
-
-        // TRAINER LOGIN
-        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return jwtUtil.generateTrainerToken(
-                trainer.getTrainerId(),
-                trainer.getEmail(),
-                "ROLE_" + trainer.getRole(),
-                trainer.getName()         // Trainer name added inside token
-        );
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register",
-                        "/api/user/batches" // ✔ Public Access
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN (Trainer Name + Trainer ID added)
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
-
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found: " + email);
-    }
-}
-
-
 package com.finalproject.internMgmtSystem.repository;
 
 import com.finalproject.internMgmtSystem.model.Feedback;
@@ -597,140 +84,345 @@ public class FeedbackDaoImpl implements FeedbackDao {
 }
 
 
-package com.finalproject.internMgmtSystem.repository;
 
-import com.finalproject.internMgmtSystem.model.Feedback;
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface FeedbackDao {
+@Service
+public class UserService {
 
-    Feedback save(Feedback feedback);
+    @Autowired
+    private UserDao userDao;
 
-    List<Feedback> findByTrainerName(String trainerName);
+    @Autowired
+    private TaskDao taskDao;
 
-    List<Feedback> findByUserId(Long userId);
+    @Autowired
+    private PerformanceDao performanceDao;
 
-    List<Feedback> findAll();
-    
-    List<Feedback> findByTrainerId(Long trainerId);
-}
+    @Autowired
+    private StipendDao stipendDao;
 
+    @Autowired
+    private BatchDao batchDao;
 
-package com.finalproject.internMgmtSystem.model;
+    @Autowired
+    private FeedbackDao feedbackDao;
 
-import java.sql.Timestamp;
+    @Autowired
+    private AttendanceDao attendanceDao;
 
-public class Feedback {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private Long id;
-    private Long userId;
-    private String userName;
-    private Long batchCode;
-    private Long trainerId; // ⭐ ADDED
-    private String trainerName;
-    private Timestamp date;
-    private String feedback;
-    private Integer rating;
+    public User registerUser(RegisterUserDto dto) {
 
-    public Feedback() {}
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
 
-    public Feedback(Long id, Long userId, String userName, Long batchCode,
-                    Long trainerId, String trainerName,
-                    Timestamp date, String feedback, Integer rating) {
-        this.id = id;
-        this.userId = userId;
-        this.userName = userName;
-        this.batchCode = batchCode;
-        this.trainerId = trainerId;
-        this.trainerName = trainerName;
-        this.date = date;
-        this.feedback = feedback;
-        this.rating = rating;
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+//        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
     }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-    public Long getBatchCode() { return batchCode; }
-    public void setBatchCode(Long batchCode) { this.batchCode = batchCode; }
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
 
-    public Long getTrainerId() { return trainerId; } // ⭐ ADDED
-    public void setTrainerId(Long trainerId) { this.trainerId = trainerId; } // ⭐ ADDED
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerId(dto.getTrainerId());   // ⭐ ADD THIS
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
 
-    public String getTrainerName() { return trainerName; }
-    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
 
-    public Timestamp getDate() { return date; }
-    public void setDate(Timestamp date) { this.date = date; }
-
-    public String getFeedback() { return feedback; }
-    public void setFeedback(String feedback) { this.feedback = feedback; }
-
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
 }
 
 
+package com.finalproject.internMgmtSystem.service;
 
-package com.finalproject.internMgmtSystem.dto;
+import com.finalproject.internMgmtSystem.dto.AttendanceDto;
+import com.finalproject.internMgmtSystem.dto.PerformanceDto;
+import com.finalproject.internMgmtSystem.dto.TaskDto;
+import com.finalproject.internMgmtSystem.dto.UserBatchDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+import java.util.List;
 
-public class FeedbackDto {
+@Service
+public class TrainerService {
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
+    @Autowired
+    private BatchDao batchDao;
 
-    @NotBlank(message = "User name is required")
-    private String userName;
+    @Autowired
+    private TaskDao taskDao;
 
-    @NotNull(message = "Batch code is required")
-    private Long batchCode;
+    @Autowired
+    private FeedbackDao feedbackDao;
 
-    @NotNull(message = "Trainer ID is required") // ⭐ NEW
-    private Long trainerId;
+    @Autowired
+    private PerformanceDao performanceDao;
 
-    @NotBlank(message = "Trainer name is required")
-    private String trainerName;
+    @Autowired
+    private AttendanceDao attendanceDao;
+    
+    @Autowired
+    private UserBatchDao UserBatchDao;
 
-    @NotBlank(message = "Feedback cannot be empty")
-    private String feedback;
+    public List<InternshipBatch> getBatches(Long trainerId) {
+        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
 
-    @NotNull(message = "Rating is required")
-    @Min(value = 1)
-    @Max(value = 5)
-    private Integer rating;
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
+        }
 
-    public FeedbackDto() {}
+        return list;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public Task addTask(TaskDto dto) {
 
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
+        // Optional: validate if user exists / trainer exists
 
-    public Long getBatchCode() { return batchCode; }
-    public void setBatchCode(Long batchCode) { this.batchCode = batchCode; }
+        Task t = new Task();
+        t.setUserId(dto.getUserId());
+        t.setDescription(dto.getDescription());
+        t.setTrainerId(dto.getTrainerId());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
 
-    public Long getTrainerId() { return trainerId; } // ⭐ getter added
-    public void setTrainerId(Long trainerId) { this.trainerId = trainerId; } // ⭐ setter added
+        return taskDao.save(t);
+    }
 
-    public String getTrainerName() { return trainerName; }
-    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
+    public void updateTask(TaskDto dto, Long taskId) {
+        Task t = taskDao.findById(taskId);
+        if (t == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
+        }
 
-    public String getFeedback() { return feedback; }
-    public void setFeedback(String feedback) { this.feedback = feedback; }
+        t.setDescription(dto.getDescription());
+        t.setStatus(dto.getStatus());
+        t.setDeadline(dto.getDeadline());
+        t.setUploadFile(dto.getUploadFile());
 
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
+        taskDao.update(t);
+    }
+
+    public void deleteTask(Long id) {
+        Task exists = taskDao.findById(id);
+        if (exists == null) {
+            throw new ResourceNotFoundException("Task not found with ID: " + id);
+        }
+
+        taskDao.delete(id);
+    }
+
+    public Attendance markAttendance(AttendanceDto dto) {
+
+        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
+            throw new RuntimeException("Cannot mark attendance for future dates");
+        }
+
+        Attendance a = new Attendance();
+        a.setUserId(dto.getUserId());
+        a.setBatchCode(dto.getBatchCode());
+        a.setDate(dto.getDate());
+        a.setPresent(dto.getPresent());
+
+        return attendanceDao.save(a);
+    }
+
+    public Performance updatePerformance(PerformanceDto dto) {
+
+        Performance p = new Performance();
+
+        p.setUserId(dto.getUserId());
+        p.setTrainerId(dto.getTrainerId());
+        p.setBatchCode(dto.getBatchCode());       // NEW
+        p.setTrainerName(dto.getTrainerName());   // NEW
+        p.setRemarks(dto.getRemarks());
+        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
+
+        return performanceDao.save(p);
+    }
+
+
+    public List<Feedback> viewFeedback(String trainerName) {
+        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
+
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
+        }
+
+        return list;
+    }
+    
+    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
+        return UserBatchDao.getUsersByTrainerId(trainerId);
+    }
+    public List<Task> getTasksByTrainerId(Long trainerId) {
+        List<Task> tasks = taskDao.findByTrainerId(trainerId);
+        if (tasks.isEmpty()) {
+            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
+        }
+        return tasks;
+    }
+
+    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
+        List<Performance> list = performanceDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+    public List<Feedback> viewFeedbackByTrainerId(Long trainerId) {
+        List<Feedback> list = feedbackDao.findByTrainerId(trainerId);
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No feedback found for trainer ID: " + trainerId);
+        }
+        return list;
+    }
+
+
+
 }
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        // USER LOGIN
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUserId(),
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+        }
+
+        // TRAINER LOGIN
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateTrainerToken(
+                trainer.getTrainerId(),
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole(),
+                trainer.getName()         // Trainer name added inside token
+        );
+    }
+}
+
+
 
 
 
@@ -751,8 +443,6 @@ export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
 export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
 
 
-
-
 import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
@@ -763,35 +453,23 @@ export default function AuthProvider({ children }) {
   const [email, setEmail] = useState(localStorage.getItem("email"));
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedRole = localStorage.getItem("role");
-    const savedEmail = localStorage.getItem("email");
-
-    if (savedToken && !token) setToken(String(savedToken));
-    if (savedRole && !role) setRole(String(savedRole));
-    if (savedEmail && !email) setEmail(String(savedEmail));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (localStorage.getItem("token")) setToken(localStorage.getItem("token"));
+    if (localStorage.getItem("role")) setRole(localStorage.getItem("role"));
+    if (localStorage.getItem("email")) setEmail(localStorage.getItem("email"));
   }, []);
 
   const login = (newToken, newRole, newEmail) => {
-    // ✅ Ensure everything stored is STRING — no objects
-    const fixToken = String(newToken || "");
-    const fixRole = String(newRole || "");
-    const fixEmail = String(newEmail || "");
+    localStorage.setItem("token", String(newToken || ""));
+    localStorage.setItem("role", String(newRole || ""));
+    localStorage.setItem("email", String(newEmail || ""));
 
-    localStorage.setItem("token", fixToken);
-    localStorage.setItem("role", fixRole);
-    localStorage.setItem("email", fixEmail);
-
-    setToken(fixToken);
-    setRole(fixRole);
-    setEmail(fixEmail);
+    setToken(String(newToken || ""));
+    setRole(String(newRole || ""));
+    setEmail(String(newEmail || ""));
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
+    localStorage.clear();
     setToken(null);
     setRole(null);
     setEmail(null);
@@ -803,7 +481,6 @@ export default function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
 
 
 
@@ -820,19 +497,21 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
 
-  // Decode JWT payload
   const parseJwtPayload = (token) => {
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
       return {
-        role: payload.role?.startsWith("ROLE_")
-          ? payload.role
-          : `ROLE_${payload.role}`,
-        email: payload.sub || payload.email || "",
+        role:
+          typeof payload.role === "string"
+            ? payload.role.startsWith("ROLE_")
+              ? payload.role
+              : `ROLE_${payload.role}`
+            : "ROLE_USER",
+        sub: payload.sub || "",
         userId: payload.userId,
         trainerId: payload.trainerId,
         trainerName: payload.trainerName,
-        batchCode: payload.batchCode
+        batchCode: payload.batchCode,
       };
     } catch {
       return {};
@@ -845,35 +524,31 @@ export default function Login() {
 
     try {
       const res = await loginApi(form);
-      const token = res.data;
+      const token = res.data.token; // ✔ JSON response
 
-      const { role, email, userId, trainerId, trainerName, batchCode } =
+      const { role, sub, userId, trainerId, trainerName, batchCode } =
         parseJwtPayload(token);
 
-      login(token, role, email); // store string values only
+      login(token, role, String(sub)); // ✔ Store token, role, email
 
-      // IMPORTANT: store IDs as STRING
       if (role === "ROLE_TRAINER") {
-        if (trainerId !== undefined)
-          localStorage.setItem("trainerId", String(trainerId));
-        if (trainerName !== undefined)
-          localStorage.setItem("trainerName", String(trainerName));
+        localStorage.setItem("trainerId", String(trainerId || ""));
+        localStorage.setItem("trainerName", String(trainerName || ""));
       }
 
       if (role === "ROLE_USER") {
-        if (userId !== undefined)
-          localStorage.setItem("userId", String(userId));
-        if (batchCode !== undefined)
-          localStorage.setItem("batchCode", String(batchCode));
+        localStorage.setItem("userId", String(userId || ""));
+        localStorage.setItem("batchCode", String(batchCode || ""));
       }
 
-      // Redirect by role
       if (role === "ROLE_ADMIN") nav("/admin/dashboard");
       else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
       else nav("/user/dashboard");
-
     } catch (error) {
-      setErr(error?.response?.data || "Login failed. Try again!");
+      setErr(
+        error?.response?.data?.message ||
+          "Invalid credentials! Please enter correct email & password."
+      );
     }
   };
 
@@ -895,15 +570,13 @@ export default function Login() {
           </div>
 
           <div className="login-illustration-wrapper float-up">
-            <img src={AdminIllustration} alt="Admin working" className="login-illustration" />
+            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
         <div className="login-right">
           <button className="back-home-btn" onClick={() => nav("/")}>
-            <span className="arrow-icon">←</span>
-            Home
+            ← Home
           </button>
 
           <div className="login-right-header">
@@ -940,12 +613,13 @@ export default function Login() {
               />
             </div>
 
-            <button className="btn" type="submit">LOGIN</button>
+            <button className="btn" type="submit">
+              LOGIN
+            </button>
 
             <div className="switch-auth">
               <a href="/user/register">Register as User</a>
             </div>
-
           </form>
         </div>
       </div>
@@ -959,45 +633,61 @@ import React, { useState, useEffect } from "react";
 import { submitFeedback } from "../../api/userApi";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
+import "../../styles/feedback.css";
 
 export default function FeedbackForm() {
   const [form, setForm] = useState({
     userId: "",
     userName: "",
     batchCode: "",
+    trainerId: "",
     trainerName: "",
     feedback: "",
     rating: 5,
   });
 
   const [msg, setMsg] = useState("");
+  const [hoverStar, setHoverStar] = useState(0);
 
-  // Auto pre-fill from localStorage
   useEffect(() => {
     setForm((prev) => ({
       ...prev,
       userId: String(localStorage.getItem("userId") || ""),
       userName: String(localStorage.getItem("email") || ""),
       batchCode: String(localStorage.getItem("batchCode") || ""),
+      trainerId: String(localStorage.getItem("trainerId") || ""),
       trainerName: String(localStorage.getItem("trainerName") || ""),
     }));
   }, []);
 
+  const ratingLabels = ["Terrible", "Bad", "Okay", "Good", "Excellent"];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMsg("");
 
     if (!form.feedback.trim()) {
       setMsg("Please write feedback before submitting!");
       return;
     }
 
+    const payload = {
+      userId: Number(form.userId),
+      userName: form.userName,
+      batchCode: Number(form.batchCode),
+      trainerId: Number(form.trainerId),
+      trainerName: form.trainerName,
+      feedback: form.feedback,
+      rating: form.rating,
+    };
+
     try {
-      await submitFeedback(form);
+      await submitFeedback(payload);
       setMsg("Feedback submitted successfully ✔");
       setTimeout(() => setMsg(""), 2500);
-      setForm({ ...form, feedback: "" });
+      setForm({ ...form, feedback: "", rating: 5 });
     } catch (e) {
-      setMsg(e?.response?.data || "Failed to submit!");
+      setMsg("Failed to submit feedback!");
     }
   };
 
@@ -1012,149 +702,65 @@ export default function FeedbackForm() {
         {msg && <div className="info">{msg}</div>}
 
         <form className="small-form" onSubmit={handleSubmit}>
+
           <input value={form.userId} disabled />
           <input value={form.userName} disabled />
+
           <input
             value={form.batchCode}
             onChange={(e) => setForm({ ...form, batchCode: e.target.value })}
             placeholder="Batch Code"
             required
           />
+
+          <input
+            value={form.trainerId}
+            onChange={(e) => setForm({ ...form, trainerId: e.target.value })}
+            placeholder="Trainer ID"
+          />
+
           <input
             value={form.trainerName}
             onChange={(e) => setForm({ ...form, trainerName: e.target.value })}
             placeholder="Trainer Name"
             required
           />
+
+          {/* ⭐ Star Rating */}
+          <div className="rating-container">
+            <label className="rating-label">Rate Trainer:</label>
+            <div className="rating-stars">
+              {[1, 2, 3, 4, 5].map((star, idx) => (
+                <span
+                  key={idx}
+                  className={`star ${
+                    star <= (hoverStar || form.rating) ? "filled" : ""
+                  }`}
+                  onClick={() => setForm({ ...form, rating: star })}
+                  onMouseEnter={() => setHoverStar(star)}
+                  onMouseLeave={() => setHoverStar(0)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="rating-text">
+              {ratingLabels[(hoverStar || form.rating) - 1]}
+            </span>
+          </div>
+
           <textarea
             placeholder="Write your feedback here..."
             value={form.feedback}
             onChange={(e) => setForm({ ...form, feedback: e.target.value })}
             required
           />
-          <input
-            type="number"
-            min="1"
-            max="5"
-            value={form.rating}
-            onChange={(e) =>
-              setForm({ ...form, rating: Number(e.target.value) })
-            }
-            required
-          />
 
-          <button className="btn" type="submit">Submit</button>
+          <button className="btn" type="submit">
+            Submit Feedback
+          </button>
         </form>
       </div>
     </div>
   );
 }
-
-
-
-POST http://localhost:9090/api/user/feedback 400 (Bad Request)
-dispatchXhrRequest @ xhr.js:198
-xhr @ xhr.js:15
-dispatchRequest @ dispatchRequest.js:51
-Promise.then
-_request @ Axios.js:163
-request @ Axios.js:40
-httpMethod @ Axios.js:224
-wrap @ bind.js:12
-submitFeedback @ userApi.js:13
-handleSubmit @ FeedbackForm.jsx:38
-executeDispatch @ react-dom-client.development.js:19116
-runWithFiberInDEV @ react-dom-client.development.js:870
-processDispatchQueue @ react-dom-client.development.js:19165
-(anonymous) @ react-dom-client.development.js:19767
-batchedUpdates$1 @ react-dom-client.development.js:3255
-dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
-dispatchEvent @ react-dom-client.development.js:23584
-dispatchDiscreteEvent @ react-dom-client.development.js:23552
-react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
-    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
-    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
-    at react-dom-client.development.js:7098:1
-    at reconcileChildren (react-dom-client.development.js:9699:1)
-    at beginWork (react-dom-client.development.js:11988:1)
-    at runWithFiberInDEV (react-dom-client.development.js:870:1)
-    at performUnitOfWork (react-dom-client.development.js:17639:1)
-    at workLoopSync (react-dom-client.development.js:17469:1)
-    at renderRootSync (react-dom-client.development.js:17450:1)
-throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
-throwOnInvalidObjectType @ react-dom-client.development.js:6109
-reconcileChildFibersImpl @ react-dom-client.development.js:7058
-(anonymous) @ react-dom-client.development.js:7098
-reconcileChildren @ react-dom-client.development.js:9699
-beginWork @ react-dom-client.development.js:11988
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-FeedbackForm @ FeedbackForm.jsx:53
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-FeedbackForm.jsx:53  An error occurred in the <div> component.
-
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
-
-defaultOnUncaughtError @ react-dom-client.development.js:9362
-logUncaughtError @ react-dom-client.development.js:9431
-runWithFiberInDEV @ react-dom-client.development.js:870
-lane.callback @ react-dom-client.development.js:9461
-callCallback @ react-dom-client.development.js:7423
-commitCallbacks @ react-dom-client.development.js:7437
-runWithFiberInDEV @ react-dom-client.development.js:870
-commitLayoutEffectOnFiber @ react-dom-client.development.js:14047
-flushLayoutEffects @ react-dom-client.development.js:18135
-commitRoot @ react-dom-client.development.js:17954
-commitRootWhenReady @ react-dom-client.development.js:16824
-performWorkOnRoot @ react-dom-client.development.js:16722
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-<div>
-(anonymous) @ react-jsx-dev-runtime.development.js:327
-FeedbackForm @ FeedbackForm.jsx:53
-react_stack_bottom_frame @ react-dom-client.development.js:25904
-renderWithHooks @ react-dom-client.development.js:7662
-updateFunctionComponent @ react-dom-client.development.js:10166
-beginWork @ react-dom-client.development.js:11778
-runWithFiberInDEV @ react-dom-client.development.js:870
-performUnitOfWork @ react-dom-client.development.js:17639
-workLoopSync @ react-dom-client.development.js:17469
-renderRootSync @ react-dom-client.development.js:17450
-performWorkOnRoot @ react-dom-client.development.js:16583
-performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
-performWorkUntilDeadline @ scheduler.development.js:45
-
-
-Uncaught runtime errors:
-×
-ERROR
-Objects are not valid as a React child (found: object with keys {trainerId}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectTypeImpl (http://localhost:3000/static/js/bundle.js:11923:11)
-    at throwOnInvalidObjectType (http://localhost:3000/static/js/bundle.js:11927:106)
-    at reconcileChildFibersImpl (http://localhost:3000/static/js/bundle.js:12250:9)
-    at http://localhost:3000/static/js/bundle.js:12262:31
-    at reconcileChildren (http://localhost:3000/static/js/bundle.js:13821:47)
-    at beginWork (http://localhost:3000/static/js/bundle.js:14637:1565)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:9089:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:16998:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:16893:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:16878:7)
