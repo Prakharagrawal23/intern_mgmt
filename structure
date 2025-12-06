@@ -1,52 +1,581 @@
-trainerApi.js:9 
- 
- PUT http://localhost:9090/api/trainer/tasks/7 400 (Bad Request)
-UpdateTask.jsx:61 
- 
-AxiosError {message: 'Request failed with status code 400', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
-﻿
-Edit Task
-Failed to update task ❌
-Description
-hello
-Deadline
+package com.finalproject.internMgmtSystem.model;
 
-12/06/2025
-Status
+import java.sql.Date;
+import java.sql.Timestamp;
 
-ONGOING
-Update Task
+public class User {
+
+    
+	private Long userId;
+    private String userName;
+    private String email;
+    private String password;
+    private Date dob;
+    private String contactNo;
+    private String address;
+    private String collegeName;
+    private String grade;
+    private String major;
+    private String team;
+    private Long batchCode;
+    private Date startDate;
+    private Date endDate;
+    private Integer graduatingYear;
+    private String resume;
+    private String profilePic;
+    private String role;
+    private Timestamp createdAt;
+    
+
+
+    public User() {}
+    public User(Long userId, String userName, String email, String password, Date dob, String contactNo, String address,
+			String collegeName, String grade, String major, String team, Long batchCode, Date startDate, Date endDate,
+			Integer graduatingYear, String resume, String profilePic, String role, Timestamp createdAt) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.dob = dob;
+		this.contactNo = contactNo;
+		this.address = address;
+		this.collegeName = collegeName;
+		this.grade = grade;
+		this.major = major;
+		this.team = team;
+		this.batchCode = batchCode;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.graduatingYear = graduatingYear;
+		this.resume = resume;
+		this.profilePic = profilePic;
+		this.role = role;
+		this.createdAt = createdAt;
+	}
+   
+
+    // Getters & Setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Date getDob() { return dob; }
+    public void setDob(Date dob) { this.dob = dob; }
+
+    public String getContactNo() { return contactNo; }
+    public void setContactNo(String contactNo) { this.contactNo = contactNo; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getCollegeName() { return collegeName; }
+    public void setCollegeName(String collegeName) { this.collegeName = collegeName; }
+
+    public String getGrade() { return grade; }
+    public void setGrade(String grade) { this.grade = grade; }
+
+    public String getMajor() { return major; }
+    public void setMajor(String major) { this.major = major; }
+
+    public String getTeam() { return team; }
+    public void setTeam(String team) { this.team = team; }
+
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
+
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+    public Integer getGraduatingYear() { return graduatingYear; }
+    public void setGraduatingYear(Integer graduatingYear) { this.graduatingYear = graduatingYear; }
+
+    public String getResume() { return resume; }
+    public void setResume(String resume) { this.resume = resume; }
+
+    public String getProfilePic() { return profilePic; }
+    public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+	public Long getBatchCode() {
+		return batchCode;
+	}
+	public void setBatchCode(Long batchCode) {
+		this.batchCode = batchCode;
+	}
+}
+
+
+
+package com.finalproject.internMgmtSystem.dto;
+
+import jakarta.validation.constraints.*;
+import java.sql.Date;
+
+public class RegisterUserDto {
+
+    
+	@NotBlank(message = "User name is required")
+    private String userName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email")
+    private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
+
+    @NotNull(message = "Date of birth is required")
+    private Date dob;
+
+    @NotBlank(message = "Contact number is required")
+    private String contactNo;
+
+    @NotBlank(message = "Address is required")
+    private String address;
+
+    @NotBlank(message = "College name is required")
+    private String collegeName;
+
+    @NotBlank(message = "Grade is required")
+    private String grade;
+
+    @NotBlank(message = "Major is required")
+    private String major;
+
+    @NotBlank(message = "Team selection is required")
+    private String team;
+    
+    @NotNull(message = "batch Code is required")
+    private Long batchCode;
+    		
+    @NotNull(message = "Start date is required")
+    private Date startDate;
+
+    @NotNull(message = "End date is required")
+    private Date endDate;
+
+    @NotNull(message = "Graduating year is required")
+    @Min(value = 2020, message = "Graduating year must be >= 2020")
+    private Integer graduatingYear;
+
+    @NotBlank(message = "Resume URL/path is required")
+    private String resume;
+
+    private String profilePic;
+
+    public RegisterUserDto() {}
+    
+    
+    public RegisterUserDto(@NotBlank(message = "User name is required") String userName,
+			@NotBlank(message = "Email is required") @Email(message = "Enter a valid email") String email,
+			@NotBlank(message = "Password is required") String password,
+			@NotNull(message = "Date of birth is required") Date dob,
+			@NotBlank(message = "Contact number is required") String contactNo,
+			@NotBlank(message = "Address is required") String address,
+			@NotBlank(message = "College name is required") String collegeName,
+			@NotBlank(message = "Grade is required") String grade,
+			@NotBlank(message = "Major is required") String major,
+			@NotBlank(message = "Team selection is required") String team,
+			@NotBlank(message = "batch Code selection is required") Long batchCode,
+			@NotNull(message = "Start date is required") Date startDate,
+			@NotNull(message = "End date is required") Date endDate,
+			@NotNull(message = "Graduating year is required") @Min(value = 2020, message = "Graduating year must be >= 2020") Integer graduatingYear,
+			@NotBlank(message = "Resume URL/path is required") String resume, String profilePic) {
+		super();
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.dob = dob;
+		this.contactNo = contactNo;
+		this.address = address;
+		this.collegeName = collegeName;
+		this.grade = grade;
+		this.major = major;
+		this.team = team;
+		this.batchCode = batchCode;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.graduatingYear = graduatingYear;
+		this.resume = resume;
+		this.profilePic = profilePic;
+	}
+
+    // constructor + getters + setters
+    // ... (same as previous but unchanged)
+    
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Date getDob() { return dob; }
+    public void setDob(Date dob) { this.dob = dob; }
+
+    public String getContactNo() { return contactNo; }
+    public void setContactNo(String contactNo) { this.contactNo = contactNo; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getCollegeName() { return collegeName; }
+    public void setCollegeName(String collegeName) { this.collegeName = collegeName; }
+
+    public String getGrade() { return grade; }
+    public void setGrade(String grade) { this.grade = grade; }
+
+    public String getMajor() { return major; }
+    public void setMajor(String major) { this.major = major; }
+
+    public String getTeam() { return team; }
+    public void setTeam(String team) { this.team = team; }
+
+    public Date getStartDate() { return startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
+
+    public Date getEndDate() { return endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+    public Integer getGraduatingYear() { return graduatingYear; }
+    public void setGraduatingYear(Integer graduatingYear) { this.graduatingYear = graduatingYear; }
+
+    public String getResume() { return resume; }
+    public void setResume(String resume) { this.resume = resume; }
+
+    public String getProfilePic() { return profilePic; }
+    public void setProfilePic(String profilePic) { this.profilePic = profilePic; }
+
+
+	public Long getBatchCode() {
+		return batchCode;
+	}
+
+
+	public void setBatchCode(Long batchCode) {
+		this.batchCode = batchCode;
+	}
+}
+
+
+
+
+
+package com.finalproject.internMgmtSystem.repository;
+
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.Types;
+import java.util.List;
+
+@Repository
+public class UserDaoImpl implements UserDao {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	private RowMapper<User> mapper = (rs, rowNum) -> {
+		User u = new User();
+		u.setUserId(rs.getLong("user_id"));
+		u.setUserName(rs.getString("user_name"));
+		u.setEmail(rs.getString("email"));
+		u.setPassword(rs.getString("password"));
+		u.setDob(rs.getDate("dob"));
+		u.setContactNo(rs.getString("contact_no"));
+		u.setAddress(rs.getString("address"));
+		u.setCollegeName(rs.getString("college_name"));
+		u.setGrade(rs.getString("grade"));
+		u.setMajor(rs.getString("major"));
+		u.setTeam(rs.getString("team"));
+		u.setBatchCode(rs.getLong("batch_code"));
+		u.setStartDate(rs.getDate("start_date"));
+		u.setEndDate(rs.getDate("end_date"));
+		u.setGraduatingYear(rs.getInt("graduating_year"));
+		u.setResume(rs.getString("resume"));
+		u.setProfilePic(rs.getString("profile_pic"));
+		u.setRole(rs.getString("role"));
+		u.setCreatedAt(rs.getTimestamp("created_at"));
+		return u;
+	};
+
+	@Override
+	public User save(User user) {
+		String sql = """
+				INSERT INTO users
+				(user_name, email, password, dob, contact_no, address, college_name, grade, major,
+				team, batch_code, start_date, end_date, graduating_year, resume, profile_pic, role)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getEmail(), user.getPassword(), user.getDob(),
+				user.getContactNo(), user.getAddress(), user.getCollegeName(), user.getGrade(), user.getMajor(),
+				user.getTeam(), user.getBatchCode(), user.getStartDate(), user.getEndDate(), user.getGraduatingYear(),
+				user.getResume(), user.getProfilePic(), user.getRole());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		user.setUserId(id);
+		return user;
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", mapper, email);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public User findById(Long id) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", mapper, id);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<User> findAll() {
+		return jdbcTemplate.query("SELECT * FROM users", mapper);
+	}
+
+	@Override
+	public void update(User user) {
+		String sql = """
+				    UPDATE users SET user_name=?, contact_no=?, address=?, college_name=?, grade=?, major=?,
+				    team=?, start_date=?, end_date=?, graduating_year=?, resume=?, profile_pic=? WHERE user_id=?
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getContactNo(), user.getAddress(), user.getCollegeName(),
+				user.getGrade(), user.getMajor(), user.getTeam(), user.getBatchCode(), user.getStartDate(),
+				user.getEndDate(), user.getGraduatingYear(), user.getResume(), user.getProfilePic(), user.getUserId());
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
+	}
+}
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private PerformanceDao performanceDao;
+
+    @Autowired
+    private StipendDao stipendDao;
+
+    @Autowired
+    private BatchDao batchDao;
+
+    @Autowired
+    private FeedbackDao feedbackDao;
+
+    @Autowired
+    private AttendanceDao attendanceDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(RegisterUserDto dto) {
+
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
+
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
+
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
+
+        return userDao.save(user);
+    }
+
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
+
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
+
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerId(dto.getTrainerId());   // ⭐ ADD THIS
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
+
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
+}
+
+
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BatchDao batchDao; // 🔥 FIXED — Autowired properly
+
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody RegisterUserDto dto) {
+        return userService.registerUser(dto);
+    }
+
+    @GetMapping("/{userId}/tasks")
+    public List<Task> getTasks(@PathVariable Long userId) {
+        return userService.getTasks(userId);
+    }
+
+    @GetMapping("/{userId}/performance")
+    public List<Performance> getPerformance(@PathVariable Long userId) {
+        return userService.getPerformance(userId);
+    }
+
+    @GetMapping("/{userId}/stipends")
+    public List<Stipend> getStipends(@PathVariable Long userId) {
+        return userService.getStipendHistory(userId);
+    }
+
+    @GetMapping("/batch/{batchCode}")
+    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+        return userService.getBatchDetails(batchCode);
+    }
+
+    @PostMapping("/feedback")
+    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+        return userService.submitFeedback(dto);
+    }
+
+    @GetMapping("/{userId}/attendance")
+    public List<Attendance> getAttendance(@PathVariable Long userId) {
+        return userService.getAttendance(userId);
+    }
+
+    // 📌 NEW PUBLIC ENDPOINT
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatchesPublic() {
+        return batchDao.findAll(); // 🟢 Now resolved and working!
+    }
+}
 
 
 import api from "./axiosConfig";
 
-export const getTrainerBatches = (id) =>
-  api.get(`/api/trainer/batches/${id}`);
+// USER REGISTRATION
+export const registerUser = (data) => api.post("/api/user/register", data);
 
-export const createTask = (data) =>
-  api.post("/api/trainer/tasks", data);
+// PUBLIC BATCH LIST — no login required
+export const getAllBatchesPublic = () => api.get("/api/user/batches");
 
-export const updateTask = (taskId, data) =>
-  api.put(`/api/trainer/tasks/${taskId}`, data);
+// USER FEATURES
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
 
-export const deleteTask = (taskId) =>
-  api.delete(`/api/trainer/tasks/${taskId}`);
 
-export const markAttendance = (data) =>
-  api.post("/api/trainer/attendance", data);
-
-export const givePerformance = (data) =>
-  api.post("/api/trainer/performance", data);
-
-export const getUsersByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/UserBatch/${trainerId}`);
-
-export const getTasksByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/tasks/${trainerId}`);
-
-// ⭐ Correct Feedback API using trainerId
-export const getFeedbackByTrainerId = (trainerId) =>
-  api.get(`/api/trainer/feedback/id/${trainerId}`);
 
 
 
@@ -236,420 +765,288 @@ export default function Login() {
 
 
 
-import React, { useEffect, useState } from "react";
-import { updateTask, getTasksByTrainerId } from "../../api/trainerApi";
-import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
-
-export default function UpdateTask() {
-  const { taskId } = useParams();
-  const navigate = useNavigate();
-  const trainerId = Number(localStorage.getItem("trainerId"));
-
-  const [form, setForm] = useState({
-    userId: null,
-    trainerId,
-    description: "",
-    status: "PENDING",
-    deadline: ""
-  });
-
-  const [msg, setMsg] = useState("");
-
-  useEffect(() => {
-    const loadTask = async () => {
-      try {
-        const res = await getTasksByTrainerId(trainerId);
-        const task = res.data.find(t => t.id === taskId);
-
-        if (task) {
-          setForm({
-            userId: task.userId,
-            trainerId: task.trainerId,
-            description: task.description,
-            status: task.status,
-            deadline: task.deadline ? task.deadline.split("T")[0] : ""
-          });
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    loadTask();
-  }, [taskId, trainerId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateTask(taskId, {
-        userId: form.userId,
-        trainerId: form.trainerId,
-        description: form.description,
-        status: form.status,
-        deadline: form.deadline,
-        uploadFile: null
-      });
-
-      setMsg("✔ Task updated successfully!");
-      setTimeout(() => navigate("/trainer/tasks"), 1000);
-    } catch (e) {
-      setMsg("Failed to update task ❌");
-      console.error(e);
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Edit Task</h3>
-
-        {msg && <div className="info">{msg}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Description</label>
-          <textarea
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-
-          <label>Deadline</label>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-          />
-
-          <label>Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            <option>PENDING</option>
-            <option>ONGOING</option>
-            <option>COMPLETED</option>
-          </select>
-
-          <button className="btn" type="submit">Update Task</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-
-import React, { useEffect, useState } from "react";
-import { getTasksByTrainerId, deleteTask } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { Link } from "react-router-dom";
-import "../../styles/trainer-pages.css";
-
-export default function TrainerViewTasks() {
-  const trainerId = localStorage.getItem("trainerId");
-  const [tasks, setTasks] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await getTasksByTrainerId(trainerId);
-        setTasks(res.data || []);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to load tasks");
-      }
-    };
-
-    fetchTasks();
-  }, [trainerId]);
-
-  const removeTask = async (taskId) => {
-    try {
-      await deleteTask(taskId);
-      setMsg("Task deleted successfully");
-
-      // Reload tasks after deletion
-      const res = await getTasksByTrainerId(trainerId);
-      setTasks(res.data || []);
-    } catch (err) {
-      setMsg("Failed to delete task");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>My Assigned Tasks</h3>
-        {msg && <div className="info">{msg}</div>}
-
-        {tasks.length === 0 ? (
-          <p>No tasks assigned yet.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Intern ID</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Deadline</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {tasks.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.id}</td>
-                  <td>{t.userId}</td>
-                  <td>{t.description}</td>
-                  <td>{t.status}</td>
-                  <td>{t.deadline || "N/A"}</td>
-
-                  <td>
-                    <Link className="btn small"
-                      to={`/trainer/update-task/${t.id}`}
-                    >
-                      Edit
-                    </Link>
-
-                    <button
-                      className="btn small danger"
-                      onClick={() => removeTask(t.id)}
-                      style={{ marginLeft: 8 }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
-
-
 
 import React, { useState, useEffect } from "react";
-import { createTask, getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
+import { registerUser, getAllBatchesPublic } from "../../api/userApi";
+import formatError from "../../utils/formatError";
+import { useNavigate } from "react-router-dom";
+import "../../styles/registerUser.css";
 
-
-export default function CreateTask() {
-  const trainerId = localStorage.getItem("trainerId");
-  const trainerName = localStorage.getItem("trainerName");
+export default function RegisterUser() {
+  const [msg, setMsg] = useState("");
+  const [batches, setBatches] = useState([]);
+  const [currentStep, setCurrentStep] = useState(1);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    userId: "",
-    trainerId,
-    description: "",
-    status: "PENDING",
-    deadline: "",
-    uploadFile: null,
+    userName: "",
+    email: "",
+    password: "",
+    dob: "",
+    contactNo: "",
+    address: "",
+    collegeName: "",
+    grade: "",
+    major: "",
+    team: "",
+    batchCode: "",
+    startDate: "",
+    endDate: "",
+    graduatingYear: "",
+    resume: "",
+    profilePic: "",
   });
 
-  const [users, setUsers] = useState([]);
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState("");
-
   useEffect(() => {
-    if (trainerId) {
-      getUsersByTrainerId(trainerId)
-        .then((res) => setUsers(res.data))
-        .catch((err) =>
-          console.error("Failed to load user list for trainer:", err)
-        );
+    loadBatches();
+  }, []);
+
+  const loadBatches = async () => {
+    try {
+      const res = await getAllBatchesPublic();
+      setBatches(res.data);
+    } catch (err) {
+      console.error("Failed to load batches:", err);
     }
-  }, [trainerId]);
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleBatchSelect = (e) => {
+    const val = Number(e.target.value);
+    const selected = batches.find((b) => b.batchCode === val);
+
+    if (!selected) return;
+
+    setForm({
+      ...form,
+      batchCode: selected.batchCode,
+      startDate: selected.startDate?.slice(0, 10),
+      endDate: selected.endDate?.slice(0, 10),
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg("");
-    setError("");
-
-    if (!form.userId || !form.description) {
-      setError("⚠ Please fill all required fields!");
-      return;
-    }
-
     try {
-      await createTask({
-        userId: Number(form.userId),
-        trainerId: Number(trainerId),
-        description: form.description,
-        status: form.status,
-        deadline: form.deadline,
-        uploadFile: form.uploadFile,
-      });
-
-      setMsg("Task Assigned Successfully ✔");
-      setForm({
-        ...form,
-        userId: "",
-        description: "",
-        deadline: "",
-        status: "PENDING",
-        uploadFile: null,
-      });
+      await registerUser(form);
+      setMsg("🎉 User Registered Successfully!");
+      setTimeout(() => {
+        navigate("/"); // redirect to login
+      }, 1800);
     } catch (err) {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Failed to create task";
-      setError(String(backendMsg));
+      setMsg(formatError(err));
+      setTimeout(() => setMsg(""), 2000);
     }
   };
 
+  const goNext = () => setCurrentStep((prev) => Math.min(prev + 1, 3));
+  const goBack = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
+  const isSuccessMsg = msg.startsWith("🎉");
+
   return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+    <div className="register-page">
+      <div className="container register-container">
+        <div className="register-card">
 
-      <div className="main">
-        <h3>Create Task</h3>
-
-        {msg && <div className="info success">{msg}</div>}
-        {error && <div className="info error">{error}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Trainer</label>
-          <input value={trainerName} disabled />
-
-          <label>Assign To (Intern)</label>
-          <select
-            value={form.userId}
-            onChange={(e) => setForm({ ...form, userId: e.target.value })}
+          {/* BACK TO HOME */}
+          <button
+            className="back-home-btn"
+            onClick={() => navigate("/")}
           >
-            <option value="">-- Select Intern --</option>
-            {users.map((u) => (
-              <option key={u.userId} value={u.userId}>
-                {u.userName} (Batch {u.batchCode})
-              </option>
-            ))}
-          </select>
-
-          <label>Description</label>
-          <textarea
-            placeholder="Describe task here..."
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          ></textarea>
-
-          <label>Deadline</label>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) =>
-              setForm({ ...form, deadline: e.target.value })
-            }
-          />
-
-          <label>Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            <option>PENDING</option>
-            <option>ONGOING</option>
-            <option>COMPLETED</option>
-          </select>
-
-          <button className="btn" type="submit">
-            Assign Task
+            ← Home
           </button>
-        </form>
+
+          <div className="register-header">
+            <h2>Intern Application</h2>
+            <p>Fill in your details to apply for the internship program.</p>
+          </div>
+
+          {/* Stepper */}
+          <div className="stepper">
+            <div className={`step-item ${currentStep === 1 ? "active" : currentStep > 1 ? "completed" : ""}`}>
+              <div className="step-circle">1</div>
+              <span className="step-label">Personal Information</span>
+            </div>
+
+            <div className={`step-item ${currentStep === 2 ? "active" : currentStep > 2 ? "completed" : ""}`}>
+              <div className="step-circle">2</div>
+              <span className="step-label">Education</span>
+            </div>
+
+            <div className={`step-item ${currentStep === 3 ? "active" : ""}`}>
+              <div className="step-circle">3</div>
+              <span className="step-label">Uploads</span>
+            </div>
+          </div>
+
+          {msg && (
+            <p className={`alert-msg ${isSuccessMsg ? "success-msg" : "error-msg"}`}>
+              {msg}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="register-form">
+
+            {/* ================= STEP 1 ================= */}
+            {currentStep === 1 && (
+              <div className="step-content">
+
+                <div className="section-title">Personal Information</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Full Name *</label>
+                    <input required name="userName" placeholder="Your full name" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Email *</label>
+                    <input required name="email" type="email" placeholder="you@example.com" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Password *</label>
+                    <input required name="password" type="password" placeholder="Create password" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Date of Birth *</label>
+                    <input required name="dob" type="date" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Contact No *</label>
+                    <input required name="contactNo" placeholder="Mobile number" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Address *</label>
+                    <input required name="address" placeholder="Current address" onChange={handleChange} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ================= STEP 2 ================= */}
+            {currentStep === 2 && (
+              <div className="step-content">
+                <div className="section-title">Education & Internship Details</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>College Name *</label>
+                    <input required name="collegeName" placeholder="College / University" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Grade</label>
+                    <input name="grade" placeholder="e.g. 8.2 CGPA" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Major</label>
+                    <input name="major" placeholder="e.g. Computer Science" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Team (Optional)</label>
+                    <input name="team" placeholder="Preferred team" onChange={handleChange} />
+                  </div>
+                  <div className="field">
+                    <label>Graduation Year</label>
+                    <input name="graduatingYear" placeholder="2026" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Select Batch *</label>
+                    <select
+                      required
+                      name="batchCode"
+                      value={form.batchCode || ""}
+                      onChange={handleBatchSelect}
+                    >
+                      <option value="">Choose a batch</option>
+                      {batches.map((b) => (
+                        <option key={b.batchCode} value={b.batchCode} disabled={b.availableSeats <= 0}>
+                          {b.batchName} | {b.courseName} | Seats: {b.availableSeats}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" value={form.startDate || ""} readOnly />
+                  </div>
+                  <div className="field">
+                    <label>End Date</label>
+                    <input type="date" name="endDate" value={form.endDate || ""} readOnly />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ================= STEP 3 ================= */}
+            {currentStep === 3 && (
+              <div className="step-content">
+                <div className="section-title">Uploads</div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Resume URL</label>
+                    <input name="resume" placeholder="Drive / Portfolio link" onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label>Profile Pic URL</label>
+                    <input name="profilePic" placeholder="Photo URL link" onChange={handleChange} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step Navigation */}
+            <div className="step-actions">
+              {currentStep > 1 && (
+                <button className="btn secondary-btn" type="button" onClick={goBack}>
+                  ← Back
+                </button>
+              )}
+
+              {currentStep < 3 && (
+                <button className="btn next-btn" type="button" onClick={goNext}>
+                  Next →
+                </button>
+              )}
+
+              {currentStep === 3 && (
+                <button className="btn register-btn" type="submit">
+                  Register Now ✔
+                </button>
+              )}
+            </div>
+          </form>
+
+        </div>
       </div>
     </div>
   );
 }
 
-
-
-import React, { useEffect, useState } from "react";
-import { getUserTasks } from "../../api/userApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import formatDate from "../../utils/formatDate";
-import "../../styles/tasks.css";
-
-export default function UserTasks() {
-  const userId = localStorage.getItem("userId");
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-    if (!userId) return;
-    getUserTasks(userId)
-      .then((res) => {
-        console.log("Tasks:", res.data);
-        setTasks(res.data || []);
-      })
-      .catch(console.error);
-  }, [userId]);
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "COMPLETED":
-        return "status-green";
-      case "ONGOING":
-        return "status-orange";
-      default:
-        return "status-gray";
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Tasks</h3>
-
-        {tasks.length === 0 ? (
-          <p>No tasks found.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Deadline</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {tasks.map((t, idx) => (
-                <tr key={t.id || `fallback-${idx}`}>
-                  <td>{t.id || "-"}</td>
-                  <td>{t.description}</td>
-                  <td>
-                    <span className={`task-status ${getStatusClass(t.status)}`}>
-                      {t.status}
-                    </span>
-                  </td>
-                  <td>{t.deadline ? formatDate(t.deadline) : "N/A"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
