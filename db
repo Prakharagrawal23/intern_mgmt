@@ -1,760 +1,241 @@
-package com.finalproject.internMgmtSystem.service;
+package com.finalproject.internMgmtSystem.dto;
 
-import com.finalproject.internMgmtSystem.dto.BatchDto;
-import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
-import com.finalproject.internMgmtSystem.dto.StipendDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import jakarta.validation.constraints.*;
+
+public class FeedbackDto {
+
+//    @NotNull(message = "User ID is required")
+    private Long userId;
+
+//    @NotBlank(message = "User name is required")
+    private String userName;
+
+//    @NotNull(message = "Batch code is required")
+    private Long batchCode;
+
+//    @NotNull(message = "Trainer ID is required") // ⭐ NEW
+    private Long trainerId;
+
+//    @NotBlank(message = "Trainer name is required")
+    private String trainerName;
+
+    @NotBlank(message = "Feedback cannot be empty")
+    private String feedback;
+
+    @NotNull(message = "Rating is required")
+    @Min(value = 1)
+    @Max(value = 5)
+    private Integer rating;
+
+    public FeedbackDto() {}
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public Long getBatchCode() { return batchCode; }
+    public void setBatchCode(Long batchCode) { this.batchCode = batchCode; }
+
+    public Long getTrainerId() { return trainerId; } // ⭐ getter added
+    public void setTrainerId(Long trainerId) { this.trainerId = trainerId; } // ⭐ setter added
+
+    public String getTrainerName() { return trainerName; }
+    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
+
+    public String getFeedback() { return feedback; }
+    public void setFeedback(String feedback) { this.feedback = feedback; }
+
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+}
+
+
+
+package com.finalproject.internMgmtSystem.model;
+
+import java.sql.Timestamp;
+
+public class Feedback {
+
+    private Long id;
+    private Long userId;
+    private String userName;
+    private Long batchCode;
+    private Long trainerId; // ⭐ ADDED
+    private String trainerName;
+    private Timestamp date;
+    private String feedback;
+    private Integer rating;
+
+    public Feedback() {}
+
+    public Feedback(Long id, Long userId, String userName, Long batchCode,
+                    Long trainerId, String trainerName,
+                    Timestamp date, String feedback, Integer rating) {
+        this.id = id;
+        this.userId = userId;
+        this.userName = userName;
+        this.batchCode = batchCode;
+        this.trainerId = trainerId;
+        this.trainerName = trainerName;
+        this.date = date;
+        this.feedback = feedback;
+        this.rating = rating;
+    }
+
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public Long getBatchCode() { return batchCode; }
+    public void setBatchCode(Long batchCode) { this.batchCode = batchCode; }
+
+    public Long getTrainerId() { return trainerId; } // ⭐ ADDED
+    public void setTrainerId(Long trainerId) { this.trainerId = trainerId; } // ⭐ ADDED
+
+    public String getTrainerName() { return trainerName; }
+    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
+
+    public Timestamp getDate() { return date; }
+    public void setDate(Timestamp date) { this.date = date; }
+
+    public String getFeedback() { return feedback; }
+    public void setFeedback(String feedback) { this.feedback = feedback; }
+
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+}
+
+
+package com.finalproject.internMgmtSystem.repository;
+
 import com.finalproject.internMgmtSystem.model.InternshipBatch;
-import com.finalproject.internMgmtSystem.model.Stipend;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.*;
-import com.finalproject.internMgmtSystem.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Service
-public class AdminService {
-
-	@Autowired
-	private TrainerDao trainerDao;
-
-	@Autowired
-	private UserDao userDao;
-
-	@Autowired
-	private BatchDao batchDao;
-
-	@Autowired
-	private StipendDao stipendDao;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private EmailUtil emailUtil;
-
-	public Trainer registerTrainer(RegisterTrainerDto dto) {
-
-		Trainer exists = trainerDao.findByEmail(dto.getEmail());
-		if (exists != null) {
-			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
-		}
-
-		Trainer trainer = new Trainer();
-		trainer.setName(dto.getName());
-		trainer.setEmail(dto.getEmail());
-		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
-		trainer.setContact(dto.getContact());
-		trainer.setExperience(dto.getExperience());
-		trainer.setSkills(dto.getSkills());
-		trainer.setProfilePic(dto.getProfilePic());
-		trainer.setBio(dto.getBio());
-		trainer.setRole("TRAINER");
-
-		Trainer saved = trainerDao.save(trainer);
-
-		// send email (you already had this util)
-		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
-				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
-						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
-						+ "Regards,\nTeam");
-
-		return saved;
-	}
-
-	public InternshipBatch createBatch(BatchDto dto) {
-		InternshipBatch batch = new InternshipBatch();
-
-		batch.setBatchName(dto.getBatchName());
-		batch.setCourseName(dto.getCourseName());
-		batch.setTrainerId(dto.getTrainerId());
-		batch.setStartDate(dto.getStartDate());
-		batch.setEndDate(dto.getEndDate());
-		batch.setTotalSeats(dto.getTotalSeats());
-		batch.setAvailableSeats(dto.getAvailableSeats());
-
-		return batchDao.save(batch);
-	}
-
-	public Stipend giveStipend(StipendDto dto) {
-
-		User user = userDao.findById(dto.getUserId());
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
-		}
-
-		Stipend stipend = new Stipend();
-		stipend.setUserId(dto.getUserId());
-		stipend.setUserName(dto.getUserName());
-		stipend.setPaymentMode(dto.getPaymentMode());
-		stipend.setAmount(dto.getAmount());
-
-		return stipendDao.save(stipend);
-	}
-
-	public List<User> getAllUsers() {
-		return userDao.findAll();
-	}
-
-	public List<Trainer> getAllTrainers() {
-		return trainerDao.findAll();
-	}
-
-	public List<InternshipBatch> getAllBatches() {
-		return batchDao.findAll();
-	}
-
-	public void deleteTrainer(Long id) {
-		if (trainerDao.findById(id) == null) {
-			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
-		}
-		trainerDao.deleteById(id);
-	}
-
-	public void deleteUser(Long id) {
-		if (userDao.findById(id) == null) {
-			throw new ResourceNotFoundException("User not found with ID: " + id);
-		}
-		userDao.deleteById(id);
-	}
-
-	// --------- NEW: delete by email/name helpers ----------
-
-	// DELETE USER BY EMAIL
-	public void deleteUserByEmail(String email) {
-		User user = userDao.findByEmail(email);
-		if (user == null) {
-			throw new ResourceNotFoundException("User not found with email: " + email);
-		}
-		userDao.deleteById(user.getUserId());
-	}
-
-	// DELETE TRAINER BY EMAIL
-	public void deleteTrainerByEmail(String email) {
-		Trainer trainer = trainerDao.findByEmail(email);
-		if (trainer == null) {
-			throw new ResourceNotFoundException("Trainer not found with email: " + email);
-		}
-		trainerDao.deleteByEmail(email);
-	}
-
-	// DELETE BATCH BY NAME
-	public void deleteBatchByName(String batchName) {
-		InternshipBatch batch = batchDao.findByName(batchName);
-		if (batch == null) {
-			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
-		}
-		batchDao.delete(batch.getBatchCode());
-	}
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthService {
+@Repository
+public class BatchDaoImpl implements BatchDao {
 
     @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public String login(LoginRequest loginRequest) {
-
-        User user = userDao.findByEmail(loginRequest.getEmail());
-        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
-
-        if (user == null && trainer == null) {
-            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
-        }
-
-        // USER LOGIN
-        if (user != null) {
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new RuntimeException("Invalid password");
-            }
-
-            return jwtUtil.generateToken(
-                    user.getUserId(),
-                    user.getEmail(),
-                    "ROLE_" + user.getRole()
-            );
-        }
-
-        // TRAINER LOGIN
-        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return jwtUtil.generateTrainerToken(
-                trainer.getTrainerId(),
-                trainer.getEmail(),
-                "ROLE_" + trainer.getRole(),
-                trainer.getName()         // Trainer name added inside token
-        );
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.AttendanceDto;
-import com.finalproject.internMgmtSystem.dto.PerformanceDto;
-import com.finalproject.internMgmtSystem.dto.TaskDto;
-import com.finalproject.internMgmtSystem.dto.UserBatchDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-
-@Service
-public class TrainerService {
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-    
-    @Autowired
-    private UserBatchDao UserBatchDao;
-
-    public List<InternshipBatch> getBatches(Long trainerId) {
-        List<InternshipBatch> list = batchDao.findByTrainerId(trainerId);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No batches assigned to trainer ID: " + trainerId);
-        }
-
-        return list;
-    }
-
-    public Task addTask(TaskDto dto) {
-
-        // Optional: validate if user exists / trainer exists
-
-        Task t = new Task();
-        t.setUserId(dto.getUserId());
-        t.setDescription(dto.getDescription());
-        t.setTrainerId(dto.getTrainerId());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        return taskDao.save(t);
-    }
-
-    public void updateTask(TaskDto dto, Long taskId) {
-        Task t = taskDao.findById(taskId);
-        if (t == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + taskId);
-        }
-
-        t.setDescription(dto.getDescription());
-        t.setStatus(dto.getStatus());
-        t.setDeadline(dto.getDeadline());
-        t.setUploadFile(dto.getUploadFile());
-
-        taskDao.update(t);
-    }
-
-    public void deleteTask(Long id) {
-        Task exists = taskDao.findById(id);
-        if (exists == null) {
-            throw new ResourceNotFoundException("Task not found with ID: " + id);
-        }
-
-        taskDao.delete(id);
-    }
-
-    public Attendance markAttendance(AttendanceDto dto) {
-
-        if (dto.getDate().toLocalDate().isAfter(LocalDate.now())) {
-            throw new RuntimeException("Cannot mark attendance for future dates");
-        }
-
-        Attendance a = new Attendance();
-        a.setUserId(dto.getUserId());
-        a.setBatchCode(dto.getBatchCode());
-        a.setDate(dto.getDate());
-        a.setPresent(dto.getPresent());
-
-        return attendanceDao.save(a);
-    }
-
-    public Performance updatePerformance(PerformanceDto dto) {
-
-        Performance p = new Performance();
-
-        p.setUserId(dto.getUserId());
-        p.setTrainerId(dto.getTrainerId());
-        p.setBatchCode(dto.getBatchCode());       // NEW
-        p.setTrainerName(dto.getTrainerName());   // NEW
-        p.setRemarks(dto.getRemarks());
-        p.setTaskEvaluationScore(dto.getTaskEvaluationScore());
-
-        return performanceDao.save(p);
-    }
-
-
-    public List<Feedback> viewFeedback(String trainerName) {
-        List<Feedback> list = feedbackDao.findByTrainerName(trainerName);
-
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No feedback found for trainer: " + trainerName);
-        }
-
-        return list;
-    }
-    
-    public List<UserBatchDto> getUsersByTrainerId(int trainerId) {
-        return UserBatchDao.getUsersByTrainerId(trainerId);
-    }
-    public List<Task> getTasksByTrainerId(Long trainerId) {
-        List<Task> tasks = taskDao.findByTrainerId(trainerId);
-        if (tasks.isEmpty()) {
-            throw new ResourceNotFoundException("No tasks found for trainer ID: " + trainerId);
-        }
-        return tasks;
-    }
-
-    public List<Performance> getPerformanceByTrainerId(Long trainerId) {
-        List<Performance> list = performanceDao.findByTrainerId(trainerId);
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No performance records found for trainer ID: " + trainerId);
-        }
-        return list;
-    }
-    public List<Feedback> viewFeedbackByTrainerId(Long trainerId) {
-        List<Feedback> list = feedbackDao.findByTrainerId(trainerId);
-        if (list.isEmpty()) {
-            throw new ResourceNotFoundException("No feedback found for trainer ID: " + trainerId);
-        }
-        return list;
-    }
-
-
-
-}
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.FeedbackDto;
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.*;
-import com.finalproject.internMgmtSystem.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class UserService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TaskDao taskDao;
-
-    @Autowired
-    private PerformanceDao performanceDao;
-
-    @Autowired
-    private StipendDao stipendDao;
-
-    @Autowired
-    private BatchDao batchDao;
-
-    @Autowired
-    private FeedbackDao feedbackDao;
-
-    @Autowired
-    private AttendanceDao attendanceDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public User registerUser(RegisterUserDto dto) {
-
-        User exists = userDao.findByEmail(dto.getEmail());
-        if (exists != null) {
-            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
-        }
-
-        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
-        }
-        if (batch.getAvailableSeats() <= 0) {
-            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
-        }
-        batchDao.decrementAvailableSeats(dto.getBatchCode());
-
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setDob(dto.getDob());
-        user.setContactNo(dto.getContactNo());
-        user.setAddress(dto.getAddress());
-        user.setCollegeName(dto.getCollegeName());
-        user.setGrade(dto.getGrade());
-        user.setMajor(dto.getMajor());
-        user.setTeam(dto.getTeam());
-        user.setBatchCode(dto.getBatchCode());
-        user.setStartDate(dto.getStartDate());
-        user.setEndDate(dto.getEndDate());
-        user.setGraduatingYear(dto.getGraduatingYear());
-        user.setResume(dto.getResume());
-        user.setProfilePic(dto.getProfilePic());
-        user.setRole("USER");
-
-        return userDao.save(user);
-    }
-
-    public List<Task> getTasks(Long userId) {
-        return taskDao.findByUserId(userId);
-    }
-
-    public List<Performance> getPerformance(Long userId) {
-        return performanceDao.findByUserId(userId);
-    }
-
-    public List<Stipend> getStipendHistory(Long userId) {
-        return stipendDao.findByUserId(userId);
-    }
-
-    public InternshipBatch getBatchDetails(Long batchCode) {
-        InternshipBatch batch = batchDao.findById(batchCode);
-        if (batch == null) {
-            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
-        }
+    private JdbcTemplate jdbcTemplate;
+
+    // Updated RowMapper to include trainerName
+    private RowMapper<InternshipBatch> mapper = (rs, rowNum) -> {
+        InternshipBatch b = new InternshipBatch();
+        b.setBatchCode(rs.getLong("batch_code"));
+        b.setBatchName(rs.getString("batch_name"));
+        b.setCourseName(rs.getString("course_name"));
+        b.setTrainerId(rs.getLong("trainer_id"));
+        b.setTrainerName(rs.getString("trainer_name")); // NEW 👌
+        b.setStartDate(rs.getDate("start_date"));
+        b.setEndDate(rs.getDate("end_date"));
+        b.setTotalSeats(rs.getInt("total_seats"));
+        b.setAvailableSeats(rs.getInt("available_seats"));
+        return b;
+    };
+
+    @Override
+    public InternshipBatch save(InternshipBatch batch) {
+        String sql = """
+                INSERT INTO internship_batches
+                (batch_name, course_name, trainer_id, start_date, end_date, total_seats, available_seats)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+                batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats());
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        batch.setBatchCode(id);
         return batch;
     }
 
-    public Feedback submitFeedback(FeedbackDto dto) {
-        Feedback f = new Feedback();
-        f.setUserId(dto.getUserId());
-        f.setUserName(dto.getUserName());
-        f.setBatchCode(dto.getBatchCode());
-        f.setTrainerId(dto.getTrainerId()); // 🔥 FIXED
-        f.setTrainerName(dto.getTrainerName());
-        f.setFeedback(dto.getFeedback());
-        f.setRating(dto.getRating());
-        return feedbackDao.save(f);
+    @Override
+    public InternshipBatch findById(Long batchCode) {
+        return findByBatchCode(batchCode);
     }
-
-    public List<Attendance> getAttendance(Long userId) {
-        return attendanceDao.findByUserId(userId);
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register",
-                        "/api/user/batches" // ✔ Public Access
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role, String userName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("userName", userName) // ⭐ FIXED
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("userName", trainerName) // ⭐ Save name for convenience
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
+    public List<InternshipBatch> findAll() {
+        String sql = """
+                SELECT b.*, t.name AS trainer_name
+                FROM internship_batches b
+                JOIN trainers t ON b.trainer_id = t.trainer_id
+                """;
+        return jdbcTemplate.query(sql, mapper);
     }
-}
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public List<InternshipBatch> findByTrainerId(Long trainerId) {
+        String sql = """
+                SELECT b.*, t.name AS trainer_name
+                FROM internship_batches b
+                JOIN trainers t ON b.trainer_id = t.trainer_id
+                WHERE b.trainer_id = ?
+                """;
+        return jdbcTemplate.query(sql, mapper, trainerId);
+    }
 
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
+    @Override
+    public void update(InternshipBatch batch) {
+        String sql = """
+                UPDATE internship_batches SET batch_name=?, course_name=?, trainer_id=?, start_date=?,
+                end_date=?, total_seats=?, available_seats=? WHERE batch_code=?
+                """;
+        jdbcTemplate.update(sql, batch.getBatchName(), batch.getCourseName(), batch.getTrainerId(),
+                batch.getStartDate(), batch.getEndDate(), batch.getTotalSeats(), batch.getAvailableSeats(),
+                batch.getBatchCode());
+    }
 
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
+    @Override
+    public void delete(Long batchCode) {
+        jdbcTemplate.update("DELETE FROM internship_batches WHERE batch_code = ?", batchCode);
+    }
 
-        throw new UsernameNotFoundException("User not found: " + email);
+    @Override
+    public InternshipBatch findByName(String batchName) {
+        String sql = """
+                SELECT b.*, t.name AS trainer_name
+                FROM internship_batches b
+                JOIN trainers t ON b.trainer_id = t.trainer_id
+                WHERE b.batch_name = ?
+                """;
+        List<InternshipBatch> list = jdbcTemplate.query(sql, mapper, batchName);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public InternshipBatch findByBatchCode(Long batchCode) {
+        String sql = """
+                SELECT b.*, t.name AS trainer_name
+                FROM internship_batches b
+                JOIN trainers t ON b.trainer_id = t.trainer_id
+                WHERE b.batch_code = ?
+                """;
+        List<InternshipBatch> list = jdbcTemplate.query(sql, mapper, batchCode);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public void decrementAvailableSeats(Long batchCode) {
+        String sql = """
+                UPDATE internship_batches 
+                SET available_seats = available_seats - 1 
+                WHERE batch_code = ? AND available_seats > 0
+                """;
+        jdbcTemplate.update(sql, batchCode);
     }
 }
 
@@ -845,181 +326,1008 @@ public class FeedbackDaoImpl implements FeedbackDao {
 }
 
 
+
 package com.finalproject.internMgmtSystem.repository;
 
-import com.finalproject.internMgmtSystem.model.Feedback;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.Types;
 import java.util.List;
 
-public interface FeedbackDao {
+@Repository
+public class UserDaoImpl implements UserDao {
 
-    Feedback save(Feedback feedback);
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
-    List<Feedback> findByTrainerName(String trainerName);
+	private RowMapper<User> mapper = (rs, rowNum) -> {
+		User u = new User();
+		u.setUserId(rs.getLong("user_id"));
+		u.setUserName(rs.getString("user_name"));
+		u.setEmail(rs.getString("email"));
+		u.setPassword(rs.getString("password"));
+		u.setDob(rs.getDate("dob"));
+		u.setContactNo(rs.getString("contact_no"));
+		u.setAddress(rs.getString("address"));
+		u.setCollegeName(rs.getString("college_name"));
+		u.setGrade(rs.getString("grade"));
+		u.setMajor(rs.getString("major"));
+		u.setTeam(rs.getString("team"));
+		u.setBatchCode(rs.getLong("batch_code"));
+		u.setStartDate(rs.getDate("start_date"));
+		u.setEndDate(rs.getDate("end_date"));
+		u.setGraduatingYear(rs.getInt("graduating_year"));
+		u.setResume(rs.getString("resume"));
+//		u.setProfilePic(rs.getString("profile_pic"));
+		u.setRole(rs.getString("role"));
+		u.setCreatedAt(rs.getTimestamp("created_at"));
+		return u;
+	};
 
-    List<Feedback> findByUserId(Long userId);
+	@Override
+	public User save(User user) {
+		String sql = """
+				INSERT INTO users
+				(user_name, email, password, dob, contact_no, address, college_name, grade, major,
+				team, batch_code, start_date, end_date, graduating_year, resume, role)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""";
 
-    List<Feedback> findAll();
-    
-    List<Feedback> findByTrainerId(Long trainerId);
+		jdbcTemplate.update(sql, user.getUserName(), user.getEmail(), user.getPassword(), user.getDob(),
+				user.getContactNo(), user.getAddress(), user.getCollegeName(), user.getGrade(), user.getMajor(),
+				user.getTeam(), user.getBatchCode(), user.getStartDate(), user.getEndDate(), user.getGraduatingYear(),
+				user.getResume(), user.getRole());
+
+		Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+		user.setUserId(id);
+		return user;
+	}
+
+	@Override
+	public User findByEmail(String email) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", mapper, email);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public User findById(Long id) {
+		List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", mapper, id);
+		return list.isEmpty() ? null : list.get(0);
+	}
+
+	@Override
+	public List<User> findAll() {
+		return jdbcTemplate.query("SELECT * FROM users", mapper);
+	}
+
+	@Override
+	public void update(User user) {
+		String sql = """
+				    UPDATE users SET user_name=?, contact_no=?, address=?, college_name=?, grade=?, major=?,
+				    team=?, start_date=?, end_date=?, graduating_year=?, resume=?, profile_pic=? WHERE user_id=?
+				""";
+
+		jdbcTemplate.update(sql, user.getUserName(), user.getContactNo(), user.getAddress(), user.getCollegeName(),
+				user.getGrade(), user.getMajor(), user.getTeam(), user.getBatchCode(), user.getStartDate(),
+				user.getEndDate(), user.getGraduatingYear(), user.getResume(), user.getUserId());
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
+	}
 }
 
 
-package com.finalproject.internMgmtSystem.model;
 
-import java.sql.Timestamp;
+package com.finalproject.internMgmtSystem.repository;
 
-public class Feedback {
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
-    private Long id;
-    private Long userId;
-    private String userName;
-    private Long batchCode;
-    private Long trainerId; // ⭐ ADDED
-    private String trainerName;
-    private Timestamp date;
-    private String feedback;
-    private Integer rating;
+import java.util.List;
 
-    public Feedback() {}
+@Repository
+public class TrainerDaoImpl implements TrainerDao {
 
-    public Feedback(Long id, Long userId, String userName, Long batchCode,
-                    Long trainerId, String trainerName,
-                    Timestamp date, String feedback, Integer rating) {
-        this.id = id;
-        this.userId = userId;
-        this.userName = userName;
-        this.batchCode = batchCode;
-        this.trainerId = trainerId;
-        this.trainerName = trainerName;
-        this.date = date;
-        this.feedback = feedback;
-        this.rating = rating;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private RowMapper<Trainer> mapper = (rs, rowNum) -> {
+        Trainer t = new Trainer();
+        t.setTrainerId(rs.getLong("trainer_id"));
+        t.setName(rs.getString("name"));
+        t.setEmail(rs.getString("email"));
+        t.setPassword(rs.getString("password"));
+        t.setContact(rs.getString("contact"));
+        t.setExperience(rs.getString("experience"));
+        t.setSkills(rs.getString("skills"));
+        t.setProfilePic(rs.getString("profile_pic"));
+        t.setBio(rs.getString("bio"));
+        t.setRole(rs.getString("role"));
+        t.setCreatedAt(rs.getTimestamp("created_at"));
+        return t;
+    };
+
+    @Override
+    public Trainer save(Trainer trainer) {
+        String sql = "INSERT INTO trainers (name, email, password, contact, experience, skills, profile_pic, bio, role) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getEmail(),
+                trainer.getPassword(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getRole()
+        );
+
+        Long id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        trainer.setTrainerId(id);
+        return trainer;
     }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Override
+    public Trainer findByEmail(String email) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE email = ?",
+                mapper,
+                email
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    @Override
+    public Trainer findById(Long id) {
+        List<Trainer> list = jdbcTemplate.query(
+                "SELECT * FROM trainers WHERE trainer_id = ?",
+                mapper,
+                id
+        );
+        return list.isEmpty() ? null : list.get(0);
+    }
 
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
+    @Override
+    public List<Trainer> findAll() {
+        return jdbcTemplate.query(
+                "SELECT * FROM trainers",
+                mapper
+        );
+    }
 
-    public Long getBatchCode() { return batchCode; }
-    public void setBatchCode(Long batchCode) { this.batchCode = batchCode; }
+    @Override
+    public void update(Trainer trainer) {
+        String sql = "UPDATE trainers SET name=?, contact=?, experience=?, skills=?, profile_pic=?, bio=? "
+                   + "WHERE trainer_id=?";
 
-    public Long getTrainerId() { return trainerId; } // ⭐ ADDED
-    public void setTrainerId(Long trainerId) { this.trainerId = trainerId; } // ⭐ ADDED
+        jdbcTemplate.update(sql,
+                trainer.getName(),
+                trainer.getContact(),
+                trainer.getExperience(),
+                trainer.getSkills(),
+                trainer.getProfilePic(),
+                trainer.getBio(),
+                trainer.getTrainerId()
+        );
+    }
 
-    public String getTrainerName() { return trainerName; }
-    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update(
+                "DELETE FROM trainers WHERE trainer_id = ?",
+                id
+        );
+    }
 
-    public Timestamp getDate() { return date; }
-    public void setDate(Timestamp date) { this.date = date; }
-
-    public String getFeedback() { return feedback; }
-    public void setFeedback(String feedback) { this.feedback = feedback; }
-
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
+    @Override
+    public void deleteByEmail(String email) {
+        jdbcTemplate.update("DELETE FROM trainers WHERE email = ?", email);
+    }
 }
 
 
-package com.finalproject.internMgmtSystem.dto;
 
-import jakarta.validation.constraints.*;
+package com.finalproject.internMgmtSystem.service;
 
-public class FeedbackDto {
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-	@NotNull(message = "User ID is required")
-	private Long userId;
+import java.util.List;
 
-	@NotBlank(message = "User name is required")
-	private String userName;
+@Service
+public class UserService {
 
-	@NotNull(message = "Batch code is required")
-	private Long batchCode;
+    @Autowired
+    private UserDao userDao;
 
-	@NotBlank(message = "Trainer name is required")
-	private String trainerName;
+    @Autowired
+    private TaskDao taskDao;
 
-	@NotBlank(message = "Feedback cannot be empty")
-	private String feedback;
+    @Autowired
+    private PerformanceDao performanceDao;
 
-	@NotNull(message = "Rating is required")
-	@Min(value = 1, message = "Rating must be >= 1")
-	@Max(value = 5, message = "Rating must be <= 5")
-	private Integer rating;
+    @Autowired
+    private StipendDao stipendDao;
 
-	public FeedbackDto() {
-	}
+    @Autowired
+    private BatchDao batchDao;
 
-	public FeedbackDto(@NotNull(message = "User ID is required") Long userId,
-			@NotBlank(message = "User name is required") String userName,
-			@NotNull(message = "Batch code is required") Long batchCode,
-			@NotBlank(message = "Trainer name is required") String trainerName,
-			@NotBlank(message = "Feedback cannot be empty") String feedback,
-			@NotNull(message = "Rating is required") @Min(value = 1, message = "Rating must be >= 1") @Max(value = 5, message = "Rating must be <= 5") Integer rating) {
-		super();
-		this.userId = userId;
-		this.userName = userName;
-		this.batchCode = batchCode;
-		this.trainerName = trainerName;
-		this.feedback = feedback;
-		this.rating = rating;
-	}
+    @Autowired
+    private FeedbackDao feedbackDao;
 
-	public Long getUserId() {
-		return userId;
-	}
+    @Autowired
+    private AttendanceDao attendanceDao;
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-	public String getUserName() {
-		return userName;
-	}
+    public User registerUser(RegisterUserDto dto) {
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+        User exists = userDao.findByEmail(dto.getEmail());
+        if (exists != null) {
+            throw new UserAlreadyExistsException("User email already exists: " + dto.getEmail());
+        }
 
-	public Long getBatchCode() {
-		return batchCode;
-	}
+        InternshipBatch batch = batchDao.findByBatchCode(dto.getBatchCode());
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + dto.getBatchCode());
+        }
+        if (batch.getAvailableSeats() <= 0) {
+            throw new ResourceNotFoundException("No available seats in batch: " + dto.getBatchCode());
+        }
+        batchDao.decrementAvailableSeats(dto.getBatchCode());
 
-	public void setBatchCode(Long batchCode) {
-		this.batchCode = batchCode;
-	}
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setDob(dto.getDob());
+        user.setContactNo(dto.getContactNo());
+        user.setAddress(dto.getAddress());
+        user.setCollegeName(dto.getCollegeName());
+        user.setGrade(dto.getGrade());
+        user.setMajor(dto.getMajor());
+        user.setTeam(dto.getTeam());
+        user.setBatchCode(dto.getBatchCode());
+        user.setStartDate(dto.getStartDate());
+        user.setEndDate(dto.getEndDate());
+        user.setGraduatingYear(dto.getGraduatingYear());
+        user.setResume(dto.getResume());
+//        user.setProfilePic(dto.getProfilePic());
+        user.setRole("USER");
 
-	public String getTrainerName() {
-		return trainerName;
-	}
+        return userDao.save(user);
+    }
 
-	public void setTrainerName(String trainerName) {
-		this.trainerName = trainerName;
-	}
+    public List<Task> getTasks(Long userId) {
+        return taskDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-	public String getFeedback() {
-		return feedback;
-	}
+    public List<Performance> getPerformance(Long userId) {
+        return performanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-	public void setFeedback(String feedback) {
-		this.feedback = feedback;
-	}
+    public List<Stipend> getStipendHistory(Long userId) {
+        return stipendDao.findByUserId(userId); // ✨ Allow empty list
+    }
 
-	public Integer getRating() {
-		return rating;
-	}
+    public InternshipBatch getBatchDetails(Long batchCode) {
+        InternshipBatch batch = batchDao.findById(batchCode);
+        if (batch == null) {
+            throw new ResourceNotFoundException("Batch not found with code: " + batchCode);
+        }
+        return batch;
+    }
 
-	public void setRating(Integer rating) {
-		this.rating = rating;
-	}
+    public Feedback submitFeedback(FeedbackDto dto) {
+        Feedback f = new Feedback();
+        f.setUserId(dto.getUserId());
+        f.setUserName(dto.getUserName());
+        f.setBatchCode(dto.getBatchCode());
+        f.setTrainerId(dto.getTrainerId());   // ⭐ ADD THIS
+        f.setTrainerName(dto.getTrainerName());
+        f.setFeedback(dto.getFeedback());
+        f.setRating(dto.getRating());
+        return feedbackDao.save(f);
+    }
 
-	// getters & setters
+
+    public List<Attendance> getAttendance(Long userId) {
+        return attendanceDao.findByUserId(userId); // ✨ Allow empty list
+    }
 }
-The method generateToken(Long, String, String, String) in the type JwtUtil is not applicable for the arguments (Long, String, String)
 
-The method getTrainerId() is undefined for the type FeedbackDto
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.LoginRequest;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.TrainerDao;
+import com.finalproject.internMgmtSystem.repository.UserDao;
+import com.finalproject.internMgmtSystem.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private TrainerDao trainerDao;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String login(LoginRequest loginRequest) {
+
+        User user = userDao.findByEmail(loginRequest.getEmail());
+        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
+
+        if (user == null && trainer == null) {
+            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
+        }
+
+        // USER LOGIN
+        if (user != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUserId(),
+                    user.getEmail(),
+                    "ROLE_" + user.getRole()
+            );
+        }
+
+        // TRAINER LOGIN
+        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtUtil.generateTrainerToken(
+                trainer.getTrainerId(),
+                trainer.getEmail(),
+                "ROLE_" + trainer.getRole(),
+                trainer.getName()         // Trainer name added inside token
+        );
+    }
+}
+
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.FeedbackDto;
+import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
+import com.finalproject.internMgmtSystem.model.*;
+import com.finalproject.internMgmtSystem.repository.BatchDao;
+import com.finalproject.internMgmtSystem.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+@CrossOrigin
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BatchDao batchDao; // 🔥 FIXED — Autowired properly
+
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody RegisterUserDto dto) {
+        return userService.registerUser(dto);
+    }
+
+    @GetMapping("/{userId}/tasks")
+    public List<Task> getTasks(@PathVariable Long userId) {
+        return userService.getTasks(userId);
+    }
+
+    @GetMapping("/{userId}/performance")
+    public List<Performance> getPerformance(@PathVariable Long userId) {
+        return userService.getPerformance(userId);
+    }
+
+    @GetMapping("/{userId}/stipends")
+    public List<Stipend> getStipends(@PathVariable Long userId) {
+        return userService.getStipendHistory(userId);
+    }
+
+    @GetMapping("/batch/{batchCode}")
+    public InternshipBatch getBatchDetails(@PathVariable Long batchCode) {
+        return userService.getBatchDetails(batchCode);
+    }
+
+    @PostMapping("/feedback")
+    public Feedback submitFeedback(@Valid @RequestBody FeedbackDto dto) {
+        return userService.submitFeedback(dto);
+    }
+
+    @GetMapping("/{userId}/attendance")
+    public List<Attendance> getAttendance(@PathVariable Long userId) {
+        return userService.getAttendance(userId);
+    }
+
+    // 📌 NEW PUBLIC ENDPOINT
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatchesPublic() {
+        return batchDao.findAll(); // 🟢 Now resolved and working!
+    }
+}
+
+
+org.springframework.dao.DataIntegrityViolationException: PreparedStatementCallback; SQL [    INSERT INTO feedback (user_id, user_name, batch_code, trainer_id, trainer_name, feedback, rating)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+]; Cannot add or update a child row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_batch` FOREIGN KEY (`batch_code`) REFERENCES `internship_batches` (`batch_code`))
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:95)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:70)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1580)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:675)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:968)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1023)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1033)
+	at com.finalproject.internMgmtSystem.repository.FeedbackDaoImpl.save(FeedbackDaoImpl.java:38)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.finalproject.internMgmtSystem.repository.FeedbackDaoImpl$$SpringCGLIB$$0.save(<generated>)
+	at com.finalproject.internMgmtSystem.service.UserService.submitFeedback(UserService.java:109)
+	at com.finalproject.internMgmtSystem.controller.UserController.submitFeedback(UserController.java:52)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_batch` FOREIGN KEY (`batch_code`) REFERENCES `internship_batches` (`batch_code`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1061)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1009)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1320)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:994)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:973)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:656)
+	... 116 more
+
+
+
+import api from "./axiosConfig";
+
+// USER REGISTRATION
+export const registerUser = (data) => api.post("/api/user/register", data);
+
+// PUBLIC BATCH LIST — no login required
+export const getAllBatchesPublic = () => api.get("/api/user/batches");
+
+// USER FEATURES
+export const getUserTasks = (id) => api.get(`/api/user/${id}/tasks`);
+export const getUserPerformance = (id) => api.get(`/api/user/${id}/performance`);
+export const getBatchDetails = (id) => api.get(`/api/user/batch/${id}`);
+export const submitFeedback = (data) => api.post("/api/user/feedback", data);
+export const getUserStipends = (id) => api.get(`/api/user/${id}/stipends`);
+export const getUserAttendance = (id) => api.get(`/api/user/${id}/attendance`);
+
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) setToken(localStorage.getItem("token"));
+    if (localStorage.getItem("role")) setRole(localStorage.getItem("role"));
+    if (localStorage.getItem("email")) setEmail(localStorage.getItem("email"));
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", String(newToken || ""));
+    localStorage.setItem("role", String(newRole || ""));
+    localStorage.setItem("email", String(newEmail || ""));
+
+    setToken(String(newToken || ""));
+    setRole(String(newRole || ""));
+    setEmail(String(newEmail || ""));
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role:
+          typeof payload.role === "string"
+            ? payload.role.startsWith("ROLE_")
+              ? payload.role
+              : `ROLE_${payload.role}`
+            : "ROLE_USER",
+        sub: payload.sub || "",
+        userId: payload.userId,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+        batchCode: payload.batchCode,
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data.token; // ✔ JSON response
+
+      const { role, sub, userId, trainerId, trainerName, batchCode } =
+        parseJwtPayload(token);
+
+      login(token, role, String(sub)); // ✔ Store token, role, email
+
+      if (role === "ROLE_TRAINER") {
+        localStorage.setItem("trainerId", String(trainerId || ""));
+        localStorage.setItem("trainerName", String(trainerName || ""));
+      }
+
+      if (role === "ROLE_USER") {
+        localStorage.setItem("userId", String(userId || ""));
+        localStorage.setItem("batchCode", String(batchCode || ""));
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      setErr(
+        error?.response?.data?.message ||
+          "Invalid credentials! Please enter correct email & password."
+      );
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon"><span className="brand-briefcase" /></div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
+          </div>
+        </div>
+
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            ← Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <button className="btn" type="submit">
+              LOGIN
+            </button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import { submitFeedback, getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/feedback.css";
+
+export default function FeedbackForm() {
+  const [form, setForm] = useState({
+    userId: "",
+    userName: "",
+    batchCode: "",
+    trainerId: "",
+    trainerName: "",
+    feedback: "",
+    rating: 5,
+  });
+
+  const [msg, setMsg] = useState("");
+  const [hoverStar, setHoverStar] = useState(0);
+
+  useEffect(() => {
+    const uid = localStorage.getItem("userId");
+    const email = localStorage.getItem("email");
+    const batch = localStorage.getItem("batchCode");
+
+    setForm((prev) => ({
+      ...prev,
+      userId: uid,
+      userName: email,
+      batchCode: batch,
+    }));
+
+    if (batch) fetchTrainerDetails(batch);
+  }, []);
+
+  const fetchTrainerDetails = async (batchCode) => {
+    try {
+      const res = await getBatchDetails(batchCode);
+
+      setForm((prev) => ({
+        ...prev,
+        trainerId: res.data.trainerId,
+        trainerName: res.data.trainerName,
+      }));
+    } catch (err) {
+      console.log("Trainer fetch error:", err);
+      setMsg("Trainer info unavailable for your batch!");
+    }
+  };
+
+  const ratingLabels = ["Terrible", "Bad", "Okay", "Good", "Excellent"];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+
+    const payload = {
+      userId: Number(form.userId),
+      userName: form.userName,
+      batchCode: Number(form.batchCode),
+      trainerId: Number(form.trainerId),
+      trainerName: form.trainerName,
+      feedback: form.feedback,
+      rating: form.rating,
+    };
+
+    try {
+      await submitFeedback(payload);
+      setMsg("✔ Feedback submitted successfully!");
+      setForm({ ...form, feedback: "", rating: 5 });
+    } catch (e) {
+      setMsg("❌ Failed to submit feedback!");
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Give Feedback</h3>
+
+        {msg && <div className="info">{msg}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          {/* Hidden fields */}
+          <input type="hidden" value={form.trainerId} />
+          <input type="hidden" value={form.trainerName} />
+          <input type="hidden" value={form.batchCode} />
+
+          {/* Read only */}
+          <input value={form.userId} disabled />
+          <input value={form.userName} disabled />
+
+          <div className="rating-container">
+            <label className="rating-label">Rate Trainer:</label>
+            <div className="rating-stars">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${
+                    star <= (hoverStar || form.rating) ? "filled" : ""
+                  }`}
+                  onClick={() => setForm({ ...form, rating: star })}
+                  onMouseEnter={() => setHoverStar(star)}
+                  onMouseLeave={() => setHoverStar(0)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="rating-text">
+              {ratingLabels[(hoverStar || form.rating) - 1]}
+            </span>
+          </div>
+
+          <textarea
+            placeholder="Write your feedback here..."
+            value={form.feedback}
+            onChange={(e) => setForm({ ...form, feedback: e.target.value })}
+            required
+          />
+
+          <button className="btn" type="submit">
+            Submit Feedback
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+import React, { useEffect, useState } from "react";
+import { getBatchDetails } from "../../api/userApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { useParams } from "react-router-dom";
+import "../../styles/batchdetails.css";
+
+export default function BatchDetails() {
+  const { batchCode } = useParams();
+  const [batch, setBatch] = useState(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (!batchCode) return;
+      try {
+        const res = await getBatchDetails(batchCode);
+        setBatch(res.data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetch();
+  }, [batchCode]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/user/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Batch Details</h3>
+        {!batch ? <div>No batch found.</div> : (
+          <div>
+            <p><b>Name:</b> {batch.batchName}</p>
+            <p><b>Course:</b> {batch.courseName}</p>
+            <p><b>Trainer ID:</b> {batch.trainerId}</p>
+            <p><b>Seats:</b> {batch.availableSeats}/{batch.totalSeats}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+Give Feedback
+❌ Failed to submit feedback!
+19
+prakhar123@gmail.com
+Rate Trainer:
+★
+★
+★
+★
+★
+Excellent
+good
+Submit Feedback
+
+userApi.js:13 
+ 
+ POST http://localhost:9090/api/user/feedback 500 (Internal Server Error)
+﻿
+
