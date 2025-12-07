@@ -766,4 +766,26 @@ export default function ViewUsers() {
   );
 }
 
+import api from "./axiosConfig";
+
+// TRAINER
+export const createTrainer = (data) => api.post("/api/admin/trainers", data);
+export const getTrainers = () => api.get("/api/admin/trainers");
+export const deleteTrainerByEmail = (email) =>
+  api.delete(`/api/admin/trainer/email/${email}`);
+
+// BATCH
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+export const getBatches = () => api.get("/api/admin/batches");
+export const deleteBatchByName = (batchName) =>
+  api.delete(`/api/admin/batch/name/${batchName}`);
+
+// USERS
+export const getUsers = () => api.get("/api/admin/users");
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
+
+// STIPEND
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
+
 
