@@ -1,200 +1,941 @@
-DELETE FROM users
-    -> WHERE role <> 'ADMIN'
-    -> AND user_id NOT IN (18, 19);
-ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
-mysql> describe users;
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| Field           | Type         | Null | Key | Default           | Extra             |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_name       | varchar(255) | NO   |     | NULL              |                   |
-| email           | varchar(255) | NO   | UNI | NULL              |                   |
-| password        | varchar(255) | NO   |     | NULL              |                   |
-| dob             | date         | YES  |     | NULL              |                   |
-| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
-| address         | varchar(255) | YES  |     | NULL              |                   |
-| college_name    | varchar(255) | YES  |     | NULL              |                   |
-| grade           | varchar(50)  | YES  |     | NULL              |                   |
-| major           | varchar(255) | YES  |     | NULL              |                   |
-| team            | varchar(255) | YES  |     | NULL              |                   |
-| start_date      | date         | YES  |     | NULL              |                   |
-| end_date        | date         | YES  |     | NULL              |                   |
-| graduating_year | int          | YES  |     | NULL              |                   |
-| resume          | varchar(255) | YES  |     | NULL              |                   |
-| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
-| role            | varchar(50)  | NO   |     | USER              |                   |
-| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-| batch_code      | bigint       | YES  | MUL | NULL              |                   |
-+-----------------+--------------+------+-----+-------------------+-------------------+
-19 rows in set (0.00 sec)
+import React, { useState, useEffect } from "react";
+import { createTask, getUsersByTrainerId } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/trainer-pages.css";
 
-mysql> describe trainers;
-+-------------+--------------+------+-----+-------------------+-------------------+
-| Field       | Type         | Null | Key | Default           | Extra             |
-+-------------+--------------+------+-----+-------------------+-------------------+
-| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
-| name        | varchar(255) | NO   |     | NULL              |                   |
-| email       | varchar(255) | NO   | UNI | NULL              |                   |
-| password    | varchar(255) | NO   |     | NULL              |                   |
-| contact     | varchar(20)  | YES  |     | NULL              |                   |
-| experience  | int          | YES  |     | NULL              |                   |
-| skills      | text         | YES  |     | NULL              |                   |
-| profile_pic | varchar(255) | YES  |     | NULL              |                   |
-| bio         | text         | YES  |     | NULL              |                   |
-| role        | varchar(50)  | NO   |     | TRAINER           |                   |
-| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-+-------------+--------------+------+-----+-------------------+-------------------+
-11 rows in set (0.01 sec)
 
-mysql> describe internship_batches;
-+-----------------+--------------+------+-----+---------+----------------+
-| Field           | Type         | Null | Key | Default | Extra          |
-+-----------------+--------------+------+-----+---------+----------------+
-| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
-| batch_name      | varchar(255) | NO   |     | NULL    |                |
-| course_name     | varchar(255) | NO   |     | NULL    |                |
-| trainer_id      | bigint       | NO   | MUL | NULL    |                |
-| start_date      | date         | NO   |     | NULL    |                |
-| end_date        | date         | NO   |     | NULL    |                |
-| total_seats     | int          | NO   |     | NULL    |                |
-| available_seats | int          | NO   |     | NULL    |                |
-+-----------------+--------------+------+-----+---------+----------------+
-8 rows in set (0.00 sec)
+export default function CreateTask() {
+  const trainerId = localStorage.getItem("trainerId");
+  const trainerName = localStorage.getItem("trainerName");
 
-mysql> select * from users;
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
-|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
-|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
-|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
-|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
-|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
-|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
-|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
-+---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
-8 rows in set (0.00 sec)
+  const [form, setForm] = useState({
+    userId: "",
+    trainerId,
+    description: "",
+    status: "PENDING",
+    deadline: "",
+    uploadFile: null,
+  });
 
-mysql> select * from trainers;
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
-|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
-|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
-|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
-|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
-|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
-+------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
-6 rows in set (0.00 sec)
+  const [users, setUsers] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
 
-mysql> select * from internship_batches;
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-| batch_code | batch_name               | course_name                | trainer_id | start_date | end_date   | total_seats | available_seats |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-|          1 | Java Batch Feb-2025      | Java Full Stack            |          1 | 2025-02-01 | 2025-04-01 |          30 |              26 |
-|          2 | Python ML Batch Feb-2025 | Python + Machine Learning  |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
-|          3 | Batch 1                  | Java Full Stack            |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
-|          4 | Batch 9                  | python Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
-|          5 | Batch 10                 | golang Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          10 |               4 |
-|          6 | Batch 11                 | Kubernetes Cloud Computing |          5 | 2025-11-28 | 2026-01-31 |          43 |              28 |
-|          7 | batch 12                 | java backend development   |         15 | 2025-12-02 | 2025-12-31 |          15 |               8 |
-|          9 | batch 16                 | java full stack            |          3 | 2025-12-05 | 2025-12-31 |          50 |              39 |
-|         11 | ML Batch                 | ML                         |          1 | 2025-02-01 | 2025-05-01 |          30 |              30 |
-+------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
-9 rows in set (0.00 sec)
+  useEffect(() => {
+    if (trainerId) {
+      getUsersByTrainerId(trainerId)
+        .then((res) => setUsers(res.data))
+        .catch((err) =>
+          console.error("Failed to load user list for trainer:", err)
+        );
+    }
+  }, [trainerId]);
 
-mysql> DELETE FROM users
-    -> WHERE role != 'ADMIN'
-    ->   AND user_id NOT IN (18, 19);
-ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
-mysql> select * from feedback;
-+----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
-| id | user_id | user_name            | batch_code | trainer_id | trainer_name      | date                | feedback                | rating |
-+----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
-|  1 |       1 | Prakhar              |          1 |          1 | Ram Kumar         | 2025-11-20 21:27:09 | Amazing teaching style! |      5 |
-|  2 |       2 | Rohan                |          2 |          2 | Amit Verma        | 2025-11-20 21:27:09 | Great ML mentorship!    |      4 |
-|  3 |      13 | Rohit Sharma2        |          4 |         15 | prakhar agrawal   | 2025-11-25 00:10:34 | okay okay               |      4 |
-|  4 |      19 | prakhar123@gmail.com |          7 |       NULL | prakhar agrawal 2 | 2025-12-04 20:25:21 | ge                      |      5 |
-|  5 |      19 | prakhar123@gmail.com |          7 |         15 | prakhar agrawal 2 | 2025-12-04 22:02:24 | good                    |      4 |
-|  9 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-06 16:54:36 | good                    |      5 |
-| 10 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-07 18:19:40 | good work               |      5 |
-| 11 |      14 | mayank agrawal       |          5 |          9 | prakhar           | 2025-12-07 18:20:19 | good work
-              |      5 |
-| 12 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:12:36 | hi                      |      5 |
-| 13 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:21:42 | good                    |      5 |
-+----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
-10 rows in set (0.00 sec)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+    setError("");
 
-mysql> DELETE FROM feedback
-    -> WHERE user_id NOT IN (18, 19);
-Query OK, 4 rows affected (0.01 sec)
+    if (!form.userId || !form.description) {
+      setError("Please fill all required fields!");
+      return;
+    }
 
-mysql> DELETE FROM users
-    -> WHERE role != 'ADMIN'
-    ->   AND user_id NOT IN (18, 19);
-ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`performance`, CONSTRAINT `fk_perf_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
-mysql> select * from performance;
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
-|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
-|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
-|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
-|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
-|  7 |      18 |         15 | okay work                                                            |                     4 | 2025-12-02 14:44:54 |       NULL | NULL              |
-|  9 |      14 |         15 | good                                                                 |                     5 | 2025-12-02 14:55:53 |       NULL | NULL              |
-| 10 |      14 |         15 | bad                                                                  |                     5 | 2025-12-02 15:08:45 |       NULL | NULL              |
-| 11 |      19 |         15 | good need improvement                                                |                    76 | 2025-12-02 17:17:31 |          7 | prakhar agrawal 2 |
-| 12 |      19 |         15 | now you are doing great - keep it up                                 |                    89 | 2025-12-02 17:19:44 |          7 | prakhar agrawal 2 |
-| 13 |      19 |         15 | good work                                                            |                    76 | 2025-12-05 12:09:52 |          7 | prakhar agrawal 2 |
-| 14 |      19 |         15 | good                                                                 |                    90 | 2025-12-05 16:20:33 |          7 | prakhar agrawal 2 |
-| 15 |      19 |         15 | good                                                                 |                    55 | 2025-12-07 18:02:27 |          7 | prakhar agrawal 2 |
-| 16 |       1 |          1 | Excellent                                                            |                    95 | 2025-12-08 16:57:53 |       1001 | John Miller       |
-| 17 |      19 |         15 | fkjweifoweiufiwebfiuowenio`                                          |                    12 | 2025-12-08 18:20:07 |          7 | prakhar agrawal 2 |
-+----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
-15 rows in set (0.00 sec)
+    try {
+      await createTask({
+        userId: Number(form.userId),
+        trainerId: Number(trainerId),
+        description: form.description,
+        status: form.status,
+        deadline: form.deadline,
+        uploadFile: form.uploadFile,
+      });
 
-mysql> select * from tasks;
-+----+---------+------------+------------------+-----------+------------+-------------+---------------------+
-| id | user_id | trainer_id | description      | status    | deadline   | upload_file | created_at          |
-+----+---------+------------+------------------+-----------+------------+-------------+---------------------+
-| 15 |      19 |         15 | do it            | PENDING   | 2025-12-18 | NULL        | 2025-12-07 23:30:35 |
-| 16 |      19 |         15 | do it            | COMPLETED | 2025-12-07 | NULL        | 2025-12-07 23:30:51 |
-| 17 |       1 |          1 | Integration Task | PENDING   | 2025-12-08 | NULL        | 2025-12-08 16:57:53 |
-+----+---------+------------+------------------+-----------+------------+-------------+---------------------+
-3 rows in set (0.00 sec)
+      setMsg("Task Assigned Successfully ✔");
+      setForm({
+        ...form,
+        userId: "",
+        description: "",
+        deadline: "",
+        status: "PENDING",
+        uploadFile: null,
+      });
+    } catch (err) {
+      const backendMsg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Failed to create task";
+      setError(String(backendMsg));
+    }
+  };
 
-mysql> describe tasks;
-+-------------+--------------+------+-----+-------------------+-------------------+
-| Field       | Type         | Null | Key | Default           | Extra             |
-+-------------+--------------+------+-----+-------------------+-------------------+
-| id          | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_id     | bigint       | NO   | MUL | NULL              |                   |
-| trainer_id  | bigint       | NO   | MUL | NULL              |                   |
-| description | text         | NO   |     | NULL              |                   |
-| status      | varchar(50)  | NO   |     | NULL              |                   |
-| deadline    | date         | YES  |     | NULL              |                   |
-| upload_file | varchar(255) | YES  |     | NULL              |                   |
-| created_at  | timestamp    | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-+-------------+--------------+------+-----+-------------------+-------------------+
-8 rows in set (0.00 sec)
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
 
-mysql> describe performance;
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-| Field                 | Type         | Null | Key | Default           | Extra             |
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-| id                    | bigint       | NO   | PRI | NULL              | auto_increment    |
-| user_id               | bigint       | NO   | MUL | NULL              |                   |
-| trainer_id            | bigint       | NO   | MUL | NULL              |                   |
-| remarks               | text         | YES  |     | NULL              |                   |
-| task_evaluation_score | int          | YES  |     | NULL              |                   |
-| created_at            | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-| batch_code            | bigint       | YES  |     | NULL              |                   |
-| trainer_name          | varchar(255) | YES  |     | NULL              |                   |
-+-----------------------+--------------+------+-----+-------------------+-------------------+
-8 rows in set (0.00 sec)
+      <div className="main">
+        <h3>Create Task</h3>
 
-mysql>
+        {msg && <div className="info success">{msg}</div>}
+        {error && <div className="info error">{error}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <label>Trainer</label>
+          <input value={trainerName} disabled />
+
+          <label>Assign To (Intern)</label>
+          <select
+            value={form.userId}
+            onChange={(e) => setForm({ ...form, userId: e.target.value })}
+          >
+            <option value="">-- Select Intern --</option>
+            {users.map((u) => (
+              <option key={u.userId} value={u.userId}>
+                {u.userName} (Batch {u.batchCode})
+              </option>
+            ))}
+          </select>
+
+          <label>Description</label>
+          <textarea
+            placeholder="Describe task here..."
+            value={form.description}
+            onChange={(e) =>
+              setForm({ ...form, description: e.target.value })
+            }
+          ></textarea>
+
+          <label>Deadline</label>
+          <input
+            type="date"
+            value={form.deadline}
+            onChange={(e) =>
+              setForm({ ...form, deadline: e.target.value })
+            }
+          />
+
+          <label>Status</label>
+          <select
+            value={form.status}
+            onChange={(e) => setForm({ ...form, status: e.target.value })}
+          >
+            <option>PENDING</option>
+            <option>ONGOING</option>
+            <option>COMPLETED</option>
+          </select>
+
+          <button className="btn" type="submit">
+            Assign Task
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useEffect, useState } from "react";
+import { givePerformance, getUsersByTrainerId } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/trainer-pages.css";
+
+export default function GivePerformance() {
+  const [form, setForm] = useState({
+    userId: "",
+    trainerId: "",
+    trainerName: "",
+    batchCode: "",
+    remarks: "",
+    taskEvaluationScore: "",
+  });
+
+  const [users, setUsers] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const trainerId = localStorage.getItem("trainerId");
+    const trainerName = localStorage.getItem("trainerName");
+
+    setForm((prev) => ({
+      ...prev,
+      trainerId,
+      trainerName,
+    }));
+
+    if (trainerId) {
+      getUsersByTrainerId(trainerId)
+        .then((res) => setUsers(res.data))
+        .catch((err) => console.error("Users fetch failed:", err));
+    }
+  }, []);
+
+  const handleUserSelect = (e) => {
+    const userId = Number(e.target.value);
+    const selectedUser = users.find((u) => u.userId === userId);
+
+    setForm((prev) => ({
+      ...prev,
+      userId,
+      batchCode: selectedUser?.batchCode || "",
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+    setError("");
+
+    if (!form.userId || !form.batchCode) {
+      setError("Select a user having valid batch assignment");
+      return;
+    }
+
+    try {
+      await givePerformance({
+        userId: Number(form.userId),
+        trainerId: Number(form.trainerId),
+        batchCode: Number(form.batchCode),
+        trainerName: form.trainerName,
+        remarks: form.remarks,
+        taskEvaluationScore: Number(form.taskEvaluationScore),
+      });
+
+      setMsg("Performance Saved Successfully ✔");
+      setForm({
+        ...form,
+        userId: "",
+        batchCode: "",
+        remarks: "",
+        taskEvaluationScore: "",
+      });
+
+    } catch (err) {
+      const backendMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.response?.data ||
+        "Failed to save performance";
+
+      setError(String(backendMsg));
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Give Performance</h3>
+
+        {msg && <div className="info success">{msg}</div>}
+        {error && <div className="info error">{error}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <label>Trainer</label>
+          <input value={form.trainerName} disabled />
+
+          <label>Intern</label>
+          <select value={form.userId} onChange={handleUserSelect}>
+            <option value="">-- Select Intern --</option>
+            {users.map((u) => (
+              <option key={u.userId} value={u.userId}>
+                {u.userName} (Batch {u.batchCode})
+              </option>
+            ))}
+          </select>
+
+          <label>Batch</label>
+          <input value={form.batchCode} disabled />
+
+          <label>Remarks</label>
+          <textarea
+            value={form.remarks}
+            onChange={(e) => setForm({ ...form, remarks: e.target.value })}
+          ></textarea>
+
+          <label>Score (0-100)</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            value={form.taskEvaluationScore}
+            onChange={(e) => setForm({ ...form, taskEvaluationScore: e.target.value })}
+          />
+
+          <button className="btn" type="submit">
+            Save
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { getUsersByTrainerId, markAttendance } from "../../api/trainerApi";
+import "../../styles/trainer-pages.css";
+
+export default function MarkAttendance() {
+  const trainerId = localStorage.getItem("trainerId") || 1;
+
+  const [users, setUsers] = useState([]);
+  const [attendanceList, setAttendanceList] = useState([]);
+  const [date, setDate] = useState("");
+  const [msg, setMsg] = useState("");
+
+  // Load all users in trainer's batches
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await getUsersByTrainerId(trainerId);
+        setUsers(res.data || []);
+
+        // initialize attendance list with default present=true
+        const initial = (res.data || []).map((u) => ({
+          userId: u.userId,
+          batchCode: u.batchCode,
+          present: true, // default Present
+        }));
+        setAttendanceList(initial);
+      } catch (e) {
+        console.error(e);
+        setMsg("Failed to load users");
+      }
+    };
+
+    fetchUsers();
+  }, [trainerId]);
+
+  // Change status Present/Absent for a specific user
+  const handleStatusChange = (index, value) => {
+    const updated = [...attendanceList];
+    updated[index].present = value === "true"; // convert string to boolean
+    setAttendanceList(updated);
+  };
+
+  // Submit attendance for all users
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+
+    if (!date) {
+      setMsg("Please select date first");
+      return;
+    }
+
+    // ✅ Prevent future date attendance
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      setMsg("Trainer cannot update attendance for future dates.");
+      return;
+    }
+
+    try {
+      for (const a of attendanceList) {
+        await markAttendance({
+          userId: a.userId,
+          batchCode: a.batchCode,
+          date,
+          present: a.present,
+        });
+      }
+      setMsg("Attendance saved/updated for all users.");
+    } catch (e) {
+      console.error(e);
+      setMsg(e?.response?.data || e.message || "Error saving attendance");
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>Mark Attendance</h3>
+
+        {msg && <div className="info" style={{ marginBottom: 10 }}>{msg}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <label style={{ marginRight: 8 }}>Date:</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+
+          {users.length === 0 ? (
+            <div style={{ marginTop: 20 }}>No users found in your batches.</div>
+          ) : (
+            <table className="table" style={{ marginTop: 20 }}>
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>User Name</th>
+                  <th>Batch Code</th>
+                  <th>Status (Present / Absent)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u, index) => (
+                  <tr key={u.userId || u.email || index}>
+                    <td>{u.userId}</td>
+                    <td>{u.userName}</td>
+                    <td>{u.batchCode}</td>
+                    <td>
+                      <select
+                        value={attendanceList[index]?.present ? "true" : "false"}
+                        onChange={(e) =>
+                          handleStatusChange(index, e.target.value)
+                        }
+                      >
+                        <option value="true">Present</option>
+                        <option value="false">Absent</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {users.length > 0 && (
+            <button className="btn" type="submit" style={{ marginTop: 10 }}>
+              Mark Attendance
+            </button>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import { getTrainerBatches } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/trainer-pages.css";
+export default function TrainerBatches() {
+  const [list, setList] = useState([]);
+  const trainerId = localStorage.getItem("trainerId") || 1; // adjust as available
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await getTrainerBatches(trainerId);
+        setList(res.data);
+      } catch (e) { console.error(e); }
+    };
+    fetch();
+  }, [trainerId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>My Batches</h3>
+        <ul>
+          {list.map(b => <li key={b.batchCode}>{b.batchName} - {b.courseName}</li>)}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+
+
+import React from "react";
+import { Link } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/dashboard.css";
+
+export default function TrainerDashboard() {
+  const items = [
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" },
+  ];
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+
+      <div className="main fadeIn">
+
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="page-title-block">
+            <h2 className="dash-title">Trainer Portal</h2>
+            <p className="dash-sub">Manage batches, tasks & attendance easily.</p>
+          </div>
+
+          <div className="dash-actions">
+            
+
+            <div className="dash-actions-right">
+              <div className="theme-toggle">
+                <button className="toggle-btn active">☀</button>
+                <button className="toggle-btn">🌙</button>
+              </div>
+              
+              <div className="dash-avatar">
+                <img
+                  src="https://images.pexels.com/photos/1181371/pexels-photo-1181371.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Trainer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Banner */}
+        <div className="welcome-banner">
+          <div className="banner-text">
+            <p className="banner-subtitle">Welcome back 👋</p>
+            <h3 className="banner-title">Hello Trainer</h3>
+            <p className="banner-body">
+              Continue empowering interns with impactful guidance.
+            </p>
+          </div>
+
+          <div className="banner-image">
+            <img
+              src="https://images.pexels.com/photos/1181352/pexels-photo-1181352.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Trainer overview"
+            />
+          </div>
+        </div>
+
+        {/* ALL Quick Access */}
+        <div className="section-wrapper">
+          <div className="section-header">
+            <h3 className="section-title">Quick Access</h3>
+            <p className="section-subtitle">
+              Jump directly into your actions.
+            </p>
+          </div>
+
+          <div className="dashboard-info">
+            <Link to="/trainer/batches" className="info-card">
+              <h3>📦 My Batches</h3>
+              <p>Assign interns and manage learning schedules.</p>
+            </Link>
+
+            <Link to="/trainer/users" className="info-card">
+              <h3>🧑‍🎓 Users in Batch</h3>
+              <p>View and supervise mapped interns.</p>
+            </Link>
+
+            <Link to="/trainer/create-task" className="info-card">
+              <h3>✍️ Create Task</h3>
+              <p>Assign tasks and projects to interns.</p>
+            </Link>
+
+            <Link to="/trainer/tasks" className="info-card">
+              <h3>📂 View Tasks</h3>
+              <p>Track submissions and progress.</p>
+            </Link>
+
+            <Link to="/trainer/attendance" className="info-card">
+              <h3>📝 Mark Attendance</h3>
+              <p>Submit and validate daily attendance.</p>
+            </Link>
+
+            <Link to="/trainer/performance" className="info-card">
+              <h3>⭐ Give Performance</h3>
+              <p>Evaluate skills and work quality.</p>
+            </Link>
+
+            <Link to="/trainer/feedback" className="info-card">
+              <h3>💬 View Feedback</h3>
+              <p>Review intern queries and insights.</p>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { getFeedbackByTrainerId } from "../../api/trainerApi";
+import "../../styles/trainer-pages.css";
+
+export default function TrainerFeedback() {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const trainerId = localStorage.getItem("trainerId");
+
+  const items = [
+    { to: "/trainer/dashboard", label: "Dashboard" },
+    { to: "/trainer/batches", label: "My Batches" },
+    { to: "/trainer/users", label: "Users in Batch" },
+    { to: "/trainer/create-task", label: "Create Task" },
+    { to: "/trainer/tasks", label: "View Tasks" },
+    { to: "/trainer/attendance", label: "Mark Attendance" },
+    { to: "/trainer/performance", label: "Give Performance" },
+    { to: "/trainer/feedback", label: "View Feedback" },
+  ];
+
+  useEffect(() => {
+    loadFeedback();
+  }, []);
+
+  const loadFeedback = async () => {
+    try {
+      const res = await getFeedbackByTrainerId(trainerId);
+      if (!res.data.length) {
+        setMsg("No Feedback Available");
+        return;
+      }
+      setFeedbacks(res.data);
+    } catch {
+      setMsg("Error loading feedback!");
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={items} />
+
+      <div className="main fadeIn">
+        <h2 className="dash-title">⭐ Feedback Received</h2>
+        {msg && <div className="info">{msg}</div>}
+
+        {feedbacks.length > 0 && (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Batch</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {feedbacks.map((f) => (
+                <tr key={f.id}>
+                  <td>{f.userName}</td>
+                  <td>{f.batchCode}</td>
+                  <td>{f.feedback}</td>
+                  <td>{f.rating} ⭐</td>
+                  <td>{new Date(f.date).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getTasksByTrainerId, deleteTask } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import { Link } from "react-router-dom";
+import "../../styles/trainer-pages.css";
+
+export default function TrainerViewTasks() {
+  const trainerId = localStorage.getItem("trainerId");
+  const [tasks, setTasks] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await getTasksByTrainerId(trainerId);
+        setTasks(res.data || []);
+      } catch (e) {
+        console.error(e);
+        setMsg("Failed to load tasks");
+      }
+    };
+
+    fetchTasks();
+  }, [trainerId]);
+
+  const removeTask = async (taskId) => {
+    try {
+      await deleteTask(taskId);
+      setMsg("Task deleted successfully");
+
+      // Reload tasks after deletion
+      const res = await getTasksByTrainerId(trainerId);
+      setTasks(res.data || []);
+    } catch (err) {
+      setMsg("Failed to delete task");
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+
+      <div className="main">
+        <h3>My Assigned Tasks</h3>
+        {msg && <div className="info">{msg}</div>}
+
+        {tasks.length === 0 ? (
+          <p>No tasks assigned yet.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Intern ID</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {tasks.map((t) => (
+                <tr key={t.id}>
+                  <td>{t.id}</td>
+                  <td>{t.userId}</td>
+                  <td>{t.description}</td>
+                  <td>{t.status}</td>
+                  <td>{t.deadline || "N/A"}</td>
+
+                  <td>
+                    <Link className="btn small"
+                      to={`/trainer/update-task/${t.id}`}
+                    >
+                      Edit
+                    </Link>
+
+                    <button
+                      className="btn small danger"
+                      onClick={() => removeTask(t.id)}
+                      style={{ marginLeft: 8 }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
+import React, { useEffect, useState } from "react";
+import { updateTask, getTasksByTrainerId } from "../../api/trainerApi";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/trainer-pages.css";
+
+export default function UpdateTask() {
+  const { taskId } = useParams();
+  const navigate = useNavigate();
+  const trainerId = Number(localStorage.getItem("trainerId"));
+
+  const [form, setForm] = useState({
+    userId: null,
+    trainerId,
+    description: "",
+    status: "PENDING",
+    deadline: ""
+  });
+
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    const loadTask = async () => {
+      try {
+        const res = await getTasksByTrainerId(trainerId);
+
+        // 🔥 Correct ID match (convert taskId to number)
+        const task = res.data.find((t) => t.id === Number(taskId));
+
+        if (task) {
+          setForm({
+            userId: task.userId,
+            trainerId: task.trainerId,
+            description: task.description,
+            status: task.status,
+            deadline: task.deadline ? task.deadline.split("T")[0] : ""
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadTask();
+  }, [taskId, trainerId]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateTask(Number(taskId), {
+        userId: form.userId,
+        trainerId: form.trainerId,
+        description: form.description,
+        status: form.status,
+        deadline: form.deadline,
+        uploadFile: null
+      });
+
+      setMsg("✔ Task updated successfully!");
+      setTimeout(() => navigate("/trainer/tasks"), 1000);
+    } catch (e) {
+      setMsg("Failed to update task ❌");
+      console.error(e);
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Edit Task</h3>
+
+        {msg && <div className="info">{msg}</div>}
+
+        <form className="small-form" onSubmit={handleSubmit}>
+          <label>Description</label>
+          <textarea
+            value={form.description}
+            onChange={(e) =>
+              setForm({ ...form, description: e.target.value })
+            }
+          />
+
+          <label>Deadline</label>
+          <input
+            type="date"
+            value={form.deadline}
+            onChange={(e) =>
+              setForm({ ...form, deadline: e.target.value })
+            }
+          />
+
+          <label>Status</label>
+          <select
+            value={form.status}
+            onChange={(e) =>
+              setForm({ ...form, status: e.target.value })
+            }
+          >
+            <option>PENDING</option>
+            <option>ONGOING</option>
+            <option>COMPLETED</option>
+          </select>
+
+          <button className="btn" type="submit">Update Task</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getUsersByTrainerId } from "../../api/trainerApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "../../styles/trainer-pages.css";
+
+export default function UsersInBatch() {
+  const trainerId = localStorage.getItem("trainerId") || 1;
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await getUsersByTrainerId(trainerId);
+        setList(res.data);
+      } catch (e) {
+        console.error(e);
+        setMsg("Failed to fetch users");
+      }
+    };
+    fetch();
+  }, [trainerId]);
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Users in My Batches</h3>
+
+        {msg && <div className="info">{msg}</div>}
+
+        {list.length === 0 ? (
+          <div>No users found.</div>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Batch Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((u) => (
+                <tr key={u.email}>
+                  <td>{u.userId}</td>
+                  <td>{u.userName}</td>
+                  <td>{u.email}</td>
+                  <td>{u.contactNo}</td>
+                  <td>{u.batchCode}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
