@@ -1,313 +1,200 @@
-import React, { useState, useContext } from "react";
-import { loginApi } from "../../api/authApi";
-import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import "../../styles/login.css";
-import AdminIllustration from "../../image/login.png";
+DELETE FROM users
+    -> WHERE role <> 'ADMIN'
+    -> AND user_id NOT IN (18, 19);
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
+mysql> describe users;
++-----------------+--------------+------+-----+-------------------+-------------------+
+| Field           | Type         | Null | Key | Default           | Extra             |
++-----------------+--------------+------+-----+-------------------+-------------------+
+| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_name       | varchar(255) | NO   |     | NULL              |                   |
+| email           | varchar(255) | NO   | UNI | NULL              |                   |
+| password        | varchar(255) | NO   |     | NULL              |                   |
+| dob             | date         | YES  |     | NULL              |                   |
+| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
+| address         | varchar(255) | YES  |     | NULL              |                   |
+| college_name    | varchar(255) | YES  |     | NULL              |                   |
+| grade           | varchar(50)  | YES  |     | NULL              |                   |
+| major           | varchar(255) | YES  |     | NULL              |                   |
+| team            | varchar(255) | YES  |     | NULL              |                   |
+| start_date      | date         | YES  |     | NULL              |                   |
+| end_date        | date         | YES  |     | NULL              |                   |
+| graduating_year | int          | YES  |     | NULL              |                   |
+| resume          | varchar(255) | YES  |     | NULL              |                   |
+| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
+| role            | varchar(50)  | NO   |     | USER              |                   |
+| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code      | bigint       | YES  | MUL | NULL              |                   |
++-----------------+--------------+------+-----+-------------------+-------------------+
+19 rows in set (0.00 sec)
 
-export default function Login() {
-  const { login } = useContext(AuthContext);
-  const nav = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [err, setErr] = useState("");
+mysql> describe trainers;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
+| name        | varchar(255) | NO   |     | NULL              |                   |
+| email       | varchar(255) | NO   | UNI | NULL              |                   |
+| password    | varchar(255) | NO   |     | NULL              |                   |
+| contact     | varchar(20)  | YES  |     | NULL              |                   |
+| experience  | int          | YES  |     | NULL              |                   |
+| skills      | text         | YES  |     | NULL              |                   |
+| profile_pic | varchar(255) | YES  |     | NULL              |                   |
+| bio         | text         | YES  |     | NULL              |                   |
+| role        | varchar(50)  | NO   |     | TRAINER           |                   |
+| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+11 rows in set (0.01 sec)
 
-  const parseJwtPayload = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      return {
-        role:
-          typeof payload.role === "string"
-            ? payload.role.startsWith("ROLE_")
-              ? payload.role
-              : `ROLE_${payload.role}`
-            : "ROLE_USER",
-        sub: payload.sub || "",
-        userId: payload.userId,
-        trainerId: payload.trainerId,
-        trainerName: payload.trainerName,
-        batchCode: payload.batchCode,
-      };
-    } catch {
-      return {};
-    }
-  };
+mysql> describe internship_batches;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
+| batch_name      | varchar(255) | NO   |     | NULL    |                |
+| course_name     | varchar(255) | NO   |     | NULL    |                |
+| trainer_id      | bigint       | NO   | MUL | NULL    |                |
+| start_date      | date         | NO   |     | NULL    |                |
+| end_date        | date         | NO   |     | NULL    |                |
+| total_seats     | int          | NO   |     | NULL    |                |
+| available_seats | int          | NO   |     | NULL    |                |
++-----------------+--------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErr("");
+mysql> select * from users;
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
+|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
+|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
+|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
+|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+8 rows in set (0.00 sec)
 
-    try {
-      const res = await loginApi(form);
-      const token = res.data.token; //  JSON response
+mysql> select * from trainers;
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
+|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
+|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
+|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
+|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
+|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+6 rows in set (0.00 sec)
 
-      const { role, sub, userId, trainerId, trainerName, batchCode } =
-        parseJwtPayload(token);
+mysql> select * from internship_batches;
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+| batch_code | batch_name               | course_name                | trainer_id | start_date | end_date   | total_seats | available_seats |
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+|          1 | Java Batch Feb-2025      | Java Full Stack            |          1 | 2025-02-01 | 2025-04-01 |          30 |              26 |
+|          2 | Python ML Batch Feb-2025 | Python + Machine Learning  |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
+|          3 | Batch 1                  | Java Full Stack            |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
+|          4 | Batch 9                  | python Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
+|          5 | Batch 10                 | golang Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          10 |               4 |
+|          6 | Batch 11                 | Kubernetes Cloud Computing |          5 | 2025-11-28 | 2026-01-31 |          43 |              28 |
+|          7 | batch 12                 | java backend development   |         15 | 2025-12-02 | 2025-12-31 |          15 |               8 |
+|          9 | batch 16                 | java full stack            |          3 | 2025-12-05 | 2025-12-31 |          50 |              39 |
+|         11 | ML Batch                 | ML                         |          1 | 2025-02-01 | 2025-05-01 |          30 |              30 |
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+9 rows in set (0.00 sec)
 
-      login(token, role, String(sub)); //  Store token, role, email
+mysql> DELETE FROM users
+    -> WHERE role != 'ADMIN'
+    ->   AND user_id NOT IN (18, 19);
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`feedback`, CONSTRAINT `fk_feedback_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
+mysql> select * from feedback;
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+| id | user_id | user_name            | batch_code | trainer_id | trainer_name      | date                | feedback                | rating |
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+|  1 |       1 | Prakhar              |          1 |          1 | Ram Kumar         | 2025-11-20 21:27:09 | Amazing teaching style! |      5 |
+|  2 |       2 | Rohan                |          2 |          2 | Amit Verma        | 2025-11-20 21:27:09 | Great ML mentorship!    |      4 |
+|  3 |      13 | Rohit Sharma2        |          4 |         15 | prakhar agrawal   | 2025-11-25 00:10:34 | okay okay               |      4 |
+|  4 |      19 | prakhar123@gmail.com |          7 |       NULL | prakhar agrawal 2 | 2025-12-04 20:25:21 | ge                      |      5 |
+|  5 |      19 | prakhar123@gmail.com |          7 |         15 | prakhar agrawal 2 | 2025-12-04 22:02:24 | good                    |      4 |
+|  9 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-06 16:54:36 | good                    |      5 |
+| 10 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-07 18:19:40 | good work               |      5 |
+| 11 |      14 | mayank agrawal       |          5 |          9 | prakhar           | 2025-12-07 18:20:19 | good work
+              |      5 |
+| 12 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:12:36 | hi                      |      5 |
+| 13 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:21:42 | good                    |      5 |
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+10 rows in set (0.00 sec)
 
-      if (role === "ROLE_TRAINER") {
-        localStorage.setItem("trainerId", String(trainerId || ""));
-        localStorage.setItem("trainerName", String(trainerName || ""));
-      }
+mysql> DELETE FROM feedback
+    -> WHERE user_id NOT IN (18, 19);
+Query OK, 4 rows affected (0.01 sec)
 
-      if (role === "ROLE_USER") {
-        localStorage.setItem("userId", String(userId || ""));
-        localStorage.setItem("batchCode", String(batchCode || ""));
-      }
+mysql> DELETE FROM users
+    -> WHERE role != 'ADMIN'
+    ->   AND user_id NOT IN (18, 19);
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`performance`, CONSTRAINT `fk_perf_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
+mysql> select * from performance;
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+| id | user_id | trainer_id | remarks                                                              | task_evaluation_score | created_at          | batch_code | trainer_name      |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+|  1 |       1 |          1 | Good progress in Java modules                                        |                     9 | 2025-11-22 15:08:42 |          1 | Ram Kumar         |
+|  2 |       2 |          2 | Excellent work on ML pipeline                                        |                    10 | 2025-11-22 15:08:42 |          2 | Amit Verma        |
+|  3 |      13 |          9 | Excellent work on the assignment. Code is clean and well-documented. |                     9 | 2025-11-24 23:53:10 |          4 | prakhar           |
+|  4 |      13 |          9 | Excellent on the assignment. Code is clean and well-documented.      |                     8 | 2025-11-24 23:56:17 |          4 | prakhar           |
+|  6 |      14 |         15 | good work                                                            |                     5 | 2025-12-02 14:04:47 |          5 | prakhar agrawal 2 |
+|  7 |      18 |         15 | okay work                                                            |                     4 | 2025-12-02 14:44:54 |       NULL | NULL              |
+|  9 |      14 |         15 | good                                                                 |                     5 | 2025-12-02 14:55:53 |       NULL | NULL              |
+| 10 |      14 |         15 | bad                                                                  |                     5 | 2025-12-02 15:08:45 |       NULL | NULL              |
+| 11 |      19 |         15 | good need improvement                                                |                    76 | 2025-12-02 17:17:31 |          7 | prakhar agrawal 2 |
+| 12 |      19 |         15 | now you are doing great - keep it up                                 |                    89 | 2025-12-02 17:19:44 |          7 | prakhar agrawal 2 |
+| 13 |      19 |         15 | good work                                                            |                    76 | 2025-12-05 12:09:52 |          7 | prakhar agrawal 2 |
+| 14 |      19 |         15 | good                                                                 |                    90 | 2025-12-05 16:20:33 |          7 | prakhar agrawal 2 |
+| 15 |      19 |         15 | good                                                                 |                    55 | 2025-12-07 18:02:27 |          7 | prakhar agrawal 2 |
+| 16 |       1 |          1 | Excellent                                                            |                    95 | 2025-12-08 16:57:53 |       1001 | John Miller       |
+| 17 |      19 |         15 | fkjweifoweiufiwebfiuowenio`                                          |                    12 | 2025-12-08 18:20:07 |          7 | prakhar agrawal 2 |
++----+---------+------------+----------------------------------------------------------------------+-----------------------+---------------------+------------+-------------------+
+15 rows in set (0.00 sec)
 
-      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
-      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
-      else nav("/user/dashboard");
-    } catch (error) {
-      setErr(
-        error?.response?.data?.message ||
-        "Invalid credentials! Please enter correct email & password."
-      );
-    }
-  };
+mysql> select * from tasks;
++----+---------+------------+------------------+-----------+------------+-------------+---------------------+
+| id | user_id | trainer_id | description      | status    | deadline   | upload_file | created_at          |
++----+---------+------------+------------------+-----------+------------+-------------+---------------------+
+| 15 |      19 |         15 | do it            | PENDING   | 2025-12-18 | NULL        | 2025-12-07 23:30:35 |
+| 16 |      19 |         15 | do it            | COMPLETED | 2025-12-07 | NULL        | 2025-12-07 23:30:51 |
+| 17 |       1 |          1 | Integration Task | PENDING   | 2025-12-08 | NULL        | 2025-12-08 16:57:53 |
++----+---------+------------+------------------+-----------+------------+-------------+---------------------+
+3 rows in set (0.00 sec)
 
-  return (
-    <div className="login-page">
-      <div className="login-card">
-        <div className="login-left enhanced-left">
-          <div className="login-brand pop-in">
-            <div className="brand-icon"><span className="brand-briefcase" /></div>
-            <div className="brand-text">
-              <div className="brand-title">INTERN-CONNECT</div>
-              <div className="brand-subtitle">Portal</div>
-            </div>
-          </div>
+mysql> describe tasks;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| id          | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_id     | bigint       | NO   | MUL | NULL              |                   |
+| trainer_id  | bigint       | NO   | MUL | NULL              |                   |
+| description | text         | NO   |     | NULL              |                   |
+| status      | varchar(50)  | NO   |     | NULL              |                   |
+| deadline    | date         | YES  |     | NULL              |                   |
+| upload_file | varchar(255) | YES  |     | NULL              |                   |
+| created_at  | timestamp    | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+8 rows in set (0.00 sec)
 
-          <div className="login-left-heading slide-up">
-            <h1>Welcome Back 👋</h1>
-            <p>Manage the entire internship workflow efficiently.</p>
-          </div>
+mysql> describe performance;
++-----------------------+--------------+------+-----+-------------------+-------------------+
+| Field                 | Type         | Null | Key | Default           | Extra             |
++-----------------------+--------------+------+-----+-------------------+-------------------+
+| id                    | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_id               | bigint       | NO   | MUL | NULL              |                   |
+| trainer_id            | bigint       | NO   | MUL | NULL              |                   |
+| remarks               | text         | YES  |     | NULL              |                   |
+| task_evaluation_score | int          | YES  |     | NULL              |                   |
+| created_at            | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code            | bigint       | YES  |     | NULL              |                   |
+| trainer_name          | varchar(255) | YES  |     | NULL              |                   |
++-----------------------+--------------+------+-----+-------------------+-------------------+
+8 rows in set (0.00 sec)
 
-          <div className="login-illustration-wrapper float-up">
-            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
-          </div>
-        </div>
-
-        <div className="login-right">
-          <button className="back-home-btn" onClick={() => nav("/")}>
-            ← Home
-          </button>
-
-          <div className="login-right-header">
-            <h2>Login Here</h2>
-            <p>Enter your credentials to access dashboard</p>
-          </div>
-
-          {err && <div className="error">{err}</div>}
-
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="input-group">
-              <span className="input-icon">👤</span>
-              <input
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="input-group">
-              <span className="input-icon">🔒</span>
-              <input
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={(e) =>
-                  setForm({ ...form, password: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <button className="btn" type="submit">
-              LOGIN
-            </button>
-
-            <div className="switch-auth">
-              <a href="/user/register">Register as User</a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-import React, { createContext, useState, useEffect } from "react";
-
-export const AuthContext = createContext();
-
-export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-  const [email, setEmail] = useState(localStorage.getItem("email"));
-
-  useEffect(() => {
-    if (localStorage.getItem("token")) setToken(localStorage.getItem("token"));
-    if (localStorage.getItem("role")) setRole(localStorage.getItem("role"));
-    if (localStorage.getItem("email")) setEmail(localStorage.getItem("email"));
-  }, []);
-
-  const login = (newToken, newRole, newEmail) => {
-    localStorage.setItem("token", String(newToken || ""));
-    localStorage.setItem("role", String(newRole || ""));
-    localStorage.setItem("email", String(newEmail || ""));
-
-    setToken(String(newToken || ""));
-    setRole(String(newRole || ""));
-    setEmail(String(newEmail || ""));
-  };
-
-  const logout = () => {
-    localStorage.clear();
-    setToken(null);
-    setRole(null);
-    setEmail(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ token, role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-
-
-
-import api from "./axiosConfig";
-
-export const loginApi = (data) => api.post("/api/auth/login", data);
-// export const createAdminApi = (data) => api.post("/api/auth/create-admin", data);
-
-
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://localhost:9090",
-});
-
-api.interceptors.request.use((config) => {
-  const t = localStorage.getItem("token");
-  if (t) config.headers.Authorization = `Bearer ${t}`;
-  return config;
-});
-
-export default api;
-
-
-
-import { Navigate, Outlet } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-
-export default function ProtectedRoute({ role }) {
-  const { token, role: userRole } = useContext(AuthContext);
-
-  if (!token) return <Navigate to="/" replace />;
-  if (role !== userRole) return <Navigate to="/" replace />;
-
-  return <Outlet />;
-}
-
-
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthContext";
-import ProtectedRoute from "./components/protectedRoute";
-import ThemeToggle from "./components/ThemeToggle";
-
-// Pages
-import Home from "./pages/Home/Home";
-import Login from "./pages/Auth/Login";
-import RegisterUser from "./pages/User/RegisterUser";
-
-// Admin Pages
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import CreateTrainer from "./pages/Admin/CreateTrainer";
-import ViewTrainers from "./pages/Admin/ViewTrainers";
-import CreateBatch from "./pages/Admin/CreateBatch";
-import ViewBatches from "./pages/Admin/ViewBatches";
-import GiveStipend from "./pages/Admin/GiveStipend";
-import ViewUsers from "./pages/Admin/ViewUsers";
-
-// Trainer Pages
-import TrainerDashboard from "./pages/Trainer/TrainerDashboard";
-import TrainerBatches from "./pages/Trainer/TrainerBatches";
-import CreateTask from "./pages/Trainer/CreateTask";
-import UpdateTask from "./pages/Trainer/UpdateTask";
-import MarkAttendance from "./pages/Trainer/MarkAttendance";
-import GivePerformance from "./pages/Trainer/GivePerformance";
-import UsersInBatch from "./pages/Trainer/UsersInBatch";
-import TrainerViewTasks from "./pages/Trainer/TrainerViewTasks";
-import TrainerFeedback from "./pages/Trainer/TrainerFeedback"; 
-
-// User Pages
-import UserDashboard from "./pages/User/UserDashboard";
-import UserTasks from "./pages/User/UserTasks";
-import UserPerformance from "./pages/User/UserPerformance";
-import BatchDetails from "./pages/User/BatchDetails";
-import FeedbackForm from "./pages/User/FeedbackForm";
-import UserStipends from "./pages/User/UserStipends";
-import UserAttendance from "./pages/User/UserAttendance";
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        {/* <ThemeToggle /> */}
-
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/user/register" element={<RegisterUser />} />
-
-          {/* Admin Panel */}
-          <Route element={<ProtectedRoute role="ROLE_ADMIN" />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/create-trainer" element={<CreateTrainer />} />
-            <Route path="/admin/view-trainers" element={<ViewTrainers />} />
-            <Route path="/admin/create-batch" element={<CreateBatch />} />
-            <Route path="/admin/view-batches" element={<ViewBatches />} />
-            <Route path="/admin/give-stipend" element={<GiveStipend />} />
-            <Route path="/admin/view-users" element={<ViewUsers />} />
-          </Route>
-
-          {/* Trainer Panel */}
-          <Route element={<ProtectedRoute role="ROLE_TRAINER" />}>
-            <Route path="/trainer/dashboard" element={<TrainerDashboard />} />
-            <Route path="/trainer/batches" element={<TrainerBatches />} />
-            <Route path="/trainer/create-task" element={<CreateTask />} />
-            <Route path="/trainer/update-task/:taskId" element={<UpdateTask />} />
-            <Route path="/trainer/attendance" element={<MarkAttendance />} />
-            <Route path="/trainer/performance" element={<GivePerformance />} />
-            <Route path="/trainer/users" element={<UsersInBatch />} />
-            <Route path="/trainer/tasks" element={<TrainerViewTasks />} />
-            <Route path="/trainer/feedback" element={<TrainerFeedback />} /> 
-          </Route>
-
-          {/* User Panel */}
-          <Route element={<ProtectedRoute role="ROLE_USER" />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/tasks" element={<UserTasks />} />
-            <Route path="/user/performance" element={<UserPerformance />} />
-            <Route path="/user/batch/:batchCode" element={<BatchDetails />} />
-            <Route path="/user/feedback" element={<FeedbackForm />} />
-            <Route path="/user/stipends" element={<UserStipends />} />
-            <Route path="/user/attendance" element={<UserAttendance />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
-}
-
+mysql>
