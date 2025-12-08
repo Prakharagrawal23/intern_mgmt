@@ -1,422 +1,66 @@
-package com.finalproject.internMgmtSystem.controller;
+mysql> select * from users;
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+| user_id | user_name         | email                     | password                                                     | dob        | contact_no | address       | college_name   | grade | major | team         | start_date | end_date   | graduating_year | resume           | profile_pic | role  | created_at          | batch_code |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+|       1 | Prakhar           | demo@gmail.com            | $2a$10$i8bE0abnfp87a59nLYT6EekKAU58eVne1.2av/kcxhxE3/lX81DSu | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | profile.jpg | USER  | 2025-11-20 21:16:52 |          1 |
+|       2 | Prakhar Agrawal   | prakhar@gmail.com         | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2003-05-21 | 9876543210 | Uttar Pradesh | GLA University | A     | CSE   | Java         | 2025-02-01 | 2025-04-01 |            2025 | resume.pdf       | prakhar.jpg | USER  | 2025-11-20 21:27:09 |          2 |
+|       3 | Rohan Singh       | rohan@gmail.com           | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 2002-10-10 | 9012345678 | Delhi         | IIT Delhi      | A+    | ECE   | Python       | 2025-02-01 | 2025-04-01 |            2025 | rohan_resume.pdf | rohan.png   | USER  | 2025-11-20 21:27:09 |          3 |
+|      13 | Rohit Sharma2     | rohit1.user1232@gmail.com | $2a$10$7Ry1lLbFWIe5kY9pHWlr.untZNbztFunh7al0reIlqbSyM/s66kdO | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-24 23:33:52 |          4 |
+|      14 | mayank agrawal    | mayank.ag1963@gmail.com   | $2a$10$8vmM59h3VBVDSs5mqIxrL.LCDKedilPIcQdXYSfOrQKJH5EpoqJ1. | 2002-01-15 | 9876543210 | Delhi         | IIT Delhi      | A     | CSE   | Java         | 2025-01-10 | 2025-04-10 |            2025 | resume.pdf       | rohit.png   | USER  | 2025-11-26 20:40:53 |          5 |
+|      15 | System Admin      | admin@gmail.com           | $2a$10$yOWXy88q5UPYzsQVYaKwPOhMPw/F.Yr9x.fSNpJ.jeJdCYA1FXn7a | NULL       | NULL       | NULL          | NULL           | NULL  | NULL  | NULL         | NULL       | NULL       |            NULL | NULL             | NULL        | ADMIN | 2025-11-26 23:29:50 |       NULL |
+|      18 | prakhar agrawal 3 | returnbydeath16@gmail.com | $2a$10$xQQ.q5.4ig1tjtByQc8AQelm3O6trOc7dIYT.nOOoIeNp2pxBvLJC | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-01 23:57:35 |          1 |
+|      19 | prakhar agrawal 3 | prakhar123@gmail.com      | $2a$10$fM8Gk90IbLPuujkNk94X5.s.0O2L8gCrbUAZzOlN8ZQLiOXLK6Qhm | 2025-12-01 | 8887876113 | newyork       | gla university | 7.52  | CSE   | Java python  | 2025-12-02 | 2025-12-31 |            2026 | resume.pdf       | prakhar.png | USER  | 2025-12-02 16:33:03 |          7 |
++---------+-------------------+---------------------------+--------------------------------------------------------------+------------+------------+---------------+----------------+-------+-------+--------------+------------+------------+-----------------+------------------+-------------+-------+---------------------+------------+
+
+give a command to delete all user just leave the admin and user id 18 19 and dont make any other changes 
+select * from trainers;
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+| trainer_id | name              | email                    | password                                                     | contact    | experience | skills                   | profile_pic    | bio                   | role    | created_at          |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+|          1 | Ram Kumar         | ram.trainer@gmail.com    | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9876543210 |          5 | Java, Spring Boot, MySQL | ram.jpg        | Senior Java Trainer   | TRAINER | 2025-11-22 15:42:13 |
+|          2 | Amit Verma        | amit.trainer@gmail.com   | $2a$10$JDEuSRh4AcG0l2U1BjQVgO4h1.xZ9vq5P1XRg8Mm1Nn.4y2mauCGe | 9898989898 |          8 | Python, Django, ML       | amit.png       | Python & ML Mentor    | TRAINER | 2025-11-22 15:42:13 |
+|          3 | prakhar agrawal   | prakhar@gmail.com        | $2a$10$Eroa1vqaonTEQdxaFdMD0.zhSZ7dcTau7cPqWoVs..6AAckjYMT2C | 9898983298 |          4 | python dev               | prakhar.jpg    | Senior python Trainer | TRAINER | 2025-11-22 15:42:13 |
+|          5 | iron man          | iron@gmail.com           | $2a$10$Czs.fTJMfBd16CWx03MrlOK1fC5kbGdbfQKAthgRBcirt9LbkYXoW | 98989298   |          5 | tech                     | iron.jpg       | Senior Trainer        | TRAINER | 2025-11-23 01:47:15 |
+|          9 | prakhar           | prakhar.ag9839@gmail.com | $2a$10$NBul6dhiWlggwqceyWuX4euiIGXwAfPf36Ojivw0RJvS640xppTBq | 8887876211 |          5 | java core                | prakharpic.jpg | Senior java Trainer   | TRAINER | 2025-11-24 21:57:10 |
+|         15 | prakhar agrawal 2 | prakhar.ag1123@gmail.com | $2a$10$LsccJnHxXIgnvuIsquIEx.BqBHPWqDAhQZ8qLqRMKUdmBny5GLju. | 8887876118 |          6 | python, java             | prakhar.png    | hello                 | TRAINER | 2025-11-29 01:39:08 |
++------------+-------------------+--------------------------+--------------------------------------------------------------+------------+------------+--------------------------+----------------+-----------------------+---------+---------------------+
+
+give a command to delete all trainer just leave the trainer id 9 and 15 and dont make any other changes 
+
+select * from internship_batches;
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+| batch_code | batch_name               | course_name                | trainer_id | start_date | end_date   | total_seats | available_seats |
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+|          1 | Java Batch Feb-2025      | Java Full Stack            |          1 | 2025-02-01 | 2025-04-01 |          30 |              26 |
+|          2 | Python ML Batch Feb-2025 | Python + Machine Learning  |          2 | 2025-02-01 | 2025-04-01 |          25 |              23 |
+|          3 | Batch 1                  | Java Full Stack            |          5 | 2025-01-10 | 2025-03-20 |          50 |              50 |
+|          4 | Batch 9                  | python Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          20 |              10 |
+|          5 | Batch 10                 | golang Full Stack          |          9 | 2025-01-10 | 2025-03-20 |          10 |               4 |
+|          6 | Batch 11                 | Kubernetes Cloud Computing |          5 | 2025-11-28 | 2026-01-31 |          43 |              28 |
+|          7 | batch 12                 | java backend development   |         15 | 2025-12-02 | 2025-12-31 |          15 |               8 |
+|          9 | batch 16                 | java full stack            |          3 | 2025-12-05 | 2025-12-31 |          50 |              39 |
+|         11 | ML Batch                 | ML                         |          1 | 2025-02-01 | 2025-05-01 |          30 |              30 |
++------------+--------------------------+----------------------------+------------+------------+------------+-------------+-----------------+
+
+give a command to delete all batches just leave thoese batche which is assign to trainer id  id 9 and 15 and dont make any other changes 
+
+
+select * from feedback;
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+| id | user_id | user_name            | batch_code | trainer_id | trainer_name      | date                | feedback                | rating |
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+|  1 |       1 | Prakhar              |          1 |          1 | Ram Kumar         | 2025-11-20 21:27:09 | Amazing teaching style! |      5 |
+|  2 |       2 | Rohan                |          2 |          2 | Amit Verma        | 2025-11-20 21:27:09 | Great ML mentorship!    |      4 |
+|  3 |      13 | Rohit Sharma2        |          4 |         15 | prakhar agrawal   | 2025-11-25 00:10:34 | okay okay               |      4 |
+|  4 |      19 | prakhar123@gmail.com |          7 |       NULL | prakhar agrawal 2 | 2025-12-04 20:25:21 | ge                      |      5 |
+|  5 |      19 | prakhar123@gmail.com |          7 |         15 | prakhar agrawal 2 | 2025-12-04 22:02:24 | good                    |      4 |
+|  9 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-06 16:54:36 | good                    |      5 |
+| 10 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-07 18:19:40 | good work               |      5 |
+| 11 |      14 | mayank agrawal       |          5 |          9 | prakhar           | 2025-12-07 18:20:19 | good work
+              |      5 |
+| 12 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:12:36 | hi                      |      5 |
+| 13 |      19 | prakhar agrawal 3    |          7 |         15 | prakhar agrawal 2 | 2025-12-08 18:21:42 | good                    |      5 |
++----+---------+----------------------+------------+------------+-------------------+---------------------+-------------------------+--------+
+
+delete all feedback just leave one 
 
-import com.finalproject.internMgmtSystem.dto.RegisterUserDto;
-import com.finalproject.internMgmtSystem.dto.CreateAdminDto;
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-
-@RestController
-@RequestMapping("/api/auth")
-@CrossOrigin
-public class AuthController {
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserDao userDao;              // instance DAO
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // injected password encoder
-
-    // LOGIN (existing)
-    @PostMapping("/login")
-    public Map<String, String> login(@Valid @RequestBody LoginRequest loginRequest) {
-        String token = authService.login(loginRequest);
-        return Map.of("token", token);
-    }
-
-
-    /**
-     * Temporary endpoint to create the one-time ADMIN via Postman.
-     * - Ensures only ONE admin exists in the system.
-     * - After successful admin creation you should REMOVE this endpoint
-     *   (or at least lock it) from SecurityConfig.
-     */
-    
-    @PostMapping("/create-admin")
-    public String createAdmin(@Valid @RequestBody CreateAdminDto dto) {
-
-        // 1) Check if an admin already exists
-        List<User> allUsers = userDao.findAll();
-        boolean adminExists = allUsers.stream()
-                .anyMatch(u -> "ADMIN".equalsIgnoreCase(u.getRole()));
-
-        if (adminExists) {
-            throw new UserAlreadyExistsException("Admin already exists!");
-        }
-
-        // 2) Check if email already used
-        User existing = userDao.findByEmail(dto.getEmail());
-        if (existing != null) {
-            throw new UserAlreadyExistsException("Email already registered!");
-        }
-
-        // 3) Create admin
-        User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRole("ADMIN");
-
-        userDao.save(user);
-
-        return "Admin created successfully!";
-    }
-
-}
-
-
-
-
-package com.finalproject.internMgmtSystem.service;
-
-import com.finalproject.internMgmtSystem.dto.LoginRequest;
-import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import com.finalproject.internMgmtSystem.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public String login(LoginRequest loginRequest) {
-
-        User user = userDao.findByEmail(loginRequest.getEmail());
-        Trainer trainer = trainerDao.findByEmail(loginRequest.getEmail());
-
-        if (user == null && trainer == null) {
-            throw new ResourceNotFoundException("Account not found: " + loginRequest.getEmail());
-        }
-
-        // USER LOGIN
-        if (user != null) {
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new RuntimeException("Invalid password");
-            }
-
-            return jwtUtil.generateToken(
-                    user.getUserId(),
-                    user.getEmail(),
-                    "ROLE_" + user.getRole()
-            );
-        }
-
-        // TRAINER LOGIN
-        if (!passwordEncoder.matches(loginRequest.getPassword(), trainer.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return jwtUtil.generateTrainerToken(
-                trainer.getTrainerId(),
-                trainer.getEmail(),
-                "ROLE_" + trainer.getRole(),
-                trainer.getName()         // Trainer name added inside token
-        );
-    }
-}
-
-
-
-
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-
-@Component
-public class JwtUtil {
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // USER TOKEN
-    public String generateToken(Long userId, String email, String role) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // TRAINER TOKEN (Trainer Name + Trainer ID added)
-    public String generateTrainerToken(Long trainerId, String email, String role, String trainerName) {
-        return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", trainerId)    // REQUIRED BY SPRING SECURITY
-                .claim("trainerId", trainerId)
-                .claim("trainerName", trainerName)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    public String extractEmail(String token) {
-        return extractAllClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return extractAllClaims(token).get("userId", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-}
-
-
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
-
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-
-        final String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        Long userId = jwtUtil.extractUserId(token); // ⬅ NEW
-        String role = jwtUtil.extractRole(token);
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
-    }
-}
-
-
-
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import com.finalproject.internMgmtSystem.model.Trainer;
-import com.finalproject.internMgmtSystem.model.User;
-import com.finalproject.internMgmtSystem.repository.TrainerDao;
-import com.finalproject.internMgmtSystem.repository.UserDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-@Service
-public class CustomUserDetailsService implements UserDetailsService {
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private TrainerDao trainerDao;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = userDao.findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))   // FIXED
-            );
-        }
-
-        Trainer trainer = trainerDao.findByEmail(email);
-        if (trainer != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    trainer.getEmail(),
-                    trainer.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_" + trainer.getRole())) // FIXED
-            );
-        }
-
-        throw new UsernameNotFoundException("User not found: " + email);
-    }
-}
-
-
-
-
-
-
-package com.finalproject.internMgmtSystem.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.List;
-
-@Configuration
-public class SecurityConfig {
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        http.csrf(csrf -> csrf.disable());
-
-        // VERY IMPORTANT: enable CORS here
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/api/auth/login",
-                        "/api/user/register",
-                        "/api/user/batches" // ✔ Public Access
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/trainer/**").hasAuthority("ROLE_TRAINER")
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-        );
-
-
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // FULL CORS CONFIGURATION FOR SPRING SECURITY
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-}
