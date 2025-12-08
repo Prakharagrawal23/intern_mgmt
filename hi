@@ -1,922 +1,1371 @@
-import React, { useState, useEffect } from "react";
-import { createTask, getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
-
-
-export default function CreateTask() {
-  const trainerId = localStorage.getItem("trainerId");
-  const trainerName = localStorage.getItem("trainerName");
-
-  const [form, setForm] = useState({
-    userId: "",
-    trainerId,
-    description: "",
-    status: "PENDING",
-    deadline: "",
-    uploadFile: null,
-  });
-
-  const [users, setUsers] = useState([]);
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (trainerId) {
-      getUsersByTrainerId(trainerId)
-        .then((res) => setUsers(res.data))
-        .catch((err) =>
-          console.error("Failed to load user list for trainer:", err)
-        );
-    }
-  }, [trainerId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-    setError("");
-
-    if (!form.userId || !form.description) {
-      setError("⚠ Please fill all required fields!");
-      return;
-    }
-
-    try {
-      await createTask({
-        userId: Number(form.userId),
-        trainerId: Number(trainerId),
-        description: form.description,
-        status: form.status,
-        deadline: form.deadline,
-        uploadFile: form.uploadFile,
-      });
-
-      setMsg("Task Assigned Successfully ✔");
-      setForm({
-        ...form,
-        userId: "",
-        description: "",
-        deadline: "",
-        status: "PENDING",
-        uploadFile: null,
-      });
-    } catch (err) {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Failed to create task";
-      setError(String(backendMsg));
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Create Task</h3>
-
-        {msg && <div className="info success">{msg}</div>}
-        {error && <div className="info error">{error}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Trainer</label>
-          <input value={trainerName} disabled />
-
-          <label>Assign To (Intern)</label>
-          <select
-            value={form.userId}
-            onChange={(e) => setForm({ ...form, userId: e.target.value })}
-          >
-            <option value="">-- Select Intern --</option>
-            {users.map((u) => (
-              <option key={u.userId} value={u.userId}>
-                {u.userName} (Batch {u.batchCode})
-              </option>
-            ))}
-          </select>
-
-          <label>Description</label>
-          <textarea
-            placeholder="Describe task here..."
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          ></textarea>
-
-          <label>Deadline</label>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) =>
-              setForm({ ...form, deadline: e.target.value })
-            }
-          />
-
-          <label>Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-          >
-            <option>PENDING</option>
-            <option>ONGOING</option>
-            <option>COMPLETED</option>
-          </select>
-
-          <button className="btn" type="submit">
-            Assign Task
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
 import React, { useEffect, useState } from "react";
-import { givePerformance, getUsersByTrainerId } from "../../api/trainerApi";
+import { getBatches, deleteBatchByName } from "../../api/adminApi";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
 
-export default function GivePerformance() {
-  const [form, setForm] = useState({
-    userId: "",
-    trainerId: "",
-    trainerName: "",
-    batchCode: "",
-    remarks: "",
-    taskEvaluationScore: "",
-  });
-
-  const [users, setUsers] = useState([]);
-  const [msg, setMsg] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const trainerId = localStorage.getItem("trainerId");
-    const trainerName = localStorage.getItem("trainerName");
-
-    setForm((prev) => ({
-      ...prev,
-      trainerId,
-      trainerName,
-    }));
-
-    if (trainerId) {
-      getUsersByTrainerId(trainerId)
-        .then((res) => setUsers(res.data))
-        .catch((err) => console.error("Users fetch failed:", err));
-    }
-  }, []);
-
-  const handleUserSelect = (e) => {
-    const userId = Number(e.target.value);
-    const selectedUser = users.find((u) => u.userId === userId);
-
-    setForm((prev) => ({
-      ...prev,
-      userId,
-      batchCode: selectedUser?.batchCode || "",
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-    setError("");
-
-    if (!form.userId || !form.batchCode) {
-      setError("⚠️ Select a user having valid batch assignment");
-      return;
-    }
-
-    try {
-      await givePerformance({
-        userId: Number(form.userId),
-        trainerId: Number(form.trainerId),
-        batchCode: Number(form.batchCode),
-        trainerName: form.trainerName,
-        remarks: form.remarks,
-        taskEvaluationScore: Number(form.taskEvaluationScore),
-      });
-
-      setMsg("Performance Saved Successfully ✔");
-      setForm({
-        ...form,
-        userId: "",
-        batchCode: "",
-        remarks: "",
-        taskEvaluationScore: "",
-      });
-
-    } catch (err) {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.response?.data ||
-        "Failed to save performance";
-
-      setError(String(backendMsg));
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Give Performance</h3>
-
-        {msg && <div className="info success">{msg}</div>}
-        {error && <div className="info error">{error}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Trainer</label>
-          <input value={form.trainerName} disabled />
-
-          <label>Intern</label>
-          <select value={form.userId} onChange={handleUserSelect}>
-            <option value="">-- Select Intern --</option>
-            {users.map((u) => (
-              <option key={u.userId} value={u.userId}>
-                {u.userName} (Batch {u.batchCode})
-              </option>
-            ))}
-          </select>
-
-          <label>Batch</label>
-          <input value={form.batchCode} disabled />
-
-          <label>Remarks</label>
-          <textarea
-            value={form.remarks}
-            onChange={(e) => setForm({ ...form, remarks: e.target.value })}
-          ></textarea>
-
-          <label>Score (0-100)</label>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            value={form.taskEvaluationScore}
-            onChange={(e) => setForm({ ...form, taskEvaluationScore: e.target.value })}
-          />
-
-          <button className="btn" type="submit">
-            Save
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { getUsersByTrainerId, markAttendance } from "../../api/trainerApi";
-import "../../styles/trainer-pages.css";
-export default function MarkAttendance() {
-  const trainerId = localStorage.getItem("trainerId") || 1;
-
-  const [users, setUsers] = useState([]);
-  const [attendanceList, setAttendanceList] = useState([]);
-  const [date, setDate] = useState("");
-  const [msg, setMsg] = useState("");
-
-  // Load all users in trainer's batches
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getUsersByTrainerId(trainerId);
-        setUsers(res.data || []);
-
-        // initialize attendance list with default present=true
-        const initial = (res.data || []).map((u) => ({
-          userId: u.userId,
-          batchCode: u.batchCode,
-          present: true, // default Present
-        }));
-        setAttendanceList(initial);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to load users");
-      }
-    };
-
-    fetchUsers();
-  }, [trainerId]);
-
-  // Change status Present/Absent for a specific user
-  const handleStatusChange = (index, value) => {
-    const updated = [...attendanceList];
-    updated[index].present = value === "true"; // convert string to boolean
-    setAttendanceList(updated);
-  };
-
-  // Submit attendance for all users
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-
-    if (!date) {
-      setMsg("Please select date first");
-      return;
-    }
-
-    try {
-      for (const a of attendanceList) {
-        await markAttendance({
-          userId: a.userId,
-          batchCode: a.batchCode,
-          date,
-          present: a.present,
-        });
-      }
-      setMsg("Attendance saved/updated for all users.");
-    } catch (e) {
-      console.error(e);
-      setMsg(e?.response?.data || e.message || "Error saving attendance");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>Mark Attendance</h3>
-
-        {msg && <div className="info" style={{ marginBottom: 10 }}>{msg}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label style={{ marginRight: 8 }}>Date:</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-
-          {users.length === 0 ? (
-            <div style={{ marginTop: 20 }}>No users found in your batches.</div>
-          ) : (
-            <table className="table" style={{ marginTop: 20 }}>
-              <thead>
-                <tr>
-                  <th>User ID</th>
-                  <th>User Name</th>
-                  <th>Batch Code</th>
-                  <th>Status (Present / Absent)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u, index) => (
-                  <tr key={u.userId || u.email || index}>
-                    <td>{u.userId}</td>
-                    <td>{u.userName}</td>
-                    <td>{u.batchCode}</td>
-                    <td>
-                      <select
-                        value={attendanceList[index]?.present ? "true" : "false"}
-                        onChange={(e) =>
-                          handleStatusChange(index, e.target.value)
-                        }
-                      >
-                        <option value="true">Present</option>
-                        <option value="false">Absent</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
-          {users.length > 0 && (
-            <button className="btn" type="submit" style={{ marginTop: 10 }}>
-              Mark Attendance
-            </button>
-          )}
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useState, useEffect } from "react";
-import { getTrainerBatches } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
-export default function TrainerBatches() {
-  const [list, setList] = useState([]);
-  const trainerId = localStorage.getItem("trainerId") || 1; // adjust as available
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await getTrainerBatches(trainerId);
-        setList(res.data);
-      } catch (e) { console.error(e); }
-    };
-    fetch();
-  }, [trainerId]);
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>My Batches</h3>
-        <ul>
-          {list.map(b => <li key={b.batchCode}>{b.batchName} - {b.courseName}</li>)}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-
-import React from "react";
-import { Link } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/dashboard.css";
-
-export default function TrainerDashboard() {
-  const items = [
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/users", label: "Users in Batch" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/tasks", label: "View Tasks" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" },
-  ];
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-
-      <div className="main fadeIn">
-
-        {/* Header */}
-        <div className="dashboard-header">
-          <div className="page-title-block">
-            <h2 className="dash-title">Trainer Portal</h2>
-            <p className="dash-sub">Manage batches, tasks & attendance easily.</p>
-          </div>
-
-          <div className="dash-actions">
-            
-
-            <div className="dash-actions-right">
-              <div className="theme-toggle">
-                <button className="toggle-btn active">☀</button>
-                <button className="toggle-btn">🌙</button>
-              </div>
-              
-              <div className="dash-avatar">
-                <img
-                  src="https://images.pexels.com/photos/1181371/pexels-photo-1181371.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Trainer"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Banner */}
-        <div className="welcome-banner">
-          <div className="banner-text">
-            <p className="banner-subtitle">Welcome back 👋</p>
-            <h3 className="banner-title">Hello Trainer</h3>
-            <p className="banner-body">
-              Continue empowering interns with impactful guidance.
-            </p>
-          </div>
-
-          <div className="banner-image">
-            <img
-              src="https://images.pexels.com/photos/1181352/pexels-photo-1181352.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="Trainer overview"
-            />
-          </div>
-        </div>
-
-        {/* ALL Quick Access */}
-        <div className="section-wrapper">
-          <div className="section-header">
-            <h3 className="section-title">Quick Access</h3>
-            <p className="section-subtitle">
-              Jump directly into your actions.
-            </p>
-          </div>
-
-          <div className="dashboard-info">
-            <Link to="/trainer/batches" className="info-card">
-              <h3>📦 My Batches</h3>
-              <p>Assign interns and manage learning schedules.</p>
-            </Link>
-
-            <Link to="/trainer/users" className="info-card">
-              <h3>🧑‍🎓 Users in Batch</h3>
-              <p>View and supervise mapped interns.</p>
-            </Link>
-
-            <Link to="/trainer/create-task" className="info-card">
-              <h3>✍️ Create Task</h3>
-              <p>Assign tasks and projects to interns.</p>
-            </Link>
-
-            <Link to="/trainer/tasks" className="info-card">
-              <h3>📂 View Tasks</h3>
-              <p>Track submissions and progress.</p>
-            </Link>
-
-            <Link to="/trainer/attendance" className="info-card">
-              <h3>📝 Mark Attendance</h3>
-              <p>Submit and validate daily attendance.</p>
-            </Link>
-
-            <Link to="/trainer/performance" className="info-card">
-              <h3>⭐ Give Performance</h3>
-              <p>Evaluate skills and work quality.</p>
-            </Link>
-
-            <Link to="/trainer/feedback" className="info-card">
-              <h3>💬 View Feedback</h3>
-              <p>Review intern queries and insights.</p>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { getFeedbackByTrainerId } from "../../api/trainerApi";
-import "../../styles/trainer-pages.css";
-
-export default function TrainerFeedback() {
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const trainerId = localStorage.getItem("trainerId");
-
-  const items = [
-    { to: "/trainer/dashboard", label: "Dashboard" },
-    { to: "/trainer/batches", label: "My Batches" },
-    { to: "/trainer/users", label: "Users in Batch" },
-    { to: "/trainer/create-task", label: "Create Task" },
-    { to: "/trainer/tasks", label: "View Tasks" },
-    { to: "/trainer/attendance", label: "Mark Attendance" },
-    { to: "/trainer/performance", label: "Give Performance" },
-    { to: "/trainer/feedback", label: "View Feedback" },
-  ];
-
-  useEffect(() => {
-    loadFeedback();
-    // eslint-disable-next-line
-  }, []);
-
-  const loadFeedback = async () => {
-    try {
-      const res = await getFeedbackByTrainerId(trainerId);
-      if (!res.data.length) {
-        setMsg("No Feedback Available");
-        return;
-      }
-      setFeedbacks(res.data);
-    } catch {
-      setMsg("Error loading feedback!");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={items} />
-
-      <div className="main fadeIn">
-        <h2 className="dash-title">⭐ Feedback Received</h2>
-        {msg && <div className="info">{msg}</div>}
-
-        {feedbacks.length > 0 && (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Batch</th>
-                <th>Feedback</th>
-                <th>Rating</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {feedbacks.map((f) => (
-                <tr key={f.id}>
-                  <td>{f.userName}</td>
-                  <td>{f.batchCode}</td>
-                  <td>{f.feedback}</td>
-                  <td>{f.rating} ⭐</td>
-                  <td>{new Date(f.date).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useEffect, useState } from "react";
-import { getTasksByTrainerId, deleteTask } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { Link } from "react-router-dom";
-import "../../styles/trainer-pages.css";
-
-export default function TrainerViewTasks() {
-  const trainerId = localStorage.getItem("trainerId");
-  const [tasks, setTasks] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await getTasksByTrainerId(trainerId);
-        setTasks(res.data || []);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to load tasks");
-      }
-    };
-
-    fetchTasks();
-  }, [trainerId]);
-
-  const removeTask = async (taskId) => {
-    try {
-      await deleteTask(taskId);
-      setMsg("Task deleted successfully");
-
-      // Reload tasks after deletion
-      const res = await getTasksByTrainerId(trainerId);
-      setTasks(res.data || []);
-    } catch (err) {
-      setMsg("Failed to delete task");
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-
-      <div className="main">
-        <h3>My Assigned Tasks</h3>
-        {msg && <div className="info">{msg}</div>}
-
-        {tasks.length === 0 ? (
-          <p>No tasks assigned yet.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Intern ID</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Deadline</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {tasks.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.id}</td>
-                  <td>{t.userId}</td>
-                  <td>{t.description}</td>
-                  <td>{t.status}</td>
-                  <td>{t.deadline || "N/A"}</td>
-
-                  <td>
-                    <Link className="btn small"
-                      to={`/trainer/update-task/${t.id}`}
-                    >
-                      Edit
-                    </Link>
-
-                    <button
-                      className="btn small danger"
-                      onClick={() => removeTask(t.id)}
-                      style={{ marginLeft: 8 }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useEffect, useState } from "react";
-import { updateTask, getTasksByTrainerId } from "../../api/trainerApi";
-import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
-
-export default function UpdateTask() {
-  const { taskId } = useParams();
-  const navigate = useNavigate();
-  const trainerId = Number(localStorage.getItem("trainerId"));
-
-  const [form, setForm] = useState({
-    userId: null,
-    trainerId,
-    description: "",
-    status: "PENDING",
-    deadline: ""
-  });
-
-  const [msg, setMsg] = useState("");
-
-  useEffect(() => {
-    const loadTask = async () => {
-      try {
-        const res = await getTasksByTrainerId(trainerId);
-
-        // 🔥 Correct ID match (convert taskId to number)
-        const task = res.data.find((t) => t.id === Number(taskId));
-
-        if (task) {
-          setForm({
-            userId: task.userId,
-            trainerId: task.trainerId,
-            description: task.description,
-            status: task.status,
-            deadline: task.deadline ? task.deadline.split("T")[0] : ""
-          });
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    loadTask();
-  }, [taskId, trainerId]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateTask(Number(taskId), {
-        userId: form.userId,
-        trainerId: form.trainerId,
-        description: form.description,
-        status: form.status,
-        deadline: form.deadline,
-        uploadFile: null
-      });
-
-      setMsg("✔ Task updated successfully!");
-      setTimeout(() => navigate("/trainer/tasks"), 1000);
-    } catch (e) {
-      setMsg("Failed to update task ❌");
-      console.error(e);
-    }
-  };
-
-  return (
-    <div className="layout">
-      <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
-      <div className="main">
-        <h3>Edit Task</h3>
-
-        {msg && <div className="info">{msg}</div>}
-
-        <form className="small-form" onSubmit={handleSubmit}>
-          <label>Description</label>
-          <textarea
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          />
-
-          <label>Deadline</label>
-          <input
-            type="date"
-            value={form.deadline}
-            onChange={(e) =>
-              setForm({ ...form, deadline: e.target.value })
-            }
-          />
-
-          <label>Status</label>
-          <select
-            value={form.status}
-            onChange={(e) =>
-              setForm({ ...form, status: e.target.value })
-            }
-          >
-            <option>PENDING</option>
-            <option>ONGOING</option>
-            <option>COMPLETED</option>
-          </select>
-
-          <button className="btn" type="submit">Update Task</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-
-import React, { useEffect, useState } from "react";
-import { getUsersByTrainerId } from "../../api/trainerApi";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import "../../styles/trainer-pages.css";
-
-export default function UsersInBatch() {
-  const trainerId = localStorage.getItem("trainerId") || 1;
+export default function ViewBatches() {
   const [list, setList] = useState([]);
   const [msg, setMsg] = useState("");
 
+  const fetch = async () => {
+    try {
+      const res = await getBatches();
+      setList(res.data);
+    } catch (e) {
+      console.error(e);
+      setMsg("Failed to load batches");
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await getUsersByTrainerId(trainerId);
-        setList(res.data);
-      } catch (e) {
-        console.error(e);
-        setMsg("Failed to fetch users");
-      }
-    };
     fetch();
-  }, [trainerId]);
+  }, []);
+
+  const handleDelete = async (batchName) => {
+    try {
+      await deleteBatchByName(batchName);
+      setMsg("Deleted " + batchName);
+      fetch();
+    } catch (e) {
+      setMsg(e?.response?.data || e.message);
+    }
+  };
 
   return (
     <div className="layout">
       <Navbar />
-      <Sidebar items={[{ to: "/trainer/dashboard", label: "Dashboard" }]} />
+      <Sidebar
+        items={[{ to: "/admin/dashboard", label: "Dashboard" }]}
+      />
       <div className="main">
-        <h3>Users in My Batches</h3>
-
+        <h3>Batches</h3>
         {msg && <div className="info">{msg}</div>}
-
-        {list.length === 0 ? (
-          <div>No users found.</div>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>Batch Code</th>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Batch Name</th>
+              <th>Course Name</th>
+              <th>Trainer ID</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Seats</th>
+              <th>Available Seats</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((b) => (
+              <tr key={b.batchName}>
+                <td>{b.batchName}</td>
+                <td>{b.courseName}</td>
+                <td>{b.trainerId}</td>
+                <td>{b.startDate}</td>
+                <td>{b.endDate}</td>
+                <td>{b.totalSeats}</td>
+                <td>{b.availableSeats}</td>
+                <td>
+                  <button
+                    className="btn small"
+                    onClick={() => handleDelete(b.batchName)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {list.map((u) => (
-                <tr key={u.email}>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getTrainers, deleteTrainerByEmail } from "../../api/adminApi";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function ViewTrainers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetch = async () => {
+    try {
+      const res = await getTrainers();
+      setList(res.data);
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => { fetch(); }, []);
+
+  const handleDelete = async (email) => {
+    try {
+      await deleteTrainerByEmail(email);
+      setMsg("Deleted " + email);
+      fetch();
+    } catch (e) { setMsg(e?.response?.data || e.message); }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar items={[{ to: "/admin/dashboard", label: "Dashboard" }]} />
+      <div className="main">
+        <h3>Trainers</h3>
+        {msg && <div className="info">{msg}</div>}
+        <table className="table">
+          <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Action</th></tr></thead>
+          <tbody>
+            {list.map(t => (
+              <tr key={t.id || t.email}>
+                <td>{t.name}</td>
+                <td>{t.email}</td>
+                <td>{t.contact}</td>
+                <td><button className="btn small" onClick={()=>handleDelete(t.email)}>Delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { getUsers, deleteUserByEmail } from "../../api/adminApi";
+import formatError from "../../utils/formatError";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+
+export default function ViewUsers() {
+  const [list, setList] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await getUsers();
+
+      
+      const filtered = res.data.filter(
+        (u) => u.role && u.role.toUpperCase() === "USER"
+      );
+
+      setList(filtered);
+      setMsg("");
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (email) => {
+    if (!window.confirm("Are you sure? This action cannot be undone!")) return;
+
+    try {
+      await deleteUserByEmail(email);
+      setMsg(`User deleted: ${email}`);
+      fetchData();
+      setTimeout(() => setMsg(""), 3000);
+    } catch (e) {
+      setMsg(formatError(e));
+    }
+  };
+
+  return (
+    <div className="layout">
+      <Navbar />
+      <Sidebar
+        items={[
+          { to: "/admin/create-trainer", label: "Create Trainer" },
+          { to: "/admin/view-trainers", label: "View Trainers" },
+          { to: "/admin/create-batch", label: "Create Batch" },
+          { to: "/admin/view-batches", label: "View Batches" },
+          { to: "/admin/give-stipend", label: "Give Stipend" },
+          { to: "/admin/view-users", label: "View Users" },
+        ]}
+      />
+
+      <div className="main">
+        <h3>Registered Users</h3>
+
+        {msg && <div className="info success">{msg}</div>}
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th>Batch</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {list.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  No users found
+                </td>
+              </tr>
+            ) : (
+              list.map((u) => (
+                <tr key={u.userId}>
                   <td>{u.userId}</td>
                   <td>{u.userName}</td>
                   <td>{u.email}</td>
                   <td>{u.contactNo}</td>
                   <td>{u.batchCode}</td>
+                  <td>
+                    <button
+                      onClick={() => handleDelete(u.email)}
+                      className="btn btn-danger small"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
+
+
+
+
+
+
+import React, { useState, useContext } from "react";
+import { loginApi } from "../../api/authApi";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import AdminIllustration from "../../image/login.png";
+
+export default function Login() {
+  const { login } = useContext(AuthContext);
+  const nav = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [err, setErr] = useState("");
+
+  const parseJwtPayload = (token) => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return {
+        role:
+          typeof payload.role === "string"
+            ? payload.role.startsWith("ROLE_")
+              ? payload.role
+              : `ROLE_${payload.role}`
+            : "ROLE_USER",
+        sub: payload.sub || "",
+        userId: payload.userId,
+        trainerId: payload.trainerId,
+        trainerName: payload.trainerName,
+        batchCode: payload.batchCode,
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErr("");
+
+    try {
+      const res = await loginApi(form);
+      const token = res.data.token; //  JSON response
+
+      const { role, sub, userId, trainerId, trainerName, batchCode } =
+        parseJwtPayload(token);
+
+      login(token, role, String(sub)); //  Store token, role, email
+
+      if (role === "ROLE_TRAINER") {
+        localStorage.setItem("trainerId", String(trainerId || ""));
+        localStorage.setItem("trainerName", String(trainerName || ""));
+      }
+
+      if (role === "ROLE_USER") {
+        localStorage.setItem("userId", String(userId || ""));
+        localStorage.setItem("batchCode", String(batchCode || ""));
+      }
+
+      if (role === "ROLE_ADMIN") nav("/admin/dashboard");
+      else if (role === "ROLE_TRAINER") nav("/trainer/dashboard");
+      else nav("/user/dashboard");
+    } catch (error) {
+      setErr(
+        error?.response?.data?.message ||
+        "Invalid credentials! Please enter correct email & password."
+      );
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-left enhanced-left">
+          <div className="login-brand pop-in">
+            <div className="brand-icon"><span className="brand-briefcase" /></div>
+            <div className="brand-text">
+              <div className="brand-title">INTERN-CONNECT</div>
+              <div className="brand-subtitle">Portal</div>
+            </div>
+          </div>
+
+          <div className="login-left-heading slide-up">
+            <h1>Welcome Back 👋</h1>
+            <p>Manage the entire internship workflow efficiently.</p>
+          </div>
+
+          <div className="login-illustration-wrapper float-up">
+            <img src={AdminIllustration} alt="Illustration" className="login-illustration" />
+          </div>
+        </div>
+
+        <div className="login-right">
+          <button className="back-home-btn" onClick={() => nav("/")}>
+            ← Home
+          </button>
+
+          <div className="login-right-header">
+            <h2>Login Here</h2>
+            <p>Enter your credentials to access dashboard</p>
+          </div>
+
+          {err && <div className="error">{err}</div>}
+
+          <form className="form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <span className="input-icon">👤</span>
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <button className="btn" type="submit">
+              LOGIN
+            </button>
+
+            <div className="switch-auth">
+              <a href="/user/register">Register as User</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+import React, { createContext, useState, useEffect } from "react";
+
+export const AuthContext = createContext();
+
+export default function AuthProvider({ children }) {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [email, setEmail] = useState(localStorage.getItem("email"));
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) setToken(localStorage.getItem("token"));
+    if (localStorage.getItem("role")) setRole(localStorage.getItem("role"));
+    if (localStorage.getItem("email")) setEmail(localStorage.getItem("email"));
+  }, []);
+
+  const login = (newToken, newRole, newEmail) => {
+    localStorage.setItem("token", String(newToken || ""));
+    localStorage.setItem("role", String(newRole || ""));
+    localStorage.setItem("email", String(newEmail || ""));
+
+    setToken(String(newToken || ""));
+    setRole(String(newRole || ""));
+    setEmail(String(newEmail || ""));
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    setToken(null);
+    setRole(null);
+    setEmail(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, role, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+
+
+
+
+
+import api from "./axiosConfig";
+
+// TRAINER
+export const createTrainer = (data) => api.post("/api/admin/trainers", data);
+export const getTrainers = () => api.get("/api/admin/trainers");
+export const deleteTrainerByEmail = (email) =>
+  api.delete(`/api/admin/trainer/email/${email}`);
+
+// BATCH
+export const createBatch = (data) => api.post("/api/admin/batches", data);
+export const getBatches = () => api.get("/api/admin/batches");
+export const deleteBatchByName = (batchName) =>
+  api.delete(`/api/admin/batch/name/${batchName}`);
+
+// USERS
+export const getUsers = () => api.get("/api/admin/users");
+export const deleteUserByEmail = (email) =>
+  api.delete(`/api/admin/user/email/${email}`);
+
+// STIPEND
+export const giveStipend = (data) => api.post("/api/admin/stipend", data);
+
+
+
+
+
+ PreparedStatementCallback; SQL [DELETE FROM trainers WHERE email = ?]; Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`users`, CONSTRAINT `FK_batchcode` FOREIGN KEY (`batch_code`) REFERENCES `internship_batches` (`batch_code`))
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:95)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:70)
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1580)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:675)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:968)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1023)
+	at org.springframework.jdbc.core.JdbcTemplate.update(JdbcTemplate.java:1033)
+	at com.finalproject.internMgmtSystem.repository.TrainerDaoImpl.deleteByEmail(TrainerDaoImpl.java:110)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.finalproject.internMgmtSystem.repository.TrainerDaoImpl$$SpringCGLIB$$0.deleteByEmail(<generated>)
+	at com.finalproject.internMgmtSystem.service.AdminService.deleteTrainerByEmail(AdminService.java:143)
+	at com.finalproject.internMgmtSystem.controller.AdminController.deleteTrainerByEmail(AdminController.java:65)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011)
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.finalproject.internMgmtSystem.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`users`, CONSTRAINT `FK_batchcode` FOREIGN KEY (`batch_code`) REFERENCES `internship_batches` (`batch_code`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:916)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1061)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1009)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1320)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:994)
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+	at org.springframework.jdbc.core.JdbcTemplate.lambda$update$2(JdbcTemplate.java:973)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:656)
+	... 116 more
+2025-12-08T17:48:48.213+05:30 DEBUG 14576 --- [nio-9090-exec-8] o.s.jdbc.core.JdbcTemplate               : Executing SQL query [SELECT * FROM trainers]
+
+
+
+
+
+
+package com.finalproject.internMgmtSystem.controller;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.service.AdminService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin
+public class AdminController {
+
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/trainers")
+    public Trainer createTrainer(@Valid @RequestBody RegisterTrainerDto dto) {
+        return adminService.registerTrainer(dto);
+    }
+
+    @PostMapping("/batches")
+    public InternshipBatch createBatch(@Valid @RequestBody BatchDto dto) {
+        return adminService.createBatch(dto);
+    }
+
+    @PostMapping("/stipend")
+    public Stipend giveStipend(@Valid @RequestBody StipendDto dto) {
+        return adminService.giveStipend(dto);
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+
+    @GetMapping("/trainers")
+    public List<Trainer> getAllTrainers() {
+        return adminService.getAllTrainers();
+    }
+
+    @GetMapping("/batches")
+    public List<InternshipBatch> getAllBatches() {
+        return adminService.getAllBatches();
+    }
+
+    // DELETE USER BY EMAIL
+    @DeleteMapping("/user/email/{email}")
+    public String deleteUserByEmail(@PathVariable String email) {
+        adminService.deleteUserByEmail(email);
+        return "User deleted successfully with email: " + email;
+    }
+
+    // DELETE TRAINER BY EMAIL
+    @DeleteMapping("/trainer/email/{email}")
+    public String deleteTrainerByEmail(@PathVariable String email) {
+        adminService.deleteTrainerByEmail(email);
+        return "Trainer deleted successfully with email: " + email;
+    }
+
+    // DELETE BATCH BY BATCH NAME
+    @DeleteMapping("/batch/name/{batchName}")
+    public String deleteBatchByName(@PathVariable String batchName) {
+        adminService.deleteBatchByName(batchName);
+        return "Batch deleted successfully with name: " + batchName;
+    }
+}
+
+
+
+
+
+package com.finalproject.internMgmtSystem.service;
+
+import com.finalproject.internMgmtSystem.dto.BatchDto;
+import com.finalproject.internMgmtSystem.dto.RegisterTrainerDto;
+import com.finalproject.internMgmtSystem.dto.StipendDto;
+import com.finalproject.internMgmtSystem.exception.ResourceNotFoundException;
+import com.finalproject.internMgmtSystem.exception.UserAlreadyExistsException;
+import com.finalproject.internMgmtSystem.model.InternshipBatch;
+import com.finalproject.internMgmtSystem.model.Stipend;
+import com.finalproject.internMgmtSystem.model.Trainer;
+import com.finalproject.internMgmtSystem.model.User;
+import com.finalproject.internMgmtSystem.repository.*;
+import com.finalproject.internMgmtSystem.util.EmailUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AdminService {
+
+	@Autowired
+	private TrainerDao trainerDao;
+
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private BatchDao batchDao;
+
+	@Autowired
+	private StipendDao stipendDao;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private EmailUtil emailUtil;
+
+	public Trainer registerTrainer(RegisterTrainerDto dto) {
+
+		Trainer exists = trainerDao.findByEmail(dto.getEmail());
+		if (exists != null) {
+			throw new UserAlreadyExistsException("Trainer with email already exists: " + dto.getEmail());
+		}
+
+		Trainer trainer = new Trainer();
+		trainer.setName(dto.getName());
+		trainer.setEmail(dto.getEmail());
+		trainer.setPassword(passwordEncoder.encode(dto.getPassword()));
+		trainer.setContact(dto.getContact());
+		trainer.setExperience(dto.getExperience());
+		trainer.setSkills(dto.getSkills());
+	
+		trainer.setBio(dto.getBio());
+		trainer.setRole("TRAINER");
+
+		Trainer saved = trainerDao.save(trainer);
+
+		// send email (you already had this util)
+		emailUtil.sendEmail(dto.getEmail(), "Trainer Account Created",
+				"Hello " + dto.getName() + ",\n\n" + "Your trainer account has been created.\n\n" + "Email: "
+						+ dto.getEmail() + "\n" + "Password (temporary): " + dto.getPassword() + "\n\n"
+						+ "Regards,\nTeam");
+
+		return saved;
+	}
+
+	public InternshipBatch createBatch(BatchDto dto) {
+		InternshipBatch batch = new InternshipBatch();
+
+		batch.setBatchName(dto.getBatchName());
+		batch.setCourseName(dto.getCourseName());
+		batch.setTrainerId(dto.getTrainerId());
+		batch.setStartDate(dto.getStartDate());
+		batch.setEndDate(dto.getEndDate());
+		batch.setTotalSeats(dto.getTotalSeats());
+		batch.setAvailableSeats(dto.getAvailableSeats());
+
+		return batchDao.save(batch);
+	}
+
+	public Stipend giveStipend(StipendDto dto) {
+
+		User user = userDao.findById(dto.getUserId());
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found for stipend: " + dto.getUserId());
+		}
+
+		Stipend stipend = new Stipend();
+		stipend.setUserId(dto.getUserId());
+		stipend.setUserName(dto.getUserName());
+		stipend.setPaymentMode(dto.getPaymentMode());
+		stipend.setAmount(dto.getAmount());
+
+		return stipendDao.save(stipend);
+	}
+
+	public List<User> getAllUsers() {
+		return userDao.findAll();
+	}
+
+	public List<Trainer> getAllTrainers() {
+		return trainerDao.findAll();
+	}
+
+	public List<InternshipBatch> getAllBatches() {
+		return batchDao.findAll();
+	}
+
+	public void deleteTrainer(Long id) {
+		if (trainerDao.findById(id) == null) {
+			throw new ResourceNotFoundException("Trainer not found with ID: " + id);
+		}
+		trainerDao.deleteById(id);
+	}
+
+	public void deleteUser(Long id) {
+		if (userDao.findById(id) == null) {
+			throw new ResourceNotFoundException("User not found with ID: " + id);
+		}
+		userDao.deleteById(id);
+	}
+
+	// --------- NEW: delete by email/name helpers ----------
+
+	// DELETE USER BY EMAIL
+	public void deleteUserByEmail(String email) {
+		User user = userDao.findByEmail(email);
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found with email: " + email);
+		}
+		userDao.deleteById(user.getUserId());
+	}
+
+	// DELETE TRAINER BY EMAIL
+	public void deleteTrainerByEmail(String email) {
+		Trainer trainer = trainerDao.findByEmail(email);
+		if (trainer == null) {
+			throw new ResourceNotFoundException("Trainer not found with email: " + email);
+		}
+		trainerDao.deleteByEmail(email);
+	}
+
+	// DELETE BATCH BY NAME
+	public void deleteBatchByName(String batchName) {
+		InternshipBatch batch = batchDao.findByName(batchName);
+		if (batch == null) {
+			throw new ResourceNotFoundException("Batch not found with name: " + batchName);
+		}
+		batchDao.delete(batch.getBatchCode());
+	}
+}
+
+
+ describe trainer;
+ERROR 1146 (42S02): Table 'internmgmtsystem.trainer' doesn't exist
+mysql> describe trainers;
++-------------+--------------+------+-----+-------------------+-------------------+
+| Field       | Type         | Null | Key | Default           | Extra             |
++-------------+--------------+------+-----+-------------------+-------------------+
+| trainer_id  | bigint       | NO   | PRI | NULL              | auto_increment    |
+| name        | varchar(255) | NO   |     | NULL              |                   |
+| email       | varchar(255) | NO   | UNI | NULL              |                   |
+| password    | varchar(255) | NO   |     | NULL              |                   |
+| contact     | varchar(20)  | YES  |     | NULL              |                   |
+| experience  | int          | YES  |     | NULL              |                   |
+| skills      | text         | YES  |     | NULL              |                   |
+| profile_pic | varchar(255) | YES  |     | NULL              |                   |
+| bio         | text         | YES  |     | NULL              |                   |
+| role        | varchar(50)  | NO   |     | TRAINER           |                   |
+| created_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------+--------------+------+-----+-------------------+-------------------+
+11 rows in set (0.01 sec)
+
+mysql> describe users;
++-----------------+--------------+------+-----+-------------------+-------------------+
+| Field           | Type         | Null | Key | Default           | Extra             |
++-----------------+--------------+------+-----+-------------------+-------------------+
+| user_id         | bigint       | NO   | PRI | NULL              | auto_increment    |
+| user_name       | varchar(255) | NO   |     | NULL              |                   |
+| email           | varchar(255) | NO   | UNI | NULL              |                   |
+| password        | varchar(255) | NO   |     | NULL              |                   |
+| dob             | date         | YES  |     | NULL              |                   |
+| contact_no      | varchar(20)  | YES  |     | NULL              |                   |
+| address         | varchar(255) | YES  |     | NULL              |                   |
+| college_name    | varchar(255) | YES  |     | NULL              |                   |
+| grade           | varchar(50)  | YES  |     | NULL              |                   |
+| major           | varchar(255) | YES  |     | NULL              |                   |
+| team            | varchar(255) | YES  |     | NULL              |                   |
+| start_date      | date         | YES  |     | NULL              |                   |
+| end_date        | date         | YES  |     | NULL              |                   |
+| graduating_year | int          | YES  |     | NULL              |                   |
+| resume          | varchar(255) | YES  |     | NULL              |                   |
+| profile_pic     | varchar(255) | YES  |     | NULL              |                   |
+| role            | varchar(50)  | NO   |     | USER              |                   |
+| created_at      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| batch_code      | bigint       | YES  | MUL | NULL              |                   |
++-----------------+--------------+------+-----+-------------------+-------------------+
+19 rows in set (0.00 sec)
+
+mysql> describe internship_batches;
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| batch_code      | bigint       | NO   | PRI | NULL    | auto_increment |
+| batch_name      | varchar(255) | NO   |     | NULL    |                |
+| course_name     | varchar(255) | NO   |     | NULL    |                |
+| trainer_id      | bigint       | NO   | MUL | NULL    |                |
+| start_date      | date         | NO   |     | NULL    |                |
+| end_date        | date         | NO   |     | NULL    |                |
+| total_seats     | int          | NO   |     | NULL    |                |
+| available_seats | int          | NO   |     | NULL    |                |
++-----------------+--------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql>
+
+DELETE http://localhost:9090/api/admin/trainer/email/ram.trainer@gmail.com 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:198
+xhr @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+__webpack_modules__../node_modules/axios/lib/core/Axios.js._utils_js__WEBPACK_IMPORTED_MODULE_0__.default.forEach.Axios.<computed> @ Axios.js:211
+wrap @ bind.js:12
+deleteTrainerByEmail @ adminApi.js:6
+handleDelete @ ViewTrainers.jsx:21
+onClick @ ViewTrainers.jsx:42
+executeDispatch @ react-dom-client.development.js:19116
+runWithFiberInDEV @ react-dom-client.development.js:870
+processDispatchQueue @ react-dom-client.development.js:19165
+(anonymous) @ react-dom-client.development.js:19767
+batchedUpdates$1 @ react-dom-client.development.js:3255
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
+dispatchEvent @ react-dom-client.development.js:23584
+dispatchDiscreteEvent @ react-dom-client.development.js:23552
+<button>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ ViewTrainers.jsx:42
+ViewTrainers @ ViewTrainers.jsx:36
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewTrainers>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:57
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
+    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
+    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
+    at react-dom-client.development.js:7098:1
+    at reconcileChildren (react-dom-client.development.js:9699:1)
+    at beginWork (react-dom-client.development.js:11988:1)
+    at runWithFiberInDEV (react-dom-client.development.js:870:1)
+    at performUnitOfWork (react-dom-client.development.js:17639:1)
+    at workLoopSync (react-dom-client.development.js:17469:1)
+    at renderRootSync (react-dom-client.development.js:17450:1)
+throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
+throwOnInvalidObjectType @ react-dom-client.development.js:6109
+reconcileChildFibersImpl @ react-dom-client.development.js:7058
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<div>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+ViewTrainers @ ViewTrainers.jsx:32
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewTrainers>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:57
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+ViewTrainers.jsx:32  An error occurred in the <div> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+Encountered two children with the same key, `ML Batch`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+(anonymous) @ react-dom-client.development.js:6604
+runWithFiberInDEV @ react-dom-client.development.js:870
+warnOnInvalidKey @ react-dom-client.development.js:6603
+reconcileChildrenArray @ react-dom-client.development.js:6669
+reconcileChildFibersImpl @ react-dom-client.development.js:6990
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<tr>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ ViewBatches.jsx:56
+ViewBatches @ ViewBatches.jsx:56
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewBatches>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:59
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+adminApi.js:12   DELETE http://localhost:9090/api/admin/batch/name/Batch%2010 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:198
+xhr @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+(anonymous) @ Axios.js:211
+wrap @ bind.js:12
+deleteBatchByName @ adminApi.js:12
+handleDelete @ ViewBatches.jsx:26
+onClick @ ViewBatches.jsx:69
+executeDispatch @ react-dom-client.development.js:19116
+runWithFiberInDEV @ react-dom-client.development.js:870
+processDispatchQueue @ react-dom-client.development.js:19165
+(anonymous) @ react-dom-client.development.js:19767
+batchedUpdates$1 @ react-dom-client.development.js:3255
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
+dispatchEvent @ react-dom-client.development.js:23584
+dispatchDiscreteEvent @ react-dom-client.development.js:23552
+<button>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ ViewBatches.jsx:66
+ViewBatches @ ViewBatches.jsx:56
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewBatches>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:59
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+react-dom-client.development.js:6099  Uncaught Error: Objects are not valid as a React child (found: object with keys {error}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectTypeImpl (react-dom-client.development.js:6099:1)
+    at throwOnInvalidObjectType (react-dom-client.development.js:6109:1)
+    at reconcileChildFibersImpl (react-dom-client.development.js:7058:1)
+    at react-dom-client.development.js:7098:1
+    at reconcileChildren (react-dom-client.development.js:9699:1)
+    at beginWork (react-dom-client.development.js:11988:1)
+    at runWithFiberInDEV (react-dom-client.development.js:870:1)
+    at performUnitOfWork (react-dom-client.development.js:17639:1)
+    at workLoopSync (react-dom-client.development.js:17469:1)
+    at renderRootSync (react-dom-client.development.js:17450:1)
+throwOnInvalidObjectTypeImpl @ react-dom-client.development.js:6099
+throwOnInvalidObjectType @ react-dom-client.development.js:6109
+reconcileChildFibersImpl @ react-dom-client.development.js:7058
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<div>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+ViewBatches @ ViewBatches.jsx:41
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewBatches>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:59
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+ViewBatches.jsx:41  An error occurred in the <div> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom-client.development.js:9362
+logUncaughtError @ react-dom-client.development.js:9431
+runWithFiberInDEV @ react-dom-client.development.js:870
+lane.callback @ react-dom-client.development.js:9461
+callCallback @ react-dom-client.development.js:7423
+commitCallbacks @ react-dom-client.development.js:7437
+runWithFiberInDEV @ react-dom-client.development.js:870
+commitLayoutEffectOnFiber @ react-dom-client.development.js:14047
+flushLayoutEffects @ react-dom-client.development.js:18135
+commitRoot @ react-dom-client.development.js:17954
+commitRootWhenReady @ react-dom-client.development.js:16824
+performWorkOnRoot @ react-dom-client.development.js:16722
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<div>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+ViewBatches @ ViewBatches.jsx:41
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16583
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewBatches>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:59
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+
+
+PreparedStatementCallback; SQL [DELETE FROM users WHERE user_id = ?]; Cannot delete or update a parent row: a foreign key constraint fails (`internmgmtsystem`.`attendance`, CONSTRAINT `fk_attend_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`))
+
+
+Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+ViewBatches.jsx:56  Encountered two children with the same key, `ML Batch`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+(anonymous) @ react-dom-client.development.js:6604
+runWithFiberInDEV @ react-dom-client.development.js:870
+warnOnInvalidKey @ react-dom-client.development.js:6603
+reconcileChildrenArray @ react-dom-client.development.js:6669
+reconcileChildFibersImpl @ react-dom-client.development.js:6990
+(anonymous) @ react-dom-client.development.js:7098
+reconcileChildren @ react-dom-client.development.js:9699
+beginWork @ react-dom-client.development.js:11988
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<tr>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ ViewBatches.jsx:56
+ViewBatches @ ViewBatches.jsx:56
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewBatches>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:59
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+adminApi.js:17   DELETE http://localhost:9090/api/admin/user/email/demo@gmail.com 500 (Internal Server Error)
+dispatchXhrRequest @ xhr.js:198
+xhr @ xhr.js:15
+dispatchRequest @ dispatchRequest.js:51
+Promise.then
+_request @ Axios.js:163
+request @ Axios.js:40
+(anonymous) @ Axios.js:211
+wrap @ bind.js:12
+deleteUserByEmail @ adminApi.js:17
+handleDelete @ ViewUsers.jsx:35
+onClick @ ViewUsers.jsx:92
+executeDispatch @ react-dom-client.development.js:19116
+runWithFiberInDEV @ react-dom-client.development.js:870
+processDispatchQueue @ react-dom-client.development.js:19165
+(anonymous) @ react-dom-client.development.js:19767
+batchedUpdates$1 @ react-dom-client.development.js:3255
+dispatchEventForPluginEventSystem @ react-dom-client.development.js:19320
+dispatchEvent @ react-dom-client.development.js:23584
+dispatchDiscreteEvent @ react-dom-client.development.js:23552
+<button>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+(anonymous) @ ViewUsers.jsx:90
+ViewUsers @ ViewUsers.jsx:80
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<ViewUsers>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+App @ App.js:61
+react_stack_bottom_frame @ react-dom-client.development.js:25904
+renderWithHooks @ react-dom-client.development.js:7662
+updateFunctionComponent @ react-dom-client.development.js:10166
+beginWork @ react-dom-client.development.js:11778
+runWithFiberInDEV @ react-dom-client.development.js:870
+performUnitOfWork @ react-dom-client.development.js:17639
+workLoopSync @ react-dom-client.development.js:17469
+renderRootSync @ react-dom-client.development.js:17450
+performWorkOnRoot @ react-dom-client.development.js:16498
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:18957
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+(anonymous) @ react-jsx-dev-runtime.development.js:327
+./src/index.js @ index.js:11
+(anonymous) @ react refresh:37
+__webpack_require__ @ bootstrap:22
+(anonymous) @ startup:7
+(anonymous) @ startup:7
+
+
